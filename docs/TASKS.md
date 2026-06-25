@@ -23,20 +23,22 @@
 - [x] Build subject selection UI and flow.
 - [x] Enable anonymous sign-ins.
 - [x] PWA support (manifest, service worker, offline page).
-- [x] Build tutoring chat UI (static prototype at `/tutor`).
-- [ ] Decide AI provider/model for tutoring and practice generation.
+- [x] Build tutoring chat UI (static prototype at `/tutor`, now with real AI streaming).
+- [x] Decide AI provider/model for tutoring and practice generation (Azure OpenAI).
 
 ## Blocked / Waiting
 
 - [x] Enable anonymous sign-ins in the hosted Supabase project.
 - [x] Apply the initial migration to the hosted Supabase database.
-- [ ] Persist learner setup and session rows after the hosted tables are available.
+- [~] Persist learner setup and session rows after the hosted tables are available.
+  - Learner profiles and study sessions persist correctly.
+  - Tutor messages do NOT persist (no chat persistence implemented).
 - [ ] Add placeholder handling for server-only Supabase secrets once provided.
 
 ## Product Decisions To Confirm
 
 - [x] Decide whether MVP starts with local-only guest persistence or Supabase-backed anonymous/auth sessions.
-- [ ] Decide which AI provider and model will power tutoring and practice generation.
+- [x] Decide which AI provider and model will power tutoring and practice generation (Azure OpenAI).
 - [ ] Decide whether full tutoring transcripts should be stored long-term or compacted into summaries later.
 - [ ] Decide whether deterministic grading should handle objective questions before AI-assisted evaluation.
 
@@ -44,7 +46,9 @@
 
 - [x] Create the Next.js App Router project structure.
 - [x] Add TypeScript, linting, and base project scripts.
-- [ ] Create initial app routes for landing, study, chat, practice, and history.
+- [~] Create initial app routes for landing, study, chat, practice, and history.
+  - `/` (landing), `/home` (study), `/tutor` (chat), `/practice`, `/practice/results`, `/profile`, `/onboarding`, `/offline` all exist.
+  - `/history` route is missing (sidebar links to it but page is 404).
 - [x] Add a shared layout and mobile-first shell.
 
 ## Supabase Integration
@@ -82,21 +86,23 @@
 
 ## MVP Features
 
-- [x] Build onboarding and learner profile setup.
-- [ ] Build subject selection.
-- [x] Build tutoring chat UI (static prototype at `/tutor`).
-- [ ] Persist chat sessions and study history.
-- [ ] Build practice generation flow.
-- [ ] Build practice answer feedback flow.
-- [ ] Add language mode switching for Filipino, English, and mixed mode.
+- [x] Build onboarding and learner profile setup (4-step wizard with Supabase persistence).
+- [x] Build subject selection (in onboarding step 3, profile page, and practice page).
+- [x] Build tutoring chat UI (real AI streaming via `useChat` + Azure OpenAI).
+- [ ] Persist chat sessions and study history (tutor messages not saved to DB).
+- [~] Build practice generation flow (UI complete, but generates hardcoded mock data — no AI backend).
+- [~] Build practice answer feedback flow (results page UI complete, but mock data only — no grading).
+- [x] Add language mode switching for Filipino, English, and mixed mode (onboarding step 1 + profile page).
 
 ## AI Layer
 
-- [ ] Add server-only AI service modules for tutoring, lessons, and practice.
+- [~] Add server-only AI service modules for tutoring, lessons, and practice.
+  - `lib/ai/tutor-service.ts` exists with Azure OpenAI integration.
+  - `lib/ai/practice-service.ts` and `lib/ai/lesson-service.ts` do NOT exist.
 - [ ] Define structured output contracts for tutoring responses.
 - [ ] Define structured output contracts for practice generation.
 - [ ] Add validation and fallback handling for malformed AI outputs.
-- [ ] Add prompt context wiring for subject, language mode, grade band, and performance signals.
+- [ ] Add prompt context wiring for subject, language mode, grade band, and performance signals (system prompt is currently static).
 
 ## Performance And Reliability
 
