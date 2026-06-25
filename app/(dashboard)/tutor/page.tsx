@@ -33,7 +33,7 @@ export default function TutorPage() {
             <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
           </div>
           <div className={styles.bubbleAI}>
-            Hi Juan! I'm ready to help you with Math today. What should we look at first? ✨
+            Hi Juan! I&apos;m ready to help you with Math today. What should we look at first? ✨
           </div>
           <div className={styles.timeLabel}>10:41 AM</div>
         </div>
@@ -50,7 +50,7 @@ export default function TutorPage() {
             <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
           </div>
           <div className={styles.bubbleAI}>
-            Sure thing! Think of it like a triangle's secret code. If you have a triangle with one perfectly square corner (a right angle), the math rule says: if you take the two shorter sides, square their lengths, and add them together, it exactly equals the longest side squared!
+            Sure thing! Think of it like a triangle&apos;s secret code. If you have a triangle with one perfectly square corner (a right angle), the math rule says: if you take the two shorter sides, square their lengths, and add them together, it exactly equals the longest side squared!
             <div className={styles.formulaBox}>
               a² + b² = c²
             </div>

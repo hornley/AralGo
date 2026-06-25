@@ -6,7 +6,7 @@ export default function PracticePage() {
     <div className={styles.practiceContainer}>
       <div className={styles.header}>
         <h1 className={styles.title}>Practice Time</h1>
-        <p className={styles.subtitle}>Let's craft the perfect study session just for you.</p>
+        <p className={styles.subtitle}>Let&apos;s craft the perfect study session just for you.</p>
       </div>
 
       <div className={styles.configCard}>
