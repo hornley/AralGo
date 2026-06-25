@@ -1,0 +1,201 @@
+.practiceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 100px);
+  padding: 40px 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  color: var(--color-on-surface-variant);
+  margin: 0;
+  font-size: 1rem;
+}
+
+.configCard {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: var(--shadow-cozy);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-on-surface);
+}
+
+.sectionHeader span {
+  color: var(--color-primary);
+  font-size: 20px;
+}
+
+.pillGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--color-outline-variant);
+  background: transparent;
+  color: var(--color-on-surface);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: fit-content;
+}
+
+.pill:hover {
+  background: var(--color-surface-container);
+}
+
+.pill.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.pill span {
+  font-size: 18px;
+}
+
+.dropdownWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-outline-variant);
+  background: transparent;
+  appearance: none;
+  font-size: 0.95rem;
+  color: var(--color-on-surface);
+  outline: none;
+  cursor: pointer;
+}
+
+.dropdownIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-on-surface-variant);
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radioOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-outline-variant);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.radioSelected {
+  background-color: var(--color-surface-container);
+  border-color: var(--color-primary);
+}
+
+.radioCircleEmpty {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--color-outline-variant);
+}
+
+.radioCircle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioCircle span {
+  color: white;
+  font-size: 14px;
+}
+
+.tipBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: var(--color-surface-container-low);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: var(--color-on-surface-variant);
+}
+
+.tipBox span {
+  color: var(--color-primary);
+  font-size: 18px;
+}
+
+.generateBtn {
+  width: 100%;
+  max-width: 500px;
+  padding: 16px;
+  border-radius: 999px;
+  background-color: var(--color-primary);
+  color: white;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.05rem;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.generateBtn:hover {
+  opacity: 0.9;
+}
