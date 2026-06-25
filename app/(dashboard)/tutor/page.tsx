@@ -19,8 +19,8 @@ export default function TutorPage() {
         </div>
         <div className={styles.headerRight}>
           <div className={styles.modePill}>
-            <span className="material-symbols-outlined">calculate</span>
-            Mathematics mode
+            <span className="material-symbols-outlined">psychology</span>
+            Socratic mode
           </div>
         </div>
       </header>
@@ -50,12 +50,26 @@ export default function TutorPage() {
             <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
           </div>
           <div className={styles.bubbleAI}>
-            Sure thing! Think of it like a triangle&apos;s secret code. If you have a triangle with one perfectly square corner (a right angle), the math rule says: if you take the two shorter sides, square their lengths, and add them together, it exactly equals the longest side squared!
-            <div className={styles.formulaBox}>
-              a² + b² = c²
-            </div>
+            I&apos;d love to help you with that! Let&apos;s build it up together. Picture a triangle with one perfectly square corner (a right angle). Do you remember what we call the longest side of this kind of triangle?
           </div>
           <div className={styles.timeLabel}>10:43 AM</div>
+        </div>
+
+        <div className={styles.messageRowUser}>
+          <div className={styles.bubbleUser}>
+            I think it&apos;s called the hypotenuse?
+          </div>
+          <div className={styles.timeLabel}>10:44 AM</div>
+        </div>
+
+        <div className={styles.messageRowAI}>
+          <div className={styles.avatarSmallWrapper}>
+            <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+          </div>
+          <div className={styles.bubbleAI}>
+            Spot on! The Pythagorean theorem is simply a rule that connects the lengths of the two shorter sides (let&apos;s call them a and b) to the length of that hypotenuse (c). If we square the two shorter sides and add them together (a² + b²), what do you think it might equal?
+          </div>
+          <div className={styles.timeLabel}>10:45 AM</div>
         </div>
         
         <div className={styles.messageRowAI}>
