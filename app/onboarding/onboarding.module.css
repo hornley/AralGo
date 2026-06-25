@@ -203,99 +203,209 @@
   color: var(--color-secondary);
 }
 
-/* Step 5: Celebration & Summary */
+/* Step 5: Celebration & Summary — Notebook "Well Done" Page */
 .celebration {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  position: relative;
+}
+
+.starWrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.starGlow {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
 }
 
 .celebrationIcon {
-  font-size: 64px;
-  color: var(--color-primary);
-  margin-bottom: 8px;
+  font-size: 72px;
+  color: #f59e0b;
+  position: relative;
+  filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.35));
 }
 
+.celebrationTitle {
+  font-family: var(--font-lexend), sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.celebrationSub {
+  font-size: 15px;
+  color: var(--color-on-surface-variant);
+  text-align: center;
+  margin: 0 0 4px;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+/* Summary Cards — Sticky Note Style */
 .summaryCards {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
+  margin: 20px 0 8px;
+  width: 100%;
 }
 
 .summaryCard {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: var(--color-surface-dim);
-  border: 1px solid var(--color-outline-variant);
+  padding: 14px 18px;
+  position: relative;
+  background: #fefce8;
+  border: 1px solid #fde68a;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.summaryCard:first-child {
+  border-radius: 14px 14px 0 0;
+}
+
+.summaryCard:last-child {
+  border-radius: 0 0 14px 14px;
+}
+
+.summaryCard:only-child {
+  border-radius: 14px;
+}
+
+.summaryCard + .summaryCard {
+  border-top: none;
+}
+
+.summaryCard:nth-child(even) {
+  background: #fffbeb;
+  transform: rotate(0.3deg);
+}
+
+.summaryCard:nth-child(3) {
+  transform: rotate(-0.2deg);
+}
+
+.summaryCard .material-symbols-outlined {
+  font-size: 22px;
+  color: var(--color-primary);
+  opacity: 0.7;
+  flex-shrink: 0;
 }
 
 .summaryLabel {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-on-surface-variant);
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  font-weight: 600;
 }
 
 .summaryValue {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-on-surface);
   margin: 2px 0 0;
 }
 
+/* Buttons */
 .primaryButton {
   width: 100%;
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #5a8540 100%);
   color: var(--color-on-primary);
   font-family: var(--font-lexend), sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 18px 24px;
   border-radius: 9999px;
   border: none;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 20px rgba(69, 103, 50, 0.25), 0 2px 4px rgba(69, 103, 50, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  transition: transform 0.1s ease-in-out;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.primaryButton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .primaryButton:active {
-  transform: scale(0.95);
+  transform: scale(0.97);
+  box-shadow: 0 4px 12px rgba(69, 103, 50, 0.2);
 }
 
 .primaryButton:disabled {
-  opacity: 0.65;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .secondaryButton {
   width: 100%;
-  background-color: transparent;
+  background: transparent;
   color: var(--color-on-surface-variant);
-  font-family: var(--font-lexend), sans-serif;
+  font-family: var(--font-quicksand), sans-serif;
   font-size: 14px;
   font-weight: 600;
   padding: 14px;
   border-radius: 9999px;
-  border: 1px solid var(--color-outline-variant);
+  border: 1.5px solid var(--color-outline-variant);
   cursor: pointer;
-  transition: all 0.1s ease-in-out;
+  transition: all 0.12s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
 }
 
 .secondaryButton:active {
-  transform: scale(0.95);
+  transform: scale(0.97);
   background-color: var(--color-surface-dim);
+  border-color: var(--color-on-surface-variant);
 }
 
 .secondaryButton:disabled {
-  opacity: 0.65;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+}
+
+/* Notebook page lines decoration */
+.notebookLine {
+  width: 100%;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-outline-variant) 0,
+    var(--color-outline-variant) 1px,
+    transparent 1px,
+    transparent 8px
+  );
+  margin: 4px 0 16px;
+  opacity: 0.3;
 }

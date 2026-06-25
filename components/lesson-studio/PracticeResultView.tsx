@@ -1,5 +1,7 @@
 'use client';
 
+import styles from '../../app/lesson-studio/lesson-studio.module.css';
+
 interface PracticeQuestionView {
   type: string;
   prompt: string;
@@ -17,21 +19,23 @@ interface PracticeResultViewProps {
 
 export default function PracticeResultView({ questions, onStartPractice }: PracticeResultViewProps) {
   return (
-    <div className="practice-result">
-      <h3>Practice Quiz</h3>
-      <p className="question-count">{questions.length} question{questions.length !== 1 ? 's' : ''}</p>
-      <div className="question-preview-list">
+    <div className={styles.practiceResult}>
+      <h3><span className="material-symbols-outlined" style={{ fontSize: 20 }}>quiz</span> Practice Quiz</h3>
+      <div className={styles.questionPreviewList}>
         {questions.map((q, i) => (
-          <div key={i} className="question-preview">
-            <span className="q-number">{i + 1}.</span>
-            <span className="q-type">{q.type.replace(/_/g, ' ')}</span>
-            <p className="q-prompt">{q.prompt}</p>
+          <div key={i} className={styles.questionPreview}>
+            <span className={styles.qNumber}>{i + 1}.</span>
+            <span className={styles.qType}>{q.type.replace(/_/g, ' ')}</span>
+            <p className={styles.qPrompt}>{q.prompt}</p>
           </div>
         ))}
       </div>
-      <button className="start-practice-btn" onClick={onStartPractice}>
-        Start Practice
-      </button>
+      <div className={styles.actionButtons}>
+        <button className={styles.startPracticeBtn} onClick={onStartPractice}>
+          <span className="material-symbols-outlined">play_arrow</span>
+          Start Practice
+        </button>
+      </div>
     </div>
   );
 }

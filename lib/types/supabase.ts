@@ -114,3 +114,14 @@ export interface FileDraft {
   uploaded: boolean;
   file_path: string | null;
 }
+
+export interface SavedLesson {
+  id: string;
+  subject: StudySubject;
+  topics: string[];
+  gradeBand: GradeBand;
+  languageMode: LanguageMode;
+  lessonContent: LessonContent;
+  practiceQuestions: any[];
+  createdAt: string;
+}

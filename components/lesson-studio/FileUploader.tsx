@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { FileDraft } from '@/lib/types/supabase';
+import styles from '../../app/lesson-studio/lesson-studio.module.css';
 
 interface FileUploaderProps {
   files: FileDraft[];
@@ -30,29 +31,30 @@ export default function FileUploader({ files, onAdd, onRemove, uploading }: File
   };
 
   return (
-    <div className="file-uploader">
+    <div>
       <h2>Add reference material (optional)</h2>
-      <p className="file-hint">Upload worksheets, notes, or textbook pages to tailor the lesson</p>
+      <p className={styles.fileHint}>Upload worksheets, notes, or textbook pages to tailor the lesson to your materials.</p>
       <div
-        className={`drop-zone ${dragOver ? 'drag-over' : ''}`}
+        className={`${styles.dropZone} ${dragOver ? styles.dragOver : ''}`}
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={handlePick}
       >
-        <span className="drop-icon">+</span>
-        <span>Drop files here or click to browse</span>
-        <span className="drop-types">Images, PDFs, or text files</span>
+        <span className={`material-symbols-outlined ${styles.dropZoneIcon}`}>upload_file</span>
+        <span className={styles.dropZoneText}>Drop files here or click to browse</span>
+        <span className={styles.dropTypes}>Images, PDFs, or text files</span>
         <input ref={inputRef} type="file" hidden multiple accept="image/*,.pdf,.txt,.md,.csv" onChange={handleChange} />
       </div>
       {files.length > 0 && (
-        <div className="file-list">
+        <div className={styles.fileList}>
           {files.map((f) => (
-            <div key={f.id} className="file-item">
-              <span className="file-name">{f.name}</span>
-              <span className="file-size">{(f.size / 1024).toFixed(1)} KB</span>
-              <button className="file-remove" onClick={() => onRemove(f.id)} disabled={uploading}>
-                &times;
+            <div key={f.id} className={styles.fileItem}>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--color-primary)', opacity: 0.6 }}>description</span>
+              <span className={styles.fileName}>{f.name}</span>
+              <span className={styles.fileSize}>{(f.size / 1024).toFixed(1)} KB</span>
+              <button className={styles.fileRemove} onClick={() => onRemove(f.id)} disabled={uploading}>
+                <span className="material-symbols-outlined">close</span>
               </button>
             </div>
           ))}

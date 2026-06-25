@@ -29,6 +29,7 @@ export async function suggestTopics(input: TopicSuggestionInput): Promise<TopicS
         topics: { type: 'array', items: { type: 'string' } },
       },
       required: ['topics'],
+      additionalProperties: false,
     }),
   });
 

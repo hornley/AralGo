@@ -392,40 +392,46 @@ export default function OnboardingPage() {
                 </button>
                 <div className={styles.spacer}></div>
               </div>
-              <div className={styles.celebration}>
-                <span className={styles.celebrationIcon}>check_circle</span>
-                <h1 className={styles.title}>You&apos;re all set!</h1>
-                <p className={styles.subtitle}>Here&apos;s what you chose. Ready for your first lesson?</p>
-              </div>
             </header>
             <div className={styles.content}>
+              <div className={styles.celebration}>
+                <div className={styles.starWrapper}>
+                  <div className={styles.starGlow} />
+                  <span className={`material-symbols-outlined fill ${styles.celebrationIcon}`}>stars</span>
+                </div>
+                <h2 className={styles.celebrationTitle}>You&apos;re all set!</h2>
+                <p className={styles.celebrationSub}>
+                  Your study profile is ready. Here&apos;s a quick look at what you chose.
+                </p>
+                <div className={styles.notebookLine} />
+              </div>
               <div className={styles.summaryCards}>
                 <div className={styles.summaryCard}>
                   <span className="material-symbols-outlined">chat</span>
                   <div>
-                    <p className={styles.summaryLabel}>Language</p>
-                    <p className={styles.summaryValue}>{language || 'Mixed'}</p>
+                    <p className={styles.summaryLabel}>Language Mode</p>
+                    <p className={styles.summaryValue}>{language || 'Mixed (Filipino-English)'}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
                   <span className="material-symbols-outlined">school</span>
                   <div>
                     <p className={styles.summaryLabel}>Grade Level</p>
-                    <p className={styles.summaryValue}>{gradeLevel || 'Junior High'}</p>
+                    <p className={styles.summaryValue}>{gradeLevel || 'Junior High School'}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
                   <span className="material-symbols-outlined">menu_book</span>
                   <div>
                     <p className={styles.summaryLabel}>Subjects</p>
-                    <p className={styles.summaryValue}>{subjects.join(', ')}</p>
+                    <p className={styles.summaryValue}>{subjects.join(', ') || 'None selected yet'}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
                   <span className="material-symbols-outlined">flag</span>
                   <div>
-                    <p className={styles.summaryLabel}>Goal</p>
-                    <p className={styles.summaryValue}>{goal || 'Learn'}</p>
+                    <p className={styles.summaryLabel}>Study Goal</p>
+                    <p className={styles.summaryValue}>{goal || 'Learn something new'}</p>
                   </div>
                 </div>
               </div>
@@ -438,10 +444,15 @@ export default function OnboardingPage() {
                   Create your first lesson
                 </button>
                 <button className={styles.secondaryButton} onClick={handleGoToDashboard} disabled={isPending}>
-                  Go to Dashboard
+                  Head to Dashboard
                 </button>
               </div>
             </footer>
+
+            {/* Decorative ambient shapes for step 5 */}
+            <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape1}`}>auto_stories</span>
+            <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape2}`}>star</span>
+            <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape3}`}>school</span>
           </>
         );
       default:

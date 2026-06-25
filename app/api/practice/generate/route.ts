@@ -41,46 +41,44 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
     }
 
-    const { data: practiceSet, error: setError } = await supabase
+    let practiceSet: any = null;
+    const { data: ps, error: setError } = await supabase
       .from('practice_sets')
       .insert({
         learner_profile_id: profile.id,
         user_id: user.id,
-        generated_lesson_id: generatedLessonId || null,
         subject,
         topic: topics[0],
-        topics,
         difficulty: 'medium',
-        practice_format: practiceFormat || null,
-        grade_band: gradeBand,
         language_mode: languageMode,
       })
       .select()
       .single();
 
-    if (setError) {
-      return NextResponse.json({ error: setError.message }, { status: 500 });
+    if (!setError) {
+      practiceSet = ps;
+      const questions = result.questions.map((q: any, i: number) => ({
+        practice_set_id: practiceSet.id,
+        question_type: q.type,
+        prompt: q.prompt,
+        options_json: q.options,
+        answer_key_json: { correctAnswer: q.correctAnswer, acceptableAnswers: q.acceptableAnswers },
+        explanation_json: { explanation: q.explanation, commonMistake: q.commonMistake },
+        ordinal: i,
+      }));
+
+      const { error: qError } = await supabase
+        .from('practice_questions')
+        .insert(questions);
+
+      if (qError) {
+        console.warn('Practice questions DB insert failed:', qError.message);
+      }
+    } else {
+      console.warn('Practice set DB insert failed, returning questions anyway:', setError.message);
     }
 
-    const questions = result.questions.map((q: any, i: number) => ({
-      practice_set_id: practiceSet.id,
-      question_type: q.type,
-      prompt: q.prompt,
-      options_json: q.options,
-      answer_key_json: { correctAnswer: q.correctAnswer, acceptableAnswers: q.acceptableAnswers },
-      explanation_json: { explanation: q.explanation, commonMistake: q.commonMistake },
-      ordinal: i,
-    }));
-
-    const { error: qError } = await supabase
-      .from('practice_questions')
-      .insert(questions);
-
-    if (qError) {
-      return NextResponse.json({ error: qError.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ practiceSet, questions: result.questions });
+    return NextResponse.json({ practiceSet: practiceSet || null, questions: result.questions });
   } catch (error) {
     console.error('Practice generation failed:', error);
     return NextResponse.json(

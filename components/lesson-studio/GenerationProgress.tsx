@@ -1,5 +1,7 @@
 'use client';
 
+import styles from '../../app/lesson-studio/lesson-studio.module.css';
+
 interface GenerationProgressProps {
   stage: 'topics' | 'lesson' | 'practice' | null;
 }
@@ -13,9 +15,11 @@ const STAGE_MESSAGES: Record<string, string> = {
 export default function GenerationProgress({ stage }: GenerationProgressProps) {
   if (!stage) return null;
   return (
-    <div className="generation-progress">
-      <div className="progress-spinner" />
-      <p className="progress-message">{STAGE_MESSAGES[stage] || 'Working on your lesson...'}</p>
+    <div className={styles.generationProgress}>
+      <div className={styles.progressSpinner} />
+      <p className={styles.progressMessage}>
+        <span>{STAGE_MESSAGES[stage] || 'Working on your lesson...'}</span>
+      </p>
     </div>
   );
 }

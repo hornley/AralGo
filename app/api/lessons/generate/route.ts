@@ -46,21 +46,18 @@ export async function POST(req: NextRequest) {
         user_id: user.id,
         subject,
         topic: topics[0],
-        topics,
         grade_band: gradeBand,
         language_mode: languageMode,
-        learning_style: learningStyle,
-        study_goal: studyGoal,
         content_json: content,
       })
       .select()
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.warn('Lesson DB insert failed, returning content anyway:', error.message);
     }
 
-    return NextResponse.json({ lesson, content });
+    return NextResponse.json({ lesson: lesson || null, content });
   } catch (error) {
     console.error('Lesson generation failed:', error);
     return NextResponse.json(

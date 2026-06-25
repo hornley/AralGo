@@ -32,6 +32,7 @@ export async function generateLesson(input: LessonInput): Promise<LessonContent>
               definition: { type: 'string' },
             },
             required: ['term', 'definition'],
+            additionalProperties: false,
           },
         },
         workedExamples: {
@@ -43,6 +44,7 @@ export async function generateLesson(input: LessonInput): Promise<LessonContent>
               content: { type: 'string' },
             },
             required: ['title', 'content'],
+            additionalProperties: false,
           },
         },
         commonMistakes: {
@@ -54,11 +56,13 @@ export async function generateLesson(input: LessonInput): Promise<LessonContent>
               correction: { type: 'string' },
             },
             required: ['mistake', 'correction'],
+            additionalProperties: false,
           },
         },
         recap: { type: 'string' },
       },
       required: ['overview', 'keyTerms', 'workedExamples', 'commonMistakes', 'recap'],
+      additionalProperties: false,
     }),
   });
 

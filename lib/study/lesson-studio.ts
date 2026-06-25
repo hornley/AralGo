@@ -1,7 +1,8 @@
-import { StudySubject, LearningStyle, PracticeFormat, LessonStudioDraft, FileDraft } from '@/lib/types/supabase';
+import { StudySubject, LearningStyle, PracticeFormat, LessonStudioDraft, FileDraft, SavedLesson } from '@/lib/types/supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 const STORAGE_KEY = 'aralgo.lesson-studio';
+const SAVED_LESSONS_KEY = 'aralgo.saved-lessons';
 
 export function loadDraft(): LessonStudioDraft | null {
   if (typeof window === 'undefined') return null;
@@ -67,4 +68,40 @@ export async function fetchRecentLessons(supabase: SupabaseClient, learnerProfil
     .limit(5);
   if (error) throw error;
   return data;
+}
+
+/* Local saved lessons (falls back when DB is unavailable) */
+
+export function loadSavedLessons(): SavedLesson[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(SAVED_LESSONS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveLesson(lesson: SavedLesson): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const existing = loadSavedLessons();
+    const updated = [lesson, ...existing.filter((l) => l.id !== lesson.id)];
+    localStorage.setItem(SAVED_LESSONS_KEY, JSON.stringify(updated));
+  } catch {
+    // quota exceeded
+  }
+}
+
+export function deleteSavedLesson(id: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const existing = loadSavedLessons();
+    localStorage.setItem(
+      SAVED_LESSONS_KEY,
+      JSON.stringify(existing.filter((l) => l.id !== id))
+    );
+  } catch {
+    // ignore
+  }
 }

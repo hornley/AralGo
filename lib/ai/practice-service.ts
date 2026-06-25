@@ -51,6 +51,7 @@ export async function generatePractice(input: PracticeInput): Promise<PracticeRe
                   type: 'object',
                   properties: { label: { type: 'string' }, text: { type: 'string' } },
                   required: ['label', 'text'],
+                  additionalProperties: false,
                 },
               },
               correctAnswer: { type: 'string' },
@@ -59,10 +60,12 @@ export async function generatePractice(input: PracticeInput): Promise<PracticeRe
               commonMistake: { type: 'string' },
             },
             required: ['type', 'prompt', 'correctAnswer', 'explanation'],
+            additionalProperties: false,
           },
         },
       },
       required: ['questions'],
+      additionalProperties: false,
     }),
   });
 
