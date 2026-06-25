@@ -1,0 +1,206 @@
+.container {
+  max-width: 800px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #4A6741;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #6C7063;
+  margin: 8px 0 0;
+}
+
+.subjectGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.subjectCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 16px;
+  border-radius: 16px;
+  border: 2px solid transparent;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.subjectCard:hover {
+  border-color: #C8B6A0;
+}
+
+.subjectCard.selected {
+  border-color: #8CBA80;
+  background: #F0F7EE;
+}
+
+.subjectIcon {
+  font-size: 2rem;
+  color: #8CBA80;
+}
+
+.subjectCard.selected .subjectIcon {
+  color: #4A6741;
+}
+
+.subjectName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #4A6741;
+  margin: 0;
+}
+
+.topicGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.topicChip {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #E0D8CC;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.topicChip:hover {
+  border-color: #8CBA80;
+  color: #4A6741;
+}
+
+.topicChip.selected {
+  background: #8CBA80;
+  color: #fff;
+  border-color: #8CBA80;
+}
+
+.lessonList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.lessonCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #E0D8CC;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.lessonCard:hover {
+  border-color: #8CBA80;
+}
+
+.lessonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lessonTopic {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.lessonMeta {
+  font-size: 0.8rem;
+  color: #8C8C7E;
+}
+
+.lessonArrow {
+  color: #8C8C7E;
+}
+
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px dashed #D0C8BC;
+  margin-bottom: 24px;
+}
+
+.emptyIcon {
+  font-size: 2.5rem;
+  color: #C8B6A0;
+  margin-bottom: 12px;
+}
+
+.emptyTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6C7063;
+  margin: 0 0 4px;
+}
+
+.emptyText {
+  font-size: 0.85rem;
+  color: #8C8C7E;
+  margin: 0;
+}
+
+.generateBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #8CBA80, #6DAF5C);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.generateBtn:hover {
+  opacity: 0.9;
+}
+
+.generateBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

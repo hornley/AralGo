@@ -24,6 +24,10 @@ export default function DashboardLayout({
             <span className="material-symbols-outlined fill">home</span>
             Home
           </Link>
+          <Link href="/lessons" className={styles.navLink}>
+            <span className="material-symbols-outlined">menu_book</span>
+            Lessons
+          </Link>
           <Link href="/tutor" className={styles.navLink}>
             <span className="material-symbols-outlined">smart_toy</span>
             Tutor
