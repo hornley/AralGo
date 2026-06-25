@@ -1,9 +1,10 @@
 'use client';
 
-import styles from './results.module.css';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import { AppIcon } from '@/components/AppIcon';
+import styles from './results.module.css';
 
 function ResultsContent() {
   const params = useSearchParams();
@@ -49,19 +50,19 @@ function ResultsContent() {
 
         <div className={styles.metricsRow}>
           <div className={styles.metricBox}>
-            <span className="material-symbols-outlined">schedule</span>
+            <AppIcon name="schedule" className={styles.metricIcon} />
             <div className={styles.metricLabel}>SPEED</div>
             <div className={styles.metricValue}>{formattedTime}</div>
           </div>
           <div className={styles.metricBox}>
-            <span className="material-symbols-outlined">check_circle</span>
+            <AppIcon name="check_circle" className={styles.metricIcon} />
             <div className={styles.metricLabel}>ACCURACY</div>
             <div className={styles.metricValue}>{correct} / {total}</div>
           </div>
         </div>
 
         <div className={styles.streakBox}>
-          <span className={`material-symbols-outlined ${styles.streakIcon}`}>local_fire_department</span>
+          <AppIcon name="local_fire_department" className={styles.streakIcon} />
           <div>
             <div className={styles.metricLabel}>STREAK</div>
             <div className={styles.metricValue}>Unbroken</div>
@@ -71,22 +72,22 @@ function ResultsContent() {
 
       <div className={styles.upNextCard}>
         <div className={styles.upNextIconWrapper}>
-           <span className="material-symbols-outlined">explore</span>
+          <AppIcon name="explore" />
         </div>
         <div className={styles.upNextContent}>
           <div className={styles.upNextLabel}>UP NEXT</div>
           <div className={styles.upNextTitle}>Try {topic} next</div>
         </div>
-        <span className="material-symbols-outlined">arrow_forward</span>
+        <AppIcon name="arrow_forward" />
       </div>
 
       <div className={styles.actions}>
         <Link href="/practice" className={styles.btnPrimary}>
-          <span className="material-symbols-outlined">refresh</span>
+          <AppIcon name="refresh" />
           Practice Again
         </Link>
         <button className={styles.btnSecondary}>
-          <span className="material-symbols-outlined">rule</span>
+          <AppIcon name="rule" />
           Review Mistakes
         </button>
       </div>

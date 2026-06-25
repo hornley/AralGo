@@ -66,6 +66,7 @@
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(74, 103, 65, 0.3);
+  text-decoration: none;
 }
 
 .courseTitle {
@@ -363,6 +364,12 @@
   font-size: 0.875rem;
   font-weight: 700;
   color: #171D17;
+}
+
+.actionBtnMeta {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #6C7063;
 }
 
 .actionBtnDashed {

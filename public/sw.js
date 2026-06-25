@@ -1,4 +1,3 @@
-const CACHE = "aralgo-v1";
 const SHELL_CACHE = "aralgo-shell-v1";
 const DATA_CACHE = "aralgo-data-v1";
 
@@ -10,7 +9,7 @@ const SHELL_URLS = [
 ];
 
 const STATIC_REGEX = /\.(js|css|woff2?|png|svg|ico|json)$/;
-const DATA_REGEX = /^https:\/\/psatxgzaaokyvnjcaple\.supabase\.co\/rest\/v1\//;
+const DATA_REGEX = /^https:\/\/[^/]+\.supabase\.co\/rest\/v1\//;
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -35,11 +34,6 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
-
-  if (url.origin === "https://fonts.googleapis.com" || url.origin === "https://fonts.gstatic.com") {
-    event.respondWith(cacheFirst(request));
-    return;
-  }
 
   if (STATIC_REGEX.test(url.pathname)) {
     event.respondWith(cacheFirst(request));

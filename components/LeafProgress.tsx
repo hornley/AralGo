@@ -1,3 +1,4 @@
+import { AppIcon } from "./AppIcon";
 import styles from './LeafProgress.module.css';
 
 interface LeafProgressProps {
@@ -10,7 +11,7 @@ export function LeafProgress({ currentStep, totalSteps }: LeafProgressProps) {
 
   return (
     <div className={styles.container}>
-      <span className={`material-symbols-outlined fill ${styles.icon}`}>energy_savings_leaf</span>
+      <AppIcon name="energy_savings_leaf" className={styles.icon} />
       <div className={styles.track}>
         <div className={styles.progress} style={{ width: `${percentage}%` }}></div>
       </div>

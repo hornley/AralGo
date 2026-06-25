@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-const BASE = 'http://localhost:3000';
+const BASE = process.env.BASE_URL || 'http://localhost:3000';
 const results = [];
 
 function pass(route, msg) {
@@ -109,28 +109,14 @@ async function checkPage(page, route) {
     if (socraticBadge) pass('/tutor', 'Socratic mode badge visible');
     else fail('/tutor', 'Socratic mode badge missing');
 
-    // Chat messages
-    const aiMessages = await tutor.locator('text=Pythagorean theorem').count();
-    if (aiMessages > 0) pass('/tutor', 'Chat messages rendered');
-    else fail('/tutor', 'Chat messages missing');
-
-    // Quick action buttons
-    const simplerBtn = await tutor.locator('text=Explain Simpler').isVisible();
-    const exampleBtn = await tutor.locator('text=Give Example').isVisible();
-    const stepBtn = await tutor.locator('text=Step by Step').isVisible();
-    const practiceBtn = await tutor.locator('text=Practice Questions').isVisible();
-    if (simplerBtn && exampleBtn && stepBtn && practiceBtn) pass('/tutor', 'All 4 quick action buttons visible');
-    else fail('/tutor', 'Missing quick action buttons');
-
     // Chat input
     const chatInput = await tutor.locator('input[placeholder="Ask a question..."]').isVisible();
     if (chatInput) pass('/tutor', 'Chat input visible');
     else fail('/tutor', 'Chat input missing');
 
-    // Send button
-    const sendIcon = await tutor.locator('span.material-symbols-outlined:has-text("arrow_upward")').isVisible();
-    if (sendIcon) pass('/tutor', 'Send button visible');
-    else fail('/tutor', 'Send button not found');
+    const toolbarButtons = await tutor.locator('form button').count();
+    if (toolbarButtons >= 3) pass('/tutor', 'Toolbar buttons visible');
+    else fail('/tutor', 'Toolbar buttons missing');
   }
 
   // ── Home / Dashboard ──
@@ -168,6 +154,27 @@ async function checkPage(page, route) {
     const bodyText = await profile.textContent('body');
     if (bodyText.length > 0 && !bodyText.includes('Not Found')) pass('/profile', `Profile page loaded (${bodyText.length} chars)`);
     else fail('/profile', 'Profile page returned empty or not found');
+  }
+
+  const history = await checkPage(page, '/history');
+  if (history) {
+    const bodyText = await history.textContent('body');
+    if (bodyText.includes('Study history')) pass('/history', 'History page loaded');
+    else fail('/history', 'History page missing expected content');
+  }
+
+  const settings = await checkPage(page, '/settings');
+  if (settings) {
+    const bodyText = await settings.textContent('body');
+    if (bodyText.includes('Settings are consolidated')) pass('/settings', 'Settings page loaded');
+    else fail('/settings', 'Settings page missing expected content');
+  }
+
+  const help = await checkPage(page, '/help');
+  if (help) {
+    const bodyText = await help.textContent('body');
+    if (bodyText.includes('Support guidance')) pass('/help', 'Help page loaded');
+    else fail('/help', 'Help page missing expected content');
   }
 
   // ── Offline page ──

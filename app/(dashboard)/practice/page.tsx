@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { AppIcon } from '@/components/AppIcon';
 import styles from './practice.module.css';
 import { createClient } from '@/lib/supabase/client';
+import { loadStudySetup } from '@/lib/study/study-setup';
 
 interface Subject {
   id: number;
@@ -36,15 +39,17 @@ export default function PracticePage() {
   const [gradeBand, setGradeBand] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     async function loadData() {
       try {
+        const localSetup = loadStudySetup();
         const [subjectsResult, profileResult] = await Promise.all([
           supabase.from('subjects').select('*').order('sort_order'),
-          supabase.from('learner_profiles').select('*').single(),
+          supabase.from('learner_profiles').select('*').maybeSingle(),
         ]);
 
         if (subjectsResult.error) throw subjectsResult.error;
@@ -61,7 +66,23 @@ export default function PracticePage() {
           if (preferred) {
             setSelectedSubjectId(preferred.id);
           }
+          setNeedsOnboarding(false);
+          return;
         }
+
+        if (localSetup) {
+          setGradeBand(localSetup.gradeBand);
+          const preferred = subjectsData.find(
+            (subject) => subject.name === localSetup.subject,
+          );
+          if (preferred) {
+            setSelectedSubjectId(preferred.id);
+          }
+          setNeedsOnboarding(false);
+          return;
+        }
+
+        setNeedsOnboarding(true);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Failed to load data');
       } finally {
@@ -70,7 +91,7 @@ export default function PracticePage() {
     }
 
     loadData();
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     if (selectedSubjectId === null || gradeBand === null) return;
@@ -98,7 +119,7 @@ export default function PracticePage() {
     }
 
     loadTopics();
-  }, [selectedSubjectId, gradeBand]);
+  }, [gradeBand, selectedSubjectId, supabase]);
 
   const handleSubjectSelect = useCallback((id: number) => {
     setSelectedSubjectId(id);
@@ -130,6 +151,20 @@ export default function PracticePage() {
     );
   }
 
+  if (needsOnboarding) {
+    return (
+      <div className={styles.practiceContainer}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Practice Time</h1>
+          <p className={styles.subtitle}>Set up your learner profile before generating practice.</p>
+        </div>
+        <Link href="/onboarding" className={styles.generateBtn}>
+          Finish onboarding
+        </Link>
+      </div>
+    );
+  }
+
   const selectedSubject = subjects.find((s) => s.id === selectedSubjectId);
 
   return (
@@ -142,7 +177,7 @@ export default function PracticePage() {
       <div className={styles.configCard}>
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <span className="material-symbols-outlined">menu_book</span>
+            <AppIcon name="menu_book" />
             Subject
           </div>
           <div className={styles.pillGroup}>
@@ -152,7 +187,7 @@ export default function PracticePage() {
                 className={`${styles.pill} ${selectedSubjectId === subject.id ? styles.active : ''}`}
                 onClick={() => handleSubjectSelect(subject.id)}
               >
-                <span className="material-symbols-outlined">{subject.icon}</span>
+                <AppIcon name={subject.icon} />
                 {' '}{subject.display_name}
               </button>
             ))}
@@ -161,7 +196,7 @@ export default function PracticePage() {
 
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <span className="material-symbols-outlined">topic</span>
+            <AppIcon name="topic" />
             Topic
           </div>
           <div className={styles.dropdownWrapper}>
@@ -182,13 +217,13 @@ export default function PracticePage() {
                 ))
               )}
             </select>
-            <span className={`material-symbols-outlined ${styles.dropdownIcon}`}>expand_more</span>
+            <AppIcon name="expand_more" className={styles.dropdownIcon} />
           </div>
         </div>
 
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <span className="material-symbols-outlined">show_chart</span>
+            <AppIcon name="show_chart" />
             Difficulty
           </div>
           <div className={styles.pillGroup}>
@@ -200,14 +235,14 @@ export default function PracticePage() {
 
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <span className="material-symbols-outlined">list_alt</span>
+            <AppIcon name="list_alt" />
             Format
           </div>
           <div className={styles.radioGroup}>
             <label className={`${styles.radioOption} ${styles.radioSelected}`}>
               Multiple Choice
               <div className={styles.radioCircle}>
-                <span className="material-symbols-outlined">check</span>
+                <AppIcon name="check" />
               </div>
             </label>
             <label className={styles.radioOption}>
@@ -218,7 +253,7 @@ export default function PracticePage() {
         </div>
 
         <div className={styles.tipBox}>
-          <span className="material-symbols-outlined">lightbulb</span>
+          <AppIcon name="lightbulb" />
           Tip: Mixing topics builds stronger recall 🧠
         </div>
       </div>

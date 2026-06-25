@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { AppIcon } from '@/components/AppIcon';
 import { FileDraft } from '@/lib/types/supabase';
 import styles from '../../app/lesson-studio/lesson-studio.module.css';
 
@@ -41,7 +42,7 @@ export default function FileUploader({ files, onAdd, onRemove, uploading }: File
         onDrop={handleDrop}
         onClick={handlePick}
       >
-        <span className={`material-symbols-outlined ${styles.dropZoneIcon}`}>upload_file</span>
+        <AppIcon name="upload_file" className={styles.dropZoneIcon} />
         <span className={styles.dropZoneText}>Drop files here or click to browse</span>
         <span className={styles.dropTypes}>Images, PDFs, or text files</span>
         <input ref={inputRef} type="file" hidden multiple accept="image/*,.pdf,.txt,.md,.csv" onChange={handleChange} />
@@ -50,11 +51,11 @@ export default function FileUploader({ files, onAdd, onRemove, uploading }: File
         <div className={styles.fileList}>
           {files.map((f) => (
             <div key={f.id} className={styles.fileItem}>
-              <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--color-primary)', opacity: 0.6 }}>description</span>
+              <AppIcon name="description" size={20} style={{ color: 'var(--color-primary)', opacity: 0.6 }} />
               <span className={styles.fileName}>{f.name}</span>
               <span className={styles.fileSize}>{(f.size / 1024).toFixed(1)} KB</span>
               <button className={styles.fileRemove} onClick={() => onRemove(f.id)} disabled={uploading}>
-                <span className="material-symbols-outlined">close</span>
+                <AppIcon name="close" />
               </button>
             </div>
           ))}

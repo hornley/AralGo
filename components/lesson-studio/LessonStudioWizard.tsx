@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { AppIcon } from '@/components/AppIcon';
 import { StudySubject, LearningStyle, PracticeFormat, LessonStudioDraft, FileDraft, LessonContent, GradeBand, LanguageMode, SavedLesson } from '@/lib/types/supabase';
 import { loadDraft, saveDraft, clearDraft, defaultDraft, saveLesson, loadSavedLessons, deleteSavedLesson } from '@/lib/study/lesson-studio';
 import SubjectPicker from './SubjectPicker';
@@ -31,7 +32,24 @@ interface LessonStudioWizardProps {
 
 export default function LessonStudioWizard({ subjects, initialSubject, gradeBand, languageMode }: LessonStudioWizardProps) {
   const router = useRouter();
-  const [draft, setDraft] = useState<LessonStudioDraft>(defaultDraft);
+  const [draft, setDraft] = useState<LessonStudioDraft>(() => {
+    const saved = loadDraft();
+    if (saved) {
+      return {
+        ...saved,
+        step: saved.step >= 4 ? 0 : saved.step,
+      };
+    }
+
+    if (initialSubject) {
+      return {
+        ...defaultDraft(),
+        subject: initialSubject,
+      };
+    }
+
+    return defaultDraft();
+  });
   const [suggestedTopics, setSuggestedTopics] = useState<string[]>([]);
   const [topicsLoading, setTopicsLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -39,28 +57,11 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
   const [lessonContent, setLessonContent] = useState<LessonContent | null>(null);
   const [practiceQuestions, setPracticeQuestions] = useState<any[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [savedLessons, setSavedLessons] = useState<SavedLesson[]>([]);
+  const [savedLessons, setSavedLessons] = useState<SavedLesson[]>(() => loadSavedLessons());
   const [showSavedView, setShowSavedView] = useState(false);
   const [sourceIsSaved, setSourceIsSaved] = useState(false);
   const pendingSaveRef = useRef<SavedLesson | null>(null);
   const savedIdRef = useRef(new Set<string>());
-
-  useEffect(() => {
-    setSavedLessons(loadSavedLessons());
-    const saved = loadDraft();
-    if (saved) {
-      if (saved.step >= 4) {
-        saved.step = 0;
-      }
-      setDraft(saved);
-    } else if (initialSubject) {
-      setDraft((d) => ({ ...d, subject: initialSubject }));
-    }
-  }, [initialSubject]);
-
-  useEffect(() => {
-    setSavedLessons(loadSavedLessons());
-  }, [lessonContent, practiceQuestions]);
 
   useEffect(() => {
     saveDraft(draft);
@@ -270,7 +271,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
         <div className={styles.resultsView}>
           {sourceIsSaved && (
             <button className={styles.navBack} onClick={handleBackToSavedList} style={{ alignSelf: 'flex-start', marginBottom: 8 }}>
-              <span className="material-symbols-outlined">arrow_back</span>
+              <AppIcon name="arrow_back" />
               Saved lessons
             </button>
           )}
@@ -280,11 +281,11 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
           )}
           <div className={styles.actionButtons}>
             <button className={styles.createAnotherBtn} onClick={handleReset}>
-              <span className="material-symbols-outlined">add</span>
+              <AppIcon name="add" />
               Create Another
             </button>
             <button className={styles.createAnotherBtn} onClick={() => router.push('/home')}>
-              <span className="material-symbols-outlined">home</span>
+              <AppIcon name="home" />
               Back to Dashboard
             </button>
           </div>
@@ -342,7 +343,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
             </p>
             {error && <p className={styles.errorMessage}>{error}</p>}
             <button className={styles.generateBtn} onClick={handleGenerate} disabled={!canProceed(4)}>
-              <span className="material-symbols-outlined">auto_stories</span>
+              <AppIcon name="auto_stories" />
               Generate Lesson & Practice
             </button>
             <div className={styles.generateSummary}>
@@ -380,9 +381,11 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
               className={styles.savedLessonItem}
               onClick={() => handleViewSaved(sl)}
             >
-              <span className={`material-symbols-outlined ${styles.savedLessonIcon}`} data-subject={sl.subject}>
-                {subjects.find((s) => s.name === sl.subject)?.icon || 'menu_book'}
-              </span>
+              <AppIcon
+                name={subjects.find((s) => s.name === sl.subject)?.icon || 'menu_book'}
+                className={styles.savedLessonIcon}
+                data-subject={sl.subject}
+              />
               <div className={styles.savedLessonInfo}>
                 <div className={styles.savedLessonSubject}>
                   {subjects.find((s) => s.name === sl.subject)?.display_name || sl.subject}
@@ -399,7 +402,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
                     setSavedLessons(loadSavedLessons());
                   }}
                 >
-                  <span className="material-symbols-outlined">delete</span>
+                  <AppIcon name="delete" />
                 </button>
               </div>
             </div>
@@ -407,7 +410,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
         </div>
       )}
       <button className={styles.createAnotherBtn} onClick={() => setShowSavedView(false)} style={{ marginTop: 20 }}>
-        <span className="material-symbols-outlined">add</span>
+        <AppIcon name="add" />
         Create a new lesson
       </button>
     </div>
@@ -422,19 +425,19 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
               key={s}
               className={`${styles.stepTab} ${i === step ? styles.active : ''} ${i < step || lessonContent ? styles.completed : ''}`}
               onClick={() => !lessonContent && i < step && setDraft((d) => ({ ...d, step: i }))}
-              disabled={!!lessonContent || i > step}
-            >
-              <span className={`material-symbols-outlined ${styles.icon}`}>{STEP_ICONS[s]}</span>
-              {s}
-            </button>
-          ))}
-          <button
-            className={`${styles.stepTab} ${styles.savedTab} ${savedLessons.length === 0 ? styles.savedTabEmpty : ''}`}
-            onClick={() => setShowSavedView(true)}
+            disabled={!!lessonContent || i > step}
           >
-            <span className="material-symbols-outlined">folder</span>
-            Saved{savedLessons.length > 0 ? ` (${savedLessons.length})` : ''}
+            <AppIcon name={STEP_ICONS[s]} className={styles.icon} />
+            {s}
           </button>
+        ))}
+        <button
+          className={`${styles.stepTab} ${styles.savedTab} ${savedLessons.length === 0 ? styles.savedTabEmpty : ''}`}
+          onClick={() => setShowSavedView(true)}
+        >
+          <AppIcon name="folder" />
+          Saved{savedLessons.length > 0 ? ` (${savedLessons.length})` : ''}
+        </button>
         </div>
       )}
       <div className={styles.stepContent}>
@@ -444,7 +447,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
         <div className={styles.stepNav}>
           {step > 0 && (
             <button className={styles.navBack} onClick={() => setDraft((d) => ({ ...d, step: step - 1 }))}>
-              <span className="material-symbols-outlined">arrow_back</span>
+              <AppIcon name="arrow_back" />
               Back
             </button>
           )}
@@ -454,7 +457,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
             disabled={!canProceed(step)}
           >
             {step === 3 ? 'Generate' : 'Next'}
-            <span className="material-symbols-outlined">arrow_forward</span>
+            <AppIcon name="arrow_forward" />
           </button>
         </div>
       )}

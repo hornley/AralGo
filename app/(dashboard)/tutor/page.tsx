@@ -5,6 +5,7 @@ import { DefaultChatTransport } from 'ai';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, FormEvent } from 'react';
 import Image from 'next/image';
+import { AppIcon } from '@/components/AppIcon';
 import styles from './tutor.module.css';
 
 type TutorMode = 'socratic' | 'chat';
@@ -134,11 +135,9 @@ export default function TutorPage() {
               aria-expanded={isModeMenuOpen}
               onClick={() => setIsModeMenuOpen((isOpen) => !isOpen)}
             >
-              <span className="material-symbols-outlined">{selectedMode.icon}</span>
+              <AppIcon name={selectedMode.icon} />
               {selectedMode.label}
-              <span className={`${styles.modeArrow} material-symbols-outlined`}>
-                keyboard_arrow_down
-              </span>
+              <AppIcon name="keyboard_arrow_down" className={styles.modeArrow} />
             </button>
             {isModeMenuOpen && (
               <div className={styles.modeMenu} role="menu">
@@ -154,12 +153,10 @@ export default function TutorPage() {
                       setIsModeMenuOpen(false);
                     }}
                   >
-                    <span className="material-symbols-outlined">{tutorMode.icon}</span>
+                    <AppIcon name={tutorMode.icon} />
                     {tutorMode.label}
                     {mode === tutorMode.value && (
-                      <span className={`${styles.modeCheck} material-symbols-outlined`}>
-                        check
-                      </span>
+                      <AppIcon name="check" className={styles.modeCheck} />
                     )}
                   </button>
                 ))}
@@ -219,7 +216,7 @@ export default function TutorPage() {
       <div className={styles.bottomArea}>
         <form className={styles.inputWrapper} onSubmit={handleSubmit}>
           <button type="button" className={styles.attachBtn}>
-            <span className="material-symbols-outlined">attach_file</span>
+            <AppIcon name="attach_file" />
           </button>
           <input
             type="text"
@@ -229,10 +226,10 @@ export default function TutorPage() {
             onChange={(e) => setInput(e.target.value)}
           />
           <button type="button" className={styles.micBtn}>
-            <span className="material-symbols-outlined">mic</span>
+            <AppIcon name="mic" />
           </button>
           <button type="submit" className={styles.sendBtn} disabled={isLoading || !input.trim()}>
-            <span className="material-symbols-outlined">arrow_upward</span>
+            <AppIcon name="arrow_upward" />
           </button>
         </form>
       </div>

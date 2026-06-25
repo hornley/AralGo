@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:smoke": "node e2e/smoke.mjs"
   },
   "dependencies": {
     "@ai-sdk/azure": "^3.0.77",
@@ -21,6 +22,7 @@
     "ai": "^6.0.209",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.9",
+    "lucide-react": "^1.21.0",
     "next": "^16.2.9",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

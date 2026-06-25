@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { AppIcon } from '@/components/AppIcon';
 import styles from './layout.module.css';
 
 const primaryLinks = [
-  { href: '/home', icon: 'home', label: 'Home', fill: true },
+  { href: '/home', icon: 'home', label: 'Home' },
   { href: '/tutor', icon: 'smart_toy', label: 'Tutor' },
   { href: '/practice', icon: 'fitness_center', label: 'Practice' },
   { href: '/lesson-studio', icon: 'auto_stories', label: 'Lesson Studio' },
@@ -26,20 +27,17 @@ function SidebarLink({
   href,
   icon,
   label,
-  fill,
 }: {
   href: string;
   icon: string;
   label: string;
-  fill?: boolean;
 }) {
   const pathname = usePathname();
   const active = isActivePath(pathname, href);
-  const iconClassName = fill || active ? 'material-symbols-outlined fill' : 'material-symbols-outlined';
 
   return (
     <Link href={href} className={`${styles.navLink} ${active ? styles.active : ''}`}>
-      <span className={iconClassName}>{icon}</span>
+      <AppIcon name={icon} />
       {label}
     </Link>
   );

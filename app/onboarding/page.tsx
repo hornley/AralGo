@@ -2,9 +2,11 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { AppIcon } from '@/components/AppIcon';
 import { LeafProgress } from '@/components/LeafProgress';
 import { StationeryCard } from '@/components/StationeryCard';
 import { createClient } from '@/lib/supabase/client';
+import { t } from '@/lib/i18n';
 import { persistLearnerSession } from '@/lib/study/learner-session';
 import {
   createRecentStudyTopic,
@@ -12,15 +14,14 @@ import {
   saveStudySetup,
   type StudySetupDraft,
 } from '@/lib/study/study-setup';
-import { t } from '@/lib/i18n';
 import styles from './onboarding.module.css';
 
 export default function OnboardingPage() {
   const router = useRouter();
-  
+
   const [step, setStep] = useState(1);
   const totalSteps = 5;
-  
+
   const [language, setLanguage] = useState<string | null>(null);
   const [gradeLevel, setGradeLevel] = useState<string | null>(null);
   const [subjects, setSubjects] = useState<string[]>([]);
@@ -148,8 +149,8 @@ export default function OnboardingPage() {
   };
 
   const toggleSubject = (subject: string) => {
-    setSubjects(prev => 
-      prev.includes(subject) ? prev.filter(s => s !== subject) : [...prev, subject]
+    setSubjects((prev) =>
+      prev.includes(subject) ? prev.filter((s) => s !== subject) : [...prev, subject],
     );
   };
 
@@ -161,7 +162,7 @@ export default function OnboardingPage() {
             <header className={styles.header}>
               <div className={styles.headerTop}>
                 <button className={styles.backButton} onClick={handleBack}>
-                  <span className="material-symbols-outlined">arrow_back</span>
+                  <AppIcon name="arrow_back" />
                 </button>
                 <LeafProgress currentStep={1} totalSteps={totalSteps} />
                 <div className={styles.spacer}></div>
@@ -195,13 +196,13 @@ export default function OnboardingPage() {
               </div>
             </div>
             <footer className={styles.footer}>
-              <button 
-                className={styles.nextButton} 
+              <button
+                className={styles.nextButton}
                 onClick={handleNext}
                 disabled={!language}
               >
-                Next
-                <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>arrow_forward</span>
+                {t(language, 'common.next')}
+                <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
               </button>
             </footer>
           </>
@@ -212,7 +213,7 @@ export default function OnboardingPage() {
             <header className={styles.header}>
               <div className={styles.headerTop}>
                 <button className={styles.backButton} onClick={handleBack}>
-                  <span className="material-symbols-outlined">arrow_back</span>
+                  <AppIcon name="arrow_back" />
                 </button>
                 <LeafProgress currentStep={2} totalSteps={totalSteps} />
                 <div className={styles.spacer}></div>
@@ -254,18 +255,18 @@ export default function OnboardingPage() {
             </div>
             <footer className={styles.footer}>
               <div className={styles.stickyNote}>
-                <span className={`material-symbols-outlined ${styles.stickyNoteIcon}`}>lightbulb</span>
+                <AppIcon name="lightbulb" className={styles.stickyNoteIcon} />
                 <p className={styles.stickyNoteText}>
                   {t(language, 'grade.sticky')}
                 </p>
               </div>
-              <button 
-                className={styles.nextButton} 
+              <button
+                className={styles.nextButton}
                 onClick={handleNext}
                 disabled={!gradeLevel}
               >
                 {t(language, 'common.next')}
-                <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>arrow_forward</span>
+                <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
               </button>
             </footer>
           </>
@@ -276,7 +277,7 @@ export default function OnboardingPage() {
             <header className={styles.header}>
               <div className={styles.headerTop}>
                 <button className={styles.backButton} onClick={handleBack}>
-                  <span className="material-symbols-outlined">arrow_back</span>
+                  <AppIcon name="arrow_back" />
                 </button>
                 <LeafProgress currentStep={3} totalSteps={totalSteps} />
                 <div className={styles.spacer}></div>
@@ -318,18 +319,18 @@ export default function OnboardingPage() {
             </div>
             <footer className={styles.footer}>
               <div className={styles.stickyNote}>
-                <span className={`material-symbols-outlined ${styles.stickyNoteIcon}`}>lightbulb</span>
+                <AppIcon name="lightbulb" className={styles.stickyNoteIcon} />
                 <p className={styles.stickyNoteText}>
                   {t(language, 'subject.sticky')}
                 </p>
               </div>
-              <button 
-                className={styles.nextButton} 
+              <button
+                className={styles.nextButton}
                 onClick={handleNext}
                 disabled={subjects.length === 0}
               >
                 {t(language, 'common.next')}
-                <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>arrow_forward</span>
+                <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
               </button>
             </footer>
           </>
@@ -340,7 +341,7 @@ export default function OnboardingPage() {
             <header className={styles.header}>
               <div className={styles.headerTop}>
                 <button className={styles.backButton} onClick={handleBack}>
-                  <span className="material-symbols-outlined">arrow_back</span>
+                  <AppIcon name="arrow_back" />
                 </button>
                 <LeafProgress currentStep={4} totalSteps={totalSteps} />
                 <div className={styles.spacer}></div>
@@ -378,7 +379,7 @@ export default function OnboardingPage() {
                 {goal ? (
                   <button className={styles.nextButton} onClick={handleNext}>
                     {t(language, 'common.next')}
-                    <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>arrow_forward</span>
+                    <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
                   </button>
                 ) : (
                   <button className={styles.skipButton} onClick={handleNext}>
@@ -395,7 +396,7 @@ export default function OnboardingPage() {
             <header className={styles.header}>
               <div className={styles.headerTop}>
                 <button className={styles.backButton} onClick={() => setStep(4)}>
-                  <span className="material-symbols-outlined">arrow_back</span>
+                  <AppIcon name="arrow_back" />
                 </button>
                 <div className={styles.spacer}></div>
               </div>
@@ -404,7 +405,7 @@ export default function OnboardingPage() {
               <div className={styles.celebration}>
                 <div className={styles.starWrapper}>
                   <div className={styles.starGlow} />
-                  <span className={`material-symbols-outlined fill ${styles.celebrationIcon}`}>stars</span>
+                  <AppIcon name="stars" className={styles.celebrationIcon} />
                 </div>
                 <h2 className={styles.celebrationTitle}>You&apos;re all set!</h2>
                 <p className={styles.celebrationSub}>
@@ -414,28 +415,28 @@ export default function OnboardingPage() {
               </div>
               <div className={styles.summaryCards}>
                 <div className={styles.summaryCard}>
-                  <span className="material-symbols-outlined">chat</span>
+                  <AppIcon name="chat" />
                   <div>
                     <p className={styles.summaryLabel}>Language Mode</p>
                     <p className={styles.summaryValue}>{language || 'Mixed (Filipino-English)'}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
-                  <span className="material-symbols-outlined">school</span>
+                  <AppIcon name="school" />
                   <div>
                     <p className={styles.summaryLabel}>Grade Level</p>
                     <p className={styles.summaryValue}>{gradeLevel || 'Junior High School'}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
-                  <span className="material-symbols-outlined">menu_book</span>
+                  <AppIcon name="menu_book" />
                   <div>
                     <p className={styles.summaryLabel}>Subjects</p>
                     <p className={styles.summaryValue}>{subjects.join(', ') || 'None selected yet'}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
-                  <span className="material-symbols-outlined">flag</span>
+                  <AppIcon name="flag" />
                   <div>
                     <p className={styles.summaryLabel}>Study Goal</p>
                     <p className={styles.summaryValue}>{goal || 'Learn something new'}</p>
@@ -447,7 +448,7 @@ export default function OnboardingPage() {
             <footer className={styles.footer}>
               <div className={styles.buttonGroup}>
                 <button className={styles.primaryButton} onClick={handleCreateLesson} disabled={isPending}>
-                  <span className="material-symbols-outlined">auto_stories</span>
+                  <AppIcon name="auto_stories" />
                   Create your first lesson
                 </button>
                 <button className={styles.secondaryButton} onClick={handleGoToDashboard} disabled={isPending}>
@@ -456,10 +457,9 @@ export default function OnboardingPage() {
               </div>
             </footer>
 
-            {/* Decorative ambient shapes for step 5 */}
-            <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape1}`}>auto_stories</span>
-            <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape2}`}>star</span>
-            <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape3}`}>school</span>
+            <AppIcon name="auto_stories" className={`${styles.ambientShape} ${styles.shape1}`} />
+            <AppIcon name="stars" className={`${styles.ambientShape} ${styles.shape2}`} />
+            <AppIcon name="school" className={`${styles.ambientShape} ${styles.shape3}`} />
           </>
         );
       default:
@@ -469,10 +469,9 @@ export default function OnboardingPage() {
 
   return (
     <main className={styles.main}>
-      {/* Decorative Ambient Shapes */}
-      <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape1}`}>edit</span>
-      <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape2}`}>attach_file</span>
-      <span className={`material-symbols-outlined ${styles.ambientShape} ${styles.shape3}`}>sticky_note_2</span>
+      <AppIcon name="edit" className={`${styles.ambientShape} ${styles.shape1}`} />
+      <AppIcon name="attach_file" className={`${styles.ambientShape} ${styles.shape2}`} />
+      <AppIcon name="sticky_note_2" className={`${styles.ambientShape} ${styles.shape3}`} />
 
       {renderStep()}
     </main>
@@ -501,7 +500,7 @@ function buildStudyDraft({
           ? "senior_high"
           : gradeLevel === "College"
             ? "college_general"
-          : "junior_high",
+            : "junior_high",
     subject: mapSubject(subjects[0]),
     topic: "",
     goal: mapGoal(goal),

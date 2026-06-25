@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { AppIcon } from '@/components/AppIcon';
 import type { DashboardData } from '@/lib/study/dashboard-data';
 import { formatGradeBand, formatSubject } from '@/lib/study/format';
 import {
   createRecentStudyTopic,
-  goalMinutesFromGoal,
   type RecentStudyTopic,
   type StudySetupDraft,
 } from '@/lib/study/study-setup';
@@ -16,6 +16,8 @@ type HomeContentProps = {
   error: string | null;
   profile: DashboardData['profile'];
   latestSession: DashboardData['latestSession'];
+  topicPerformance: DashboardData['topicPerformance'];
+  stats: DashboardData['stats'];
 };
 
 function formatLanguageMode(languageMode: string) {
@@ -49,39 +51,163 @@ function getGoalHeading(goal: StudySetupDraft['goal']) {
   }
 }
 
-function getGoalMessage(goal: StudySetupDraft['goal'], progress: number, hasActivity: boolean) {
+function getGoalMessage(goal: StudySetupDraft['goal'], progress: number, completedBlocks: number, targetBlocks: number) {
   if (progress >= 100) {
     return 'You already completed your focus target today.';
   }
 
+  const remainingBlocks = Math.max(targetBlocks - completedBlocks, 0);
+
   if (goal === 'Habol') {
-    return hasActivity ? 'Keep going. One more focused block helps you catch up.' : 'Start one guided catch-up session on this device.';
+    return remainingBlocks > 0
+      ? `${remainingBlocks} more study block${remainingBlocks === 1 ? '' : 's'} to catch up today.`
+      : 'You are on track for today.';
   }
 
   if (goal === 'Review') {
-    return hasActivity ? 'Your review session is in progress.' : 'Begin a short review block to build recall.';
+    return remainingBlocks > 0
+      ? `${remainingBlocks} review block${remainingBlocks === 1 ? '' : 's'} left today.`
+      : 'Your review target is done for today.';
   }
 
   if (goal === 'Learn') {
-    return hasActivity ? 'You have momentum. Continue learning from your last topic.' : 'Start a short learning session and keep it consistent.';
+    return remainingBlocks > 0
+      ? `${remainingBlocks} learning block${remainingBlocks === 1 ? '' : 's'} left today.`
+      : "You reached today's learning target.";
   }
 
-  return hasActivity ? 'Your saved study setup is ready offline.' : 'Finish onboarding and start your first guided session.';
+  return remainingBlocks > 0
+    ? `${remainingBlocks} guided study block${remainingBlocks === 1 ? '' : 's'} left today.`
+    : 'Your saved study target is complete.';
 }
 
-function getGoalProgress(status: RecentStudyTopic['status'] | null) {
-  switch (status) {
-    case 'completed':
-      return 100;
-    case 'active':
-      return 70;
-    case 'setup':
-      return 30;
-    case 'archived':
-      return 10;
+function getGoalTargetBlocks(goal: StudySetupDraft['goal']) {
+  switch (goal) {
+    case 'Habol':
+      return 3;
+    case 'Review':
+      return 2;
+    case 'Learn':
+      return 1;
     default:
-      return 0;
+      return 1;
   }
+}
+
+function getGoalProgress(completedBlocks: number, targetBlocks: number) {
+  if (targetBlocks <= 0) {
+    return 0;
+  }
+
+  return Math.min(100, Math.round((completedBlocks / targetBlocks) * 100));
+}
+
+function normalizeAccuracy(value: number | null | undefined) {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return 0;
+  }
+
+  if (value <= 1) {
+    return Math.round(value * 100);
+  }
+
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function getStudyTip({
+  profile,
+  latestSession,
+  topicPerformance,
+  goalProgress,
+  targetBlocks,
+  completedBlocks,
+  courseTitle,
+}: {
+  profile: DashboardData['profile'];
+  latestSession: DashboardData['latestSession'];
+  topicPerformance: DashboardData['topicPerformance'];
+  goalProgress: number;
+  targetBlocks: number;
+  completedBlocks: number;
+  courseTitle: string;
+}) {
+  if (!profile) {
+    return 'Finish onboarding so AralGo can keep a learner profile and track your progress over time.';
+  }
+
+  if (!latestSession) {
+    return 'Start a study session to populate your dashboard with recent topics, tutor context, and progress history.';
+  }
+
+  if (topicPerformance) {
+    const accuracy = normalizeAccuracy(topicPerformance.rolling_accuracy);
+    if (accuracy < 70) {
+      return `${courseTitle} is currently at ${accuracy}% accuracy. A short practice set would be the highest-value next step.`;
+    }
+  }
+
+  if (goalProgress >= 100) {
+    return "You already hit today's target. Review your recent topic history or start a new subject if you want another block.";
+  }
+
+  const remainingBlocks = Math.max(targetBlocks - completedBlocks, 0);
+  return `${remainingBlocks} study block${remainingBlocks === 1 ? '' : 's'} left today. Continue the latest session to move the dashboard forward.`;
+}
+
+function getResumeHref(latestSession: DashboardData['latestSession']) {
+  if (!latestSession) {
+    return '/onboarding';
+  }
+
+  return `/tutor?sessionId=${latestSession.id}`;
+}
+
+function getActionItems({
+  profile,
+  latestSession,
+  courseTitle,
+  subjectLabel,
+  totalPracticeAttempts,
+}: {
+  profile: DashboardData['profile'];
+  latestSession: DashboardData['latestSession'];
+  courseTitle: string;
+  subjectLabel: string;
+  totalPracticeAttempts: number;
+}) {
+  return [
+    {
+      href: getResumeHref(latestSession),
+      icon: latestSession ? 'play_arrow' : 'school',
+      title: latestSession ? 'Continue session' : 'Finish onboarding',
+      description: latestSession ? courseTitle : 'Create your learner profile first.',
+      color: 'green',
+    },
+    {
+      href: '/practice',
+      icon: 'document_scanner',
+      title: 'Practice now',
+      description: `Generate a ${subjectLabel.toLowerCase()} set on demand.`,
+      color: 'brown',
+    },
+    {
+      href: '/history',
+      icon: 'history',
+      title: 'Review history',
+      description:
+        totalPracticeAttempts > 0
+          ? `${totalPracticeAttempts} saved practice attempt${totalPracticeAttempts === 1 ? '' : 's'}.`
+          : 'No saved practice attempts yet.',
+      color: 'blue',
+    },
+    {
+      href: profile ? '/profile' : '/onboarding',
+      icon: profile ? 'person' : 'settings',
+      title: profile ? 'Update profile' : 'Set preferences',
+      description: profile ? 'Adjust language, grade, and subject.' : 'Pick your language mode and grade band.',
+      color: 'green',
+    },
+  ] as const;
 }
 
 function formatTopicTimestamp(savedAt: string | null) {
@@ -152,7 +278,7 @@ function normalizeRecentTopics(
   return deduped.slice(0, 3);
 }
 
-export default function HomeContent({ error, profile, latestSession }: HomeContentProps) {
+export default function HomeContent({ error, profile, latestSession, topicPerformance, stats }: HomeContentProps) {
   const localSetup = useLocalStudySetup();
   const recentTopics = normalizeRecentTopics(localSetup, latestSession, profile);
   const primaryTopic = recentTopics[0] ?? null;
@@ -163,16 +289,35 @@ export default function HomeContent({ error, profile, latestSession }: HomeConte
   const gradeBand = localSetup?.gradeBand ?? profile?.grade_band ?? null;
   const gradeLabel = gradeBand ? formatGradeBand(gradeBand) : 'Guest learner';
   const goal = localSetup?.goal ?? null;
-  const goalMinutes = localSetup?.dailyGoalMinutes ?? goalMinutesFromGoal(goal);
-  const goalProgress = getGoalProgress(primaryTopic?.status ?? null);
-  const goalMessage = getGoalMessage(goal, goalProgress, Boolean(primaryTopic));
+  const targetBlocks = getGoalTargetBlocks(goal);
+  const completedBlocks = stats.todayCompletedSessions + stats.todayPracticeAttempts;
+  const goalProgress = getGoalProgress(completedBlocks, targetBlocks);
+  const goalMessage = getGoalMessage(goal, goalProgress, completedBlocks, targetBlocks);
   const goalTitle = getGoalHeading(goal);
+  const courseProgress = normalizeAccuracy(topicPerformance?.rolling_accuracy);
+  const resumeHref = getResumeHref(latestSession);
+  const actionItems = getActionItems({
+    profile,
+    latestSession,
+    courseTitle,
+    subjectLabel,
+    totalPracticeAttempts: stats.totalPracticeAttempts,
+  });
+  const studyTip = getStudyTip({
+    profile,
+    latestSession,
+    topicPerformance,
+    goalProgress,
+    targetBlocks,
+    completedBlocks,
+    courseTitle,
+  });
 
   return (
     <div className={styles.container}>
       {error ? (
         <div className={styles.alert} role="status">
-          <span className="material-symbols-outlined">info</span>
+          <AppIcon name="info" />
           {error}
         </div>
       ) : null}
@@ -182,30 +327,26 @@ export default function HomeContent({ error, profile, latestSession }: HomeConte
           <div className={`${styles.card} ${styles.courseCard}`}>
             <div className={styles.courseHeader}>
               <span className={styles.courseTag}>{subjectLabel}</span>
-              <Link
-                href={`/tutor?sessionId=${latestSession.id}`}
-                className={styles.playButton}
-                aria-label="Continue course"
-              >
-                <span className="material-symbols-outlined fill">play_arrow</span>
+              <Link href={resumeHref} className={styles.playButton} aria-label="Continue course">
+                <AppIcon name="play_arrow" />
               </Link>
             </div>
             <h3 className={styles.courseTitle}>{courseTitle}</h3>
             <p className={styles.courseSubtitle}>
-              {primaryTopic
-                ? `${gradeLabel} • ${primaryTopic.status} session`
-                : `${gradeLabel} • Start your first AI-guided session`}
+              {topicPerformance
+                ? `${gradeLabel} • ${courseProgress}% latest accuracy`
+                : `${gradeLabel} • ${primaryTopic?.status ?? 'active'} session`}
             </p>
 
             <div className={styles.courseProgress}>
               <div
                 className={styles.progressCircleSmall}
-                style={{ background: `conic-gradient(#4A6741 ${goalProgress}%, #EAF0E5 0)` }}
+                style={{ background: `conic-gradient(#4A6741 ${courseProgress}%, #EAF0E5 0)` }}
               >
-                <span className={styles.progressValue}>{goalProgress}%</span>
+                <span className={styles.progressValue}>{courseProgress}%</span>
               </div>
               <div className={styles.progressBar}>
-                <div className={styles.progressFill} style={{ width: `${goalProgress}%` }}></div>
+                <div className={styles.progressFill} style={{ width: `${courseProgress}%` }}></div>
               </div>
             </div>
           </div>
@@ -219,7 +360,7 @@ export default function HomeContent({ error, profile, latestSession }: HomeConte
           >
             <div className={styles.goalContent}>
               <div className={styles.goalValue}>{goalProgress}%</div>
-              <div className={styles.goalTotal}>{goalMinutes} mins target</div>
+              <div className={styles.goalTotal}>{completedBlocks} / {targetBlocks} study blocks</div>
             </div>
           </div>
           <div className={styles.goalMessage}>{goalMessage}</div>
@@ -239,7 +380,7 @@ export default function HomeContent({ error, profile, latestSession }: HomeConte
                 return (
                   <div className={styles.topicItem} key={`${entry.subject}-${entry.topic}-${entry.savedAt}-${index}`}>
                     <div className={styles.topicIcon} data-color={visual.color}>
-                      <span className="material-symbols-outlined">{visual.icon}</span>
+                      <AppIcon name={visual.icon} />
                     </div>
                     <div className={styles.topicInfo}>
                       <h4 className={styles.topicName}>
@@ -249,14 +390,14 @@ export default function HomeContent({ error, profile, latestSession }: HomeConte
                         {formatLanguageMode(entry.languageMode)} • {formatTopicTimestamp(entry.savedAt)}
                       </p>
                     </div>
-                    <span className={`material-symbols-outlined ${styles.topicArrow}`}>chevron_right</span>
+                    <AppIcon name="chevron_right" className={styles.topicArrow} />
                   </div>
                 );
               })
             ) : (
               <div className={styles.topicItem}>
                 <div className={styles.topicIcon} data-color="brown">
-                  <span className="material-symbols-outlined">history</span>
+                  <AppIcon name="history" />
                 </div>
                 <div className={styles.topicInfo}>
                   <h4 className={styles.topicName}>No saved topics yet</h4>
@@ -274,39 +415,24 @@ export default function HomeContent({ error, profile, latestSession }: HomeConte
         <div>
           <h3 className={styles.sectionTitle}>Quick Actions</h3>
           <div className={styles.actionsGrid}>
-            <button className={styles.actionBtn}>
-              <div className={styles.actionBtnIcon} data-color="green">
-                <span className="material-symbols-outlined">document_scanner</span>
-              </div>
-              <span className={styles.actionBtnLabel}>Scan<br />Homework</span>
-            </button>
-            <button className={styles.actionBtn}>
-              <div className={styles.actionBtnIcon} data-color="brown">
-                <span className="material-symbols-outlined">smart_toy</span>
-              </div>
-              <span className={styles.actionBtnLabel}>Ask<br />AI</span>
-            </button>
-            <button className={styles.actionBtn}>
-              <div className={styles.actionBtnIcon} data-color="blue">
-                <span className="material-symbols-outlined">style</span>
-              </div>
-              <span className={styles.actionBtnLabel}>Flashcards</span>
-            </button>
-            <button className={`${styles.actionBtn} ${styles.actionBtnDashed}`}>
-              <div className={styles.actionBtnIcon}>
-                <span className="material-symbols-outlined">add</span>
-              </div>
-              <span className={styles.actionBtnLabel}>Add<br />Shortcut</span>
-            </button>
+            {actionItems.map((item) => (
+              <Link key={item.title} href={item.href} className={styles.actionBtn}>
+                <div className={styles.actionBtnIcon} data-color={item.color}>
+                  <AppIcon name={item.icon} />
+                </div>
+                <span className={styles.actionBtnLabel}>{item.title}</span>
+                <span className={styles.actionBtnMeta}>{item.description}</span>
+              </Link>
+            ))}
           </div>
         </div>
 
         <div className={styles.tipCard}>
-          <span className={`material-symbols-outlined ${styles.tipIcon}`}>lightbulb</span>
+          <AppIcon name="lightbulb" className={styles.tipIcon} />
           <div className={styles.tipContent}>
-            <h4 className={styles.tipTitle}>Study Tip</h4>
+            <h4 className={styles.tipTitle}>Next Best Step</h4>
             <p className={styles.tipText}>
-              Taking 5-minute breaks every 25 minutes helps improve focus and retention. Try the Pomodoro technique today!
+              {studyTip}
             </p>
           </div>
         </div>

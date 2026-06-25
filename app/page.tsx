@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { AppIcon } from '@/components/AppIcon';
 import { LandingNav } from './landing-nav';
 import styles from './page.module.css';
 
@@ -10,7 +11,7 @@ export default function HomePage() {
         <div className={styles.topbarInner}>
           <Link href="/" className={styles.brand}>
             <span className={styles.brandMark} aria-hidden="true">
-              <span className="material-symbols-outlined">school</span>
+              <AppIcon name="school" />
             </span>
             <span className={styles.brandText}>AralGo Scholar</span>
           </Link>
@@ -56,7 +57,7 @@ export default function HomePage() {
         <div className={styles.container}>
           <div className={styles.servicesHeader}>
             <div className={styles.servicesTag}>
-              <span className={`material-symbols-outlined ${styles.servicesTagIcon}`}>auto_awesome</span>
+              <AppIcon name="auto_awesome" className={styles.servicesTagIcon} />
               Services
             </div>
             <h2 className={styles.servicesTitle}>Our Provided Services</h2>
@@ -65,40 +66,40 @@ export default function HomePage() {
           <div className={styles.servicesGrid}>
             <div className={styles.serviceCard}>
               <div className={styles.serviceIconWrapper} data-color="tertiary">
-                <span className={`material-symbols-outlined ${styles.serviceIcon}`}>translate</span>
+                <AppIcon name="translate" className={styles.serviceIcon} />
               </div>
               <h3 className={styles.serviceTitle}>Bilingual Tutoring</h3>
               <p className={styles.serviceDesc}>
                 Learn seamlessly in Filipino and English. Our AI tutor adapts to your preferred language mode to ensure complete understanding.
               </p>
               <Link href="/onboarding" className={styles.serviceLink}>
-                Learn More <span className={`material-symbols-outlined ${styles.serviceLinkIcon}`}>arrow_forward_ios</span>
+                Learn More <AppIcon name="arrow_forward_ios" className={styles.serviceLinkIcon} />
               </Link>
             </div>
             
             <div className={styles.serviceCard}>
               <div className={styles.serviceIconWrapper} data-color="primary">
-                <span className={`material-symbols-outlined ${styles.serviceIcon}`}>quiz</span>
+                <AppIcon name="quiz" className={styles.serviceIcon} />
               </div>
               <h3 className={styles.serviceTitle}>Adaptive Practice</h3>
               <p className={styles.serviceDesc}>
                 Generate practice questions tailored precisely to your current grade level and subject performance to boost your retention.
               </p>
               <Link href="/onboarding" className={styles.serviceLink}>
-                Learn More <span className={`material-symbols-outlined ${styles.serviceLinkIcon}`}>arrow_forward_ios</span>
+                Learn More <AppIcon name="arrow_forward_ios" className={styles.serviceLinkIcon} />
               </Link>
             </div>
             
             <div className={styles.serviceCard}>
               <div className={styles.serviceIconWrapper} data-color="secondary">
-                <span className={`material-symbols-outlined ${styles.serviceIcon}`}>signal_cellular_alt</span>
+                <AppIcon name="signal_cellular_alt" className={styles.serviceIcon} />
               </div>
               <h3 className={styles.serviceTitle}>Mobile First</h3>
               <p className={styles.serviceDesc}>
                 Designed specifically for mobile constraints. Enjoy an optimized, low-bandwidth experience wherever you study.
               </p>
               <Link href="/onboarding" className={styles.serviceLink}>
-                Learn More <span className={`material-symbols-outlined ${styles.serviceLinkIcon}`}>arrow_forward_ios</span>
+                Learn More <AppIcon name="arrow_forward_ios" className={styles.serviceLinkIcon} />
               </Link>
             </div>
           </div>

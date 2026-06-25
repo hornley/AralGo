@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { AppIcon } from '@/components/AppIcon';
 import { createClient } from '@/lib/supabase/server';
 import LessonStudioWizard from '@/components/lesson-studio/LessonStudioWizard';
 import type { StudySubject } from '@/lib/types/supabase';
@@ -35,7 +36,7 @@ export default async function LessonStudioPage(props: { searchParams: Promise<{ 
     <div className={styles.pageContainer}>
       <nav className={styles.topBar}>
         <Link href="/home" className={styles.backLink} aria-label="Back to dashboard">
-          <span className="material-symbols-outlined">arrow_back</span>
+          <AppIcon name="arrow_back" />
         </Link>
         <span className={styles.topBarTitle}>Lesson Studio</span>
       </nav>

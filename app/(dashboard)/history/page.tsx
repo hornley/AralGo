@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { AppIcon } from '@/components/AppIcon';
 import { getSessionHistory, formatSubject } from '@/lib/study/dashboard-data';
 import styles from './history.module.css';
 
@@ -64,7 +65,7 @@ export default async function HistoryPage() {
 
       {sessions.length === 0 ? (
         <div className={styles.emptyState}>
-          <span className={`material-symbols-outlined ${styles.emptyIcon}`}>history</span>
+          <AppIcon name="history" className={styles.emptyIcon} />
           <h2 className={styles.emptyTitle}>No study history yet</h2>
           <p className={styles.emptyText}>Start your first AI-guided session to build your study history.</p>
           <Link href="/home" className={styles.cta}>Go to Home</Link>
@@ -81,7 +82,7 @@ export default async function HistoryPage() {
                 className={styles.card}
               >
                 <div className={styles.cardIcon} data-color={visual.color}>
-                  <span className="material-symbols-outlined">{visual.icon}</span>
+                  <AppIcon name={visual.icon} />
                 </div>
                 <div className={styles.cardContent}>
                   <h3 className={styles.cardTitle}>
@@ -99,7 +100,7 @@ export default async function HistoryPage() {
                   <span className={`${styles.statusBadge} ${styles[`status${formatStatus(session.status).toLowerCase()}`] || ''}`}>
                     {formatStatus(session.status)}
                   </span>
-                  <span className={`material-symbols-outlined ${styles.arrow}`}>chevron_right</span>
+                  <AppIcon name="chevron_right" className={styles.arrow} />
                 </div>
               </Link>
             );

@@ -107,7 +107,7 @@
   text-align: center;
 }
 
-.metricBox span.material-symbols-outlined {
+.metricIcon {
   color: var(--color-on-surface-variant);
   margin-bottom: 4px;
 }

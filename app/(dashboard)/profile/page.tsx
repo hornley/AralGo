@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { AppIcon } from '@/components/AppIcon';
 import { createClient } from '@/lib/supabase/client';
 import {
   goalMinutesFromGoal,
@@ -53,7 +54,7 @@ const dbToDisplaySubject: Record<string, string> = {
 };
 
 export default function ProfilePage() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -184,7 +185,7 @@ export default function ProfilePage() {
       <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Profile Settings</h1>
         <button className={styles.saveButton} onClick={handleSave} disabled={saving}>
-          <span className="material-symbols-outlined">save</span>
+          <AppIcon name="save" />
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
       </header>
@@ -227,7 +228,7 @@ export default function ProfilePage() {
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <div className={styles.sectionIcon}>
-            <span className="material-symbols-outlined">translate</span>
+            <AppIcon name="translate" />
           </div>
           <h2 className={styles.sectionTitle}>Language Mode</h2>
         </div>
@@ -243,7 +244,7 @@ export default function ProfilePage() {
               data-selected={language === opt.id}
               onClick={() => setLanguage(opt.id)}
             >
-              <span className={`material-symbols-outlined ${styles.optionIcon}`}>{opt.icon}</span>
+              <AppIcon name={opt.icon} className={styles.optionIcon} />
               <span className={styles.optionLabel}>{opt.label}</span>
             </div>
           ))}
@@ -254,7 +255,7 @@ export default function ProfilePage() {
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <div className={styles.sectionIcon}>
-            <span className="material-symbols-outlined">school</span>
+            <AppIcon name="school" />
           </div>
           <h2 className={styles.sectionTitle}>Grade Level</h2>
         </div>
@@ -271,7 +272,7 @@ export default function ProfilePage() {
               data-selected={gradeLevel === opt.id}
               onClick={() => setGradeLevel(opt.id)}
             >
-              <span className={`material-symbols-outlined ${styles.optionIcon}`}>{opt.icon}</span>
+              <AppIcon name={opt.icon} className={styles.optionIcon} />
               <span className={styles.optionLabel}>{opt.label}</span>
             </div>
           ))}
@@ -282,7 +283,7 @@ export default function ProfilePage() {
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <div className={styles.sectionIcon}>
-            <span className="material-symbols-outlined">auto_stories</span>
+            <AppIcon name="auto_stories" />
           </div>
           <h2 className={styles.sectionTitle}>Subjects</h2>
         </div>
@@ -299,7 +300,7 @@ export default function ProfilePage() {
               data-selected={subjects.includes(opt.id)}
               onClick={() => toggleSubject(opt.id)}
             >
-              <span className={`material-symbols-outlined ${styles.optionIcon}`}>{opt.icon}</span>
+              <AppIcon name={opt.icon} className={styles.optionIcon} />
               <span className={styles.optionLabel}>{opt.label}</span>
             </div>
           ))}
@@ -310,7 +311,7 @@ export default function ProfilePage() {
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <div className={styles.sectionIcon}>
-            <span className="material-symbols-outlined">flag</span>
+            <AppIcon name="flag" />
           </div>
           <h2 className={styles.sectionTitle}>Study Goals</h2>
         </div>
@@ -326,7 +327,7 @@ export default function ProfilePage() {
               data-selected={goal === opt.id}
               onClick={() => setGoal(opt.id)}
             >
-              <span className={`material-symbols-outlined ${styles.optionIcon}`}>{opt.icon}</span>
+              <AppIcon name={opt.icon} className={styles.optionIcon} />
               <span className={styles.optionLabel}>{opt.label}</span>
             </div>
           ))}

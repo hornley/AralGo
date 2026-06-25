@@ -55,9 +55,8 @@
   box-shadow: 0 8px 18px rgba(74, 103, 65, 0.22);
 }
 
-.brandMark span {
+.brandMark svg {
   font-size: 20px;
-  font-variation-settings: "FILL" 1, "wght" 700;
 }
 
 .brandText {

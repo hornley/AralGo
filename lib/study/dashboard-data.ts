@@ -39,6 +39,18 @@ export type DashboardData = {
     display_name: string;
     icon: string;
   }>;
+  topicPerformance: {
+    subject: "mathematics" | "science" | "english" | "filipino";
+    topic: string;
+    rolling_accuracy: number;
+    last_practiced_at: string | null;
+  } | null;
+  stats: {
+    todayStudySessions: number;
+    todayCompletedSessions: number;
+    todayPracticeAttempts: number;
+    totalPracticeAttempts: number;
+  };
 };
 
 export async function getDashboardData(): Promise<DashboardData> {
@@ -55,10 +67,30 @@ export async function getDashboardData(): Promise<DashboardData> {
       latestSession: null,
       recentLessons: [],
       subjects: [],
+      topicPerformance: null,
+      stats: {
+        todayStudySessions: 0,
+        todayCompletedSessions: 0,
+        todayPracticeAttempts: 0,
+        totalPracticeAttempts: 0,
+      },
     };
   }
 
-  const [profileResult, latestSessionResult, lessonsResult, subjectsResult] = await Promise.all([
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const startOfDayIso = startOfDay.toISOString();
+
+  const [
+    profileResult,
+    latestSessionResult,
+    lessonsResult,
+    subjectsResult,
+    todayStudySessionsResult,
+    todayCompletedSessionsResult,
+    todayPracticeAttemptsResult,
+    totalPracticeAttemptsResult,
+  ] = await Promise.all([
     supabase
       .from("learner_profiles")
       .select("id, display_name, grade_band, preferred_language_mode, preferred_subject")
@@ -81,12 +113,47 @@ export async function getDashboardData(): Promise<DashboardData> {
       .from("subjects")
       .select("*")
       .order("sort_order"),
+    supabase
+      .from("study_sessions")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("last_active_at", startOfDayIso),
+    supabase
+      .from("study_sessions")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("status", "completed")
+      .gte("last_active_at", startOfDayIso),
+    supabase
+      .from("practice_attempts")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("completed_at", startOfDayIso),
+    supabase
+      .from("practice_attempts")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
   ]);
 
-  if (profileResult.error || latestSessionResult.error) {
+  if (
+    profileResult.error ||
+    latestSessionResult.error ||
+    lessonsResult.error ||
+    subjectsResult.error ||
+    todayStudySessionsResult.error ||
+    todayCompletedSessionsResult.error ||
+    todayPracticeAttemptsResult.error ||
+    totalPracticeAttemptsResult.error
+  ) {
     console.error("Failed to load dashboard data", {
       profileError: profileResult.error?.message,
       latestSessionError: latestSessionResult.error?.message,
+      lessonsError: lessonsResult.error?.message,
+      subjectsError: subjectsResult.error?.message,
+      todayStudySessionsError: todayStudySessionsResult.error?.message,
+      todayCompletedSessionsError: todayCompletedSessionsResult.error?.message,
+      todayPracticeAttemptsError: todayPracticeAttemptsResult.error?.message,
+      totalPracticeAttemptsError: totalPracticeAttemptsResult.error?.message,
     });
 
     return {
@@ -96,16 +163,52 @@ export async function getDashboardData(): Promise<DashboardData> {
       latestSession: null,
       recentLessons: [],
       subjects: [],
+      topicPerformance: null,
+      stats: {
+        todayStudySessions: 0,
+        todayCompletedSessions: 0,
+        todayPracticeAttempts: 0,
+        totalPracticeAttempts: 0,
+      },
     };
+  }
+
+  const latestSession = latestSessionResult.data ?? null;
+  let topicPerformance: DashboardData["topicPerformance"] = null;
+
+  if (latestSession) {
+    const { data: topicPerformanceData, error: topicPerformanceError } = await supabase
+      .from("topic_performance")
+      .select("subject, topic, rolling_accuracy, last_practiced_at")
+      .eq("user_id", user.id)
+      .eq("subject", latestSession.subject)
+      .order("last_practiced_at", { ascending: false, nullsFirst: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (topicPerformanceError) {
+      console.error("Failed to load topic performance", {
+        topicPerformanceError: topicPerformanceError.message,
+      });
+    } else {
+      topicPerformance = topicPerformanceData ?? null;
+    }
   }
 
   return {
     user,
     error: null,
     profile: profileResult.data ?? null,
-    latestSession: latestSessionResult.data ?? null,
+    latestSession,
     recentLessons: lessonsResult.data ?? [],
     subjects: subjectsResult.data ?? [],
+    topicPerformance,
+    stats: {
+      todayStudySessions: todayStudySessionsResult.count ?? 0,
+      todayCompletedSessions: todayCompletedSessionsResult.count ?? 0,
+      todayPracticeAttempts: todayPracticeAttemptsResult.count ?? 0,
+      totalPracticeAttempts: totalPracticeAttemptsResult.count ?? 0,
+    },
   };
 }
 

@@ -18,7 +18,7 @@ export async function createClient() {
               cookieStore.set(name, value, options);
             });
           } catch {
-            // Called during Server Component render — cookies are read-only.
+            // Called during Server Component render, where cookies are read-only.
             // Token refresh is handled by middleware or the next route handler.
           }
         },

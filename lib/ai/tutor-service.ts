@@ -29,7 +29,7 @@ export interface TutorContext {
 const GRADE_BAND_INSTRUCTIONS: Record<GradeBand, string> = {
   elementary: 'Use very simple words and short sentences. Give concrete examples from daily life.',
   junior_high: 'Use clear explanations appropriate for a high school freshman level.',
-  senior_high: 'You may introduce more abstract concepts appropriate for college-preparatory level.',
+  senior_high: 'You may introduce more abstract conceqpts appropriate for college-preparatory level.',
   college_general: 'Assume foundational knowledge. Focus on deeper understanding and critical thinking.',
 };
 
@@ -75,14 +75,19 @@ export function buildSystemPrompt(ctx: TutorContext): string {
 
 // --- Model setup ---
 
-const requiredEnv = (name: string) => {
-  const value = process.env[name];
-  if (!value) throw new Error(`Missing required environment variable: ${name}`);
-  return value;
+const requiredEnv = (...names: string[]) => {
+  for (const name of names) {
+    const value = process.env[name];
+    if (value) {
+      return value;
+    }
+  }
+
+  throw new Error(`Missing required environment variable. Expected one of: ${names.join(', ')}`);
 };
 
 const getAzureResourceName = () => {
-  const endpoint = requiredEnv('ENDPOINT');
+  const endpoint = requiredEnv('AZURE_OPENAI_ENDPOINT', 'ENDPOINT');
   try {
     return new URL(endpoint).hostname.split('.')[0];
   } catch {
@@ -92,10 +97,10 @@ const getAzureResourceName = () => {
 
 const azure = createAzure({
   resourceName: getAzureResourceName(),
-  apiKey: requiredEnv('API_KEY'),
+  apiKey: requiredEnv('AZURE_OPENAI_API_KEY', 'API_KEY'),
 });
 
-const tutorModel = azure(requiredEnv('DEPLOYMENT'));
+const tutorModel = azure(requiredEnv('AZURE_OPENAI_DEPLOYMENT', 'DEPLOYMENT'));
 
 // --- Streaming service ---
 

@@ -1,3 +1,4 @@
+import { AppIcon } from "./AppIcon";
 import styles from './StationeryCard.module.css';
 
 interface StationeryCardProps {
@@ -16,10 +17,10 @@ export function StationeryCard({ title, icon, colorTheme, selected, onClick }: S
       type="button"
     >
       {selected && (
-        <span className={`material-symbols-outlined fill ${styles.sparkle}`}>stars</span>
+        <AppIcon name="stars" className={styles.sparkle} />
       )}
       <div className={styles.iconWrapper} data-color={colorTheme}>
-        <span className={`material-symbols-outlined ${styles.icon}`}>{icon}</span>
+        <AppIcon name={icon} className={styles.icon} />
       </div>
       <h3 className={`${styles.title} ${selected ? styles.titleSelected : ''}`}>
         {title}

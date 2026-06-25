@@ -48,8 +48,7 @@
 - [x] Add TypeScript, linting, and base project scripts.
 - [~] Create initial app routes for landing, study, chat, practice, and history.
   - `/` (landing), `/home` (study), `/tutor` (chat), `/practice`, `/practice/results`, `/profile`, `/onboarding`, `/offline` all exist.
-  - `/history` route is missing (sidebar links to it but page is 404).
-  - `/settings` and `/help` are also linked from the sidebar but do not exist yet.
+  - `/history`, `/settings`, and `/help` now exist as valid dashboard routes.
 - [x] Add a shared layout and mobile-first shell.
 
 ## Supabase Integration
@@ -123,7 +122,7 @@
 
 - [~] Add baseline end-to-end smoke coverage.
   - `e2e/smoke.mjs` exists and checks the main routes, PWA assets, and basic rendering.
-  - It is not wired into `package.json` scripts and does not cover behavior deeply.
+  - `npm run test:smoke` is now wired into `package.json`, but coverage is still shallow.
 - [ ] Add tests for adaptation logic.
 - [ ] Add tests for language-mode behavior.
 - [ ] Add tests for practice rendering and grading flow.
