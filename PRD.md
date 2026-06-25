@@ -25,6 +25,7 @@ AralGo should reduce these barriers by offering accessible, personalized, biling
 - Generate lesson content, guided explanations, summaries, and practice exercises on demand.
 - Adapt explanations and question difficulty to the learner's grade level and demonstrated mastery.
 - Prioritize mobile usability and low-bandwidth performance.
+- Deliver as a Progressive Web App with near-instant launch, offline-capable study history, and installability on low-cost devices.
 - Make the product usable for both structured study sessions and quick question-and-answer tutoring.
 
 ## 4. Non-Goals
@@ -73,6 +74,9 @@ The experience should support actual tutoring behavior, not just content browsin
 - Difficulty adaptation based on learner level and recent performance.
 - Mobile-first responsive interface.
 - Low-bandwidth mode with reduced payloads and minimal media dependence.
+- Progressive Web App: installable on mobile home screen with an app shell that loads instantly on repeat visits.
+- Offline-capable study history: previously viewed sessions and practice sets accessible without a network connection.
+- Low-latency interactions: initial load under 3 seconds on slow 3G; UI responds instantly to taps and input.
 - Basic study history so learners can revisit recent topics and exercises.
 
 ### 7.2 Should Have
@@ -85,7 +89,8 @@ The experience should support actual tutoring behavior, not just content browsin
   - true/false
   - step-by-step problem solving
 - Saved weak-topic indicators to guide future review.
-- Caching of recent study sessions and generated content for repeat access.
+- Service-worker-based caching of recent study sessions and generated content for repeat access and offline resume.
+- Pre-cached app shell so the app launches interactively even before the network responds.
 - Optional audio-friendly or read-aloud-ready response formatting.
 
 ### 7.3 Could Have
@@ -156,7 +161,25 @@ Acceptance criteria:
 - The system can lower or raise difficulty based on recent interactions.
 - Adaptation affects both explanations and generated exercises.
 
-### 8.5 Study in Low-Bandwidth Conditions
+### 8.5 Open and Study Instantly (PWA Low-Latency)
+
+1. Learner taps the AralGo icon on their mobile home screen.
+2. The app shell appears immediately from the service worker cache — no blank white screen.
+3. Cached recent sessions and practice sets are visible and tappable right away.
+4. Learner opens a cached study item and reads it offline.
+5. Learner submits a new question; the app sends it when connectivity is available and shows an optimistic local response.
+6. On subsequent launches, the app feels near-instant because the shell and key UI are already cached.
+
+Acceptance criteria:
+
+- The app is installable on Android and iOS via browser install prompt.
+- Cold launch from home screen shows meaningful UI within 2 seconds on a slow 3G connection.
+- The app shell (header, navigation, offline indicator) loads from cache before any network request completes.
+- Previously viewed sessions and practice sets are readable offline.
+- New questions queued offline are sent automatically when connectivity returns.
+- The service worker does not serve stale AI responses without indicating they may be outdated.
+
+### 8.6 Study in Low-Bandwidth Conditions
 
 1. Learner opens the app with slow or unstable mobile data.
 2. The app loads a lightweight interface quickly.
@@ -280,7 +303,28 @@ Acceptance criteria:
 - The product should favor clarity and age-appropriate explanations.
 - Responses should make uncertainty visible when a question is ambiguous.
 
-## 10. Low-Bandwidth and Mobile Requirements
+## 10. PWA, Low-Bandwidth, and Mobile Requirements
+
+### 10.1 PWA Requirements
+
+- Provide a web app manifest with `display: standalone`, theme color, and icons for home-screen installation.
+- Register a service worker on first visit that pre-caches the app shell (HTML, CSS, JS, fonts, icons).
+- Cache previously viewed study sessions, lessons, and practice sets for offline access.
+- Show an offline indicator when the network is unavailable; never show a blank or broken page.
+- Queue new chat questions and practice answers when offline; flush on reconnect.
+- Support periodic background sync for refreshing cached study content if the browser permits.
+- The service worker must not serve stale AI responses without a clear staleness indicator.
+
+### 10.2 Low-Latency Requirements
+
+- First meaningful paint within 2 seconds on slow 3G (simulated via Lighthouse).
+- App shell loads from cache before any network request — no network waterfall to show the header.
+- Tap targets respond visually within 50 ms (no unresponsive taps).
+- Chat input feels instant: keyboard opens immediately, text appears without lag.
+- AI responses may take time to generate, but the UI shows an optimistic loading state within 200 ms of submission.
+- Route transitions between Study Home, Chat, Practice, and History feel instant (< 300 ms) once the app shell is loaded.
+
+### 10.3 Low-Bandwidth Requirements
 
 - Optimize the app for low-cost Android phones and mobile browsers.
 - Keep initial page load lightweight.
