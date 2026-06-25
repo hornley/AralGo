@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { LeafProgress } from '@/components/LeafProgress';
 import { StationeryCard } from '@/components/StationeryCard';
+import { createClient } from '@/lib/supabase/client';
+import { persistLearnerSession } from '@/lib/study/learner-session';
+import { saveStudySetup, type StudySetupDraft } from '@/lib/study/study-setup';
 import styles from './onboarding.module.css';
 
 export default function OnboardingPage() {
@@ -16,12 +19,62 @@ export default function OnboardingPage() {
   const [gradeLevel, setGradeLevel] = useState<string | null>(null);
   const [subjects, setSubjects] = useState<string[]>([]);
   const [goal, setGoal] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const handleNext = () => {
     if (step < totalSteps) {
       setStep(step + 1);
     } else {
-      router.push('/home');
+      startTransition(async () => {
+        setStatusMessage('Saving your setup and creating a learner session...');
+        const supabase = createClient();
+
+        const draft = buildStudyDraft({
+          language,
+          gradeLevel,
+          subjects,
+        });
+        saveStudySetup(draft);
+
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          setStatusMessage(sessionError.message);
+          return;
+        }
+
+        if (!session?.user) {
+          const { data, error } = await supabase.auth.signInAnonymously();
+
+          if (error) {
+            setStatusMessage(
+              'Anonymous sign-in failed. Enable Anonymous Sign-Ins in Supabase Auth to finish onboarding.',
+            );
+            return;
+          }
+
+          if (!data.user) {
+            setStatusMessage('Anonymous sign-in did not return a user session.');
+            return;
+          }
+        }
+
+        setStatusMessage('Saving your learner profile...');
+
+        const persistResult = await persistLearnerSession(supabase, draft);
+
+        if (!persistResult.ok) {
+          setStatusMessage(persistResult.message);
+          return;
+        }
+
+        setStatusMessage('Setup saved. Taking you to your dashboard...');
+        router.push('/home');
+      });
     }
   };
 
@@ -262,15 +315,16 @@ export default function OnboardingPage() {
             <footer className={styles.footer}>
               <div className={styles.buttonGroup}>
                 {goal ? (
-                  <button className={styles.nextButton} onClick={handleNext}>
+                  <button className={styles.nextButton} onClick={handleNext} disabled={isPending}>
                     Finish
                     <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>check</span>
                   </button>
                 ) : (
-                  <button className={styles.skipButton} onClick={handleNext}>
+                  <button className={styles.skipButton} onClick={handleNext} disabled={isPending}>
                     Skip for now
                   </button>
                 )}
+                {statusMessage ? <p className={styles.statusMessage}>{statusMessage}</p> : null}
               </div>
             </footer>
           </>
@@ -290,4 +344,41 @@ export default function OnboardingPage() {
       {renderStep()}
     </main>
   );
+}
+
+function buildStudyDraft({
+  language,
+  gradeLevel,
+  subjects,
+}: {
+  language: string | null;
+  gradeLevel: string | null;
+  subjects: string[];
+}): StudySetupDraft {
+  return {
+    displayName: "",
+    languageMode:
+      language === "Filipino" ? "filipino" : language === "English" ? "english" : "mixed",
+    gradeBand:
+      gradeLevel === "Elementary"
+        ? "elementary"
+        : gradeLevel === "Senior High"
+          ? "senior_high"
+          : "junior_high",
+    subject: mapSubject(subjects[0]),
+    topic: "",
+  };
+}
+
+function mapSubject(subject?: string): StudySetupDraft["subject"] {
+  switch (subject) {
+    case "Mathematics":
+      return "mathematics";
+    case "English":
+      return "english";
+    case "Filipino":
+      return "filipino";
+    default:
+      return "science";
+  }
 }
