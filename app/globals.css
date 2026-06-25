@@ -10,7 +10,6 @@
   --border: rgba(23, 33, 43, 0.12);
   --shadow: 0 24px 60px rgba(23, 33, 43, 0.08);
 
-  /* New Theme Variables (from THEME.html) */
   --color-primary: #456732;
   --color-on-primary: #ffffff;
   --color-primary-container: #8bb174;
@@ -29,11 +28,15 @@
   --color-on-surface-variant: #43483e;
   --color-surface-container-low: #f0f5eb;
   --color-surface-container: #eaf0e5;
-  --color-warning-container: #fef08a; /* Yellow sticky note */
-  
+  --color-warning-container: #fef08a;
   --shadow-cozy: 0 4px 20px rgba(69, 103, 50, 0.06);
   --shadow-cozy-active: 0 2px 10px rgba(69, 103, 50, 0.04);
   --shadow-cozy-selected: 0 4px 20px rgba(69, 103, 50, 0.1);
+
+  --math: #0f766e;
+  --science: #7c3aed;
+  --english: #d97706;
+  --filipino: #b91c1c;
 }
 
 * {
@@ -50,17 +53,16 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--color-on-surface);
-  font-family: var(--font-quicksand), "Georgia", "Times New Roman", serif;
-  background-color: #FFF9F1;
+  font-family: var(--font-quicksand), Georgia, "Times New Roman", serif;
+  background-color: #fff9f1;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-lexend), sans-serif;
 }
 
-/* Material Symbols Adjustments */
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined', sans-serif;
+  font-family: "Material Symbols Outlined", sans-serif;
   font-weight: normal;
   font-style: normal;
   display: inline-block;
@@ -70,11 +72,11 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   word-wrap: normal;
   white-space: nowrap;
   direction: ltr;
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
 .material-symbols-outlined.fill {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
 a {
@@ -262,6 +264,8 @@ main {
   background: rgba(191, 42, 36, 0.12);
   color: #9f2d2a;
 }
+
+/* ── Subject Selector ── */
 
 @media (max-width: 640px) {
   main {

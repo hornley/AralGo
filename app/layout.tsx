@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { Lexend, Quicksand } from "next/font/google";
 import "./globals.css";
 
-const lexend = Lexend({ 
-  subsets: ["latin"], 
+const lexend = Lexend({
+  subsets: ["latin"],
   weight: ["500", "600"],
   variable: "--font-lexend",
   display: "swap",
 });
 
-const quicksand = Quicksand({ 
-  subsets: ["latin"], 
+const quicksand = Quicksand({
+  subsets: ["latin"],
   weight: ["500", "700"],
   variable: "--font-quicksand",
   display: "swap",
@@ -29,7 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${lexend.variable} ${quicksand.variable}`}>
       <head>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body>{children}</body>
     </html>
