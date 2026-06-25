@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useSyncExternalStore } from 'react';
 import { loadStudySetup } from '@/lib/study/study-setup';
-import styles from './home.module.css';
+import styles from './page.module.css';
 
 export function LandingNav() {
   const hasAnsweredOnboarding = useSyncExternalStore(

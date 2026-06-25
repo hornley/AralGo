@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { LandingNav } from './landing-nav';
-import styles from './home.module.css';
+import styles from './page.module.css';
 
 export default function HomePage() {
   return (
