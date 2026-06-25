@@ -1,0 +1,196 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #171D17;
+  margin: 0;
+}
+
+.saveButton {
+  background-color: #4A6741;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(74, 103, 65, 0.2);
+  transition: transform 0.2s;
+  font-family: inherit;
+}
+
+.saveButton:hover {
+  transform: translateY(-2px);
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.section {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-bottom: 16px;
+}
+
+.sectionIcon {
+  color: #4A6741;
+  background-color: #EAF0E5;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: #171D17;
+}
+
+.profileHero {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.avatarWrapper {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #FFC0B0;
+  overflow: hidden;
+  position: relative;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarEditBtn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 6px 0;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.avatarEditBtn:hover {
+  background: rgba(0,0,0,0.8);
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.nameInput {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #171D17;
+  border: 1px solid transparent;
+  background: transparent;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.nameInput:focus {
+  border-color: #4A6741;
+  background: #f9f9f9;
+  outline: none;
+}
+
+.emailText {
+  color: #6C7063;
+  margin: 0;
+  padding: 0 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.optionCard {
+  border: 2px solid #EAF0E5;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.optionCard:hover {
+  border-color: #C3C8BA;
+}
+
+.optionCard[data-selected="true"] {
+  border-color: #4A6741;
+  background-color: #F3F7F0;
+}
+
+.optionIcon {
+  color: #6C7063;
+  font-size: 1.5rem;
+}
+
+.optionCard[data-selected="true"] .optionIcon {
+  color: #4A6741;
+}
+
+.optionLabel {
+  font-weight: 600;
+  color: #43483E;
+  font-size: 0.95rem;
+}
+
+.optionCard[data-selected="true"] .optionLabel {
+  color: #1A3311;
+}
