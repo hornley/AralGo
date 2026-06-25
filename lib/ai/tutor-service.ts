@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 
 // --- Types ---
 
+export type TutorMode = 'socratic' | 'chat';
 type GradeBand = 'elementary' | 'junior_high' | 'senior_high' | 'college_general';
 type StudySubject = 'mathematics' | 'science' | 'english' | 'filipino';
 type LanguageMode = 'english' | 'filipino' | 'mixed';
@@ -14,6 +15,7 @@ export interface TutorContext {
   subject: StudySubject;
   languageMode: LanguageMode;
   topic?: string | null;
+  mode?: TutorMode;
 }
 
 // --- Grade band adaptation ---
@@ -45,19 +47,18 @@ const LANGUAGE_INSTRUCTIONS: Record<LanguageMode, string> = {
 // --- Prompt builder ---
 
 export function buildSystemPrompt(ctx: TutorContext): string {
+  const mode = ctx.mode || 'socratic';
+
+  const roleDesc = mode === 'chat'
+    ? 'You are the AralGo AI Study Companion in chat mode.\nAnswer the student\'s questions directly in a normal, friendly Q&A style.\nKeep responses clear, concise, and helpful.\nExplain steps when they are useful, but do not force a Socratic question-first approach.\nUse emojis sparingly.\nDo not complete dishonest work for the student; help them understand instead.'
+    : 'You are the AralGo AI Study Companion, a Socratic tutor.\n\nCore principles:\n- Guide the student to the answer by asking questions, not giving it directly.\n- Keep responses brief, friendly, and encouraging.\n- Use emojis very sparingly.\n- If the student is struggling, provide a small hint.\n- Never do their homework for them.';
+
   return [
-    `You are the AralGo AI Study Companion, a Socratic tutor.`,
+    roleDesc,
     ``,
     `Student: ${ctx.displayName || 'a learner'}`,
     `Grade level: ${ctx.gradeBand.replace(/_/g, ' ')}`,
     `Subject: ${ctx.subject}${ctx.topic ? ` — Topic: ${ctx.topic}` : ''}`,
-    ``,
-    `Core principles:`,
-    `- Guide the student to the answer by asking questions, not giving it directly.`,
-    `- Keep responses brief, friendly, and encouraging.`,
-    `- Use emojis very sparingly.`,
-    `- If the student is struggling, provide a small hint.`,
-    `- Never do their homework for them.`,
     ``,
     `Adaptation:`,
     `- ${GRADE_BAND_INSTRUCTIONS[ctx.gradeBand]}`,
@@ -100,7 +101,7 @@ class TutorError extends Error {
   }
 }
 
-export async function streamTutorResponse(messages: UIMessage[], sessionId?: string) {
+export async function streamTutorResponse(messages: UIMessage[], sessionId?: string, mode?: TutorMode) {
   const supabase = await createClient();
 
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -155,6 +156,7 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
     subject: session.subject as StudySubject,
     languageMode: session.language_mode as LanguageMode,
     topic: session.topic,
+    mode: mode,
   };
 
   const result = await streamText({

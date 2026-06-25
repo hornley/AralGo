@@ -1,19 +1,12 @@
 .tutorContainer {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px); /* assuming padding from main */
-  background: white;
+  height: calc(100vh - 80px); /* 40px padding top + 40px padding bottom from mainContent */
+  background-color: var(--color-surface);
   border-radius: 24px;
   overflow: hidden;
   box-shadow: var(--shadow-cozy);
-  margin: -10px; /* Adjusting for main padding to fill more space if needed, but let's just make it fill the area */
-}
-
-/* Override container to look exactly like the screenshot */
-.tutorContainer {
   margin: 0;
-  height: 100%;
-  background-color: var(--color-surface);
   border: 1px solid var(--color-outline-variant);
 }
 
@@ -64,6 +57,10 @@
   border-radius: 50%;
 }
 
+.modeSelector {
+  position: relative;
+}
+
 .modePill {
   display: flex;
   align-items: center;
@@ -75,10 +72,67 @@
   font-size: 0.85rem;
   color: var(--color-on-surface-variant);
   font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .modePill span {
   font-size: 16px;
+  color: var(--color-primary);
+}
+
+.modePill:hover {
+  border-color: var(--color-primary);
+}
+
+.modePill .modeArrow {
+  color: var(--color-on-surface-variant);
+  font-size: 18px;
+  margin-left: 2px;
+}
+
+.modeMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 10;
+  min-width: 180px;
+  padding: 6px;
+  background: white;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 12px;
+  box-shadow: var(--shadow-cozy);
+}
+
+.modeMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-on-surface);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.modeMenuItem:hover {
+  background-color: var(--color-surface-container);
+}
+
+.modeMenuItem span {
+  color: var(--color-primary);
+  font-size: 18px;
+}
+
+.modeMenuItem .modeCheck {
+  margin-left: auto;
   color: var(--color-primary);
 }
 
@@ -130,6 +184,7 @@
   border-radius: 0 16px 16px 16px;
   font-size: 0.95rem;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .bubbleUser {
@@ -140,6 +195,26 @@
   border-radius: 16px 16px 0 16px;
   font-size: 0.95rem;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.messageText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.messageParagraph {
+  margin: 0;
+}
+
+.messageList {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.messageList li + li {
+  margin-top: 4px;
 }
 
 .bubbleError {
