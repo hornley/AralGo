@@ -1,5 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+export { formatGradeBand, formatSubject } from "@/lib/study/format";
 import type { StudySetupDraft } from "@/lib/study/study-setup";
 
 type GradeBand = StudySetupDraft["gradeBand"];
@@ -103,34 +104,4 @@ export async function getDashboardData(): Promise<DashboardData> {
     recentLessons: lessonsResult.data ?? [],
     subjects: subjectsResult.data ?? [],
   };
-}
-
-export function formatSubject(subject: DashboardData["latestSession"] extends { subject: infer T } ? T : string) {
-  switch (subject) {
-    case "mathematics":
-      return "Mathematics";
-    case "science":
-      return "Science";
-    case "english":
-      return "English";
-    case "filipino":
-      return "Filipino";
-    default:
-      return "General";
-  }
-}
-
-export function formatGradeBand(gradeBand: DashboardData["profile"] extends { grade_band: infer T } ? T : string) {
-  switch (gradeBand) {
-    case "elementary":
-      return "Elementary";
-    case "junior_high":
-      return "Junior High";
-    case "senior_high":
-      return "Senior High";
-    case "college_general":
-      return "College / General";
-    default:
-      return "Learner";
-  }
 }

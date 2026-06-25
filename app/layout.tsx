@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lexend, Quicksand } from "next/font/google";
 import "./globals.css";
 
@@ -40,7 +40,6 @@ export const metadata: Metadata = {
   },
   description: "AI study companion for Filipino learners.",
   manifest: "/manifest.json",
-  themeColor: "#456732",
   appleWebApp: {
     capable: true,
     title: "AralGo",
@@ -50,6 +49,10 @@ export const metadata: Metadata = {
     icon: "/icon.svg",
     apple: "/icon.svg",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#456732",
 };
 
 export default function RootLayout({

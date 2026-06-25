@@ -1,7 +1,28 @@
+'use client';
+
 import styles from './results.module.css';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function PracticeResultsPage() {
+function ResultsContent() {
+  const params = useSearchParams();
+
+  const rawScore = params.get('score');
+  const total = Number(params.get('total')) || 1;
+  const correct = Number(params.get('correct')) || 0;
+  const time = Number(params.get('time')) || 0;
+  const topic = params.get('topic') || 'your next topic';
+
+  const score = rawScore !== null ? Number(rawScore) : Math.round((correct / total) * 100);
+
+  const circumference = 251.2;
+  const offset = circumference * (1 - score / 100);
+
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+  const formattedTime = `${minutes}m ${seconds}s`;
+
   return (
     <div className={styles.resultsContainer}>
       <div className={styles.header}>
@@ -13,10 +34,15 @@ export default function PracticeResultsPage() {
         <div className={styles.scoreRingWrapper}>
           <svg className={styles.scoreRing} viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="40" className={styles.ringTrack} />
-            <circle cx="50" cy="50" r="40" className={styles.ringProgress} strokeDasharray="251.2" strokeDashoffset="37.68" />
+            <circle
+              cx="50" cy="50" r="40"
+              className={styles.ringProgress}
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+            />
           </svg>
           <div className={styles.scoreContent}>
-            <span className={styles.scoreValue}>85%</span>
+            <span className={styles.scoreValue}>{score}%</span>
             <span className={styles.scoreLabel}>SCORE</span>
           </div>
         </div>
@@ -25,12 +51,12 @@ export default function PracticeResultsPage() {
           <div className={styles.metricBox}>
             <span className="material-symbols-outlined">schedule</span>
             <div className={styles.metricLabel}>SPEED</div>
-            <div className={styles.metricValue}>2m 45s</div>
+            <div className={styles.metricValue}>{formattedTime}</div>
           </div>
           <div className={styles.metricBox}>
             <span className="material-symbols-outlined">check_circle</span>
             <div className={styles.metricLabel}>ACCURACY</div>
-            <div className={styles.metricValue}>17 / 20</div>
+            <div className={styles.metricValue}>{correct} / {total}</div>
           </div>
         </div>
 
@@ -49,7 +75,7 @@ export default function PracticeResultsPage() {
         </div>
         <div className={styles.upNextContent}>
           <div className={styles.upNextLabel}>UP NEXT</div>
-          <div className={styles.upNextTitle}>Try Derivative Rules next</div>
+          <div className={styles.upNextTitle}>Try {topic} next</div>
         </div>
         <span className="material-symbols-outlined">arrow_forward</span>
       </div>
@@ -65,5 +91,13 @@ export default function PracticeResultsPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function PracticeResultsPage() {
+  return (
+    <Suspense>
+      <ResultsContent />
+    </Suspense>
   );
 }

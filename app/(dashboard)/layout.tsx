@@ -1,5 +1,5 @@
-import Image from 'next/image';
-import { formatGradeBand, getDashboardData } from '@/lib/study/dashboard-data';
+import { getDashboardData } from '@/lib/study/dashboard-data';
+import DashboardProfile from './dashboard-profile';
 import SidebarNav from './sidebar-nav';
 import styles from './layout.module.css';
 
@@ -20,22 +20,17 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { profile, user } = await getDashboardData();
-  const displayName = profile?.display_name || 'AralGo Scholar';
-  const gradeLabel = profile ? formatGradeBand(profile.grade_band) : 'Guest learner';
 
   return (
     <div className={styles.layoutContainer}>
       {/* Sidebar */}
       <aside className={styles.sidebar}>
-        <div className={styles.profileSection}>
-          <div className={styles.avatarWrapper}>
-             <Image src="/images/avatar.png" alt="Avatar" width={80} height={80} className={styles.avatarImage} />
-          </div>
-          <h2 className={styles.userName}>{displayName}</h2>
-          <p className={styles.greeting}>
-            {getGreeting()}, {gradeLabel}! {user?.is_anonymous ? '🌱' : '✨'}
-          </p>
-        </div>
+        <DashboardProfile
+          initialDisplayName={profile?.display_name ?? null}
+          initialGradeBand={profile?.grade_band ?? null}
+          isAnonymous={Boolean(user?.is_anonymous)}
+          greeting={getGreeting()}
+        />
 
         <SidebarNav />
       </aside>
