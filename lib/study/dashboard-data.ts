@@ -5,6 +5,16 @@ import type { StudySetupDraft } from "@/lib/study/study-setup";
 
 type GradeBand = StudySetupDraft["gradeBand"];
 
+export type Session = {
+  id: string;
+  subject: "mathematics" | "science" | "english" | "filipino";
+  language_mode: "english" | "filipino" | "mixed";
+  topic: string | null;
+  status: "setup" | "active" | "completed" | "archived";
+  last_active_at: string;
+  started_at: string;
+};
+
 export type DashboardData = {
   user: User | null;
   error: string | null;
@@ -15,14 +25,7 @@ export type DashboardData = {
     preferred_language_mode: "english" | "filipino" | "mixed";
     preferred_subject: "mathematics" | "science" | "english" | "filipino" | null;
   } | null;
-  latestSession: {
-    id: string;
-    subject: "mathematics" | "science" | "english" | "filipino";
-    language_mode: "english" | "filipino" | "mixed";
-    topic: string | null;
-    status: "setup" | "active" | "completed" | "archived";
-    last_active_at: string;
-  } | null;
+  latestSession: Session | null;
   recentLessons: Array<{
     id: string;
     subject: "mathematics" | "science" | "english" | "filipino";
@@ -63,7 +66,7 @@ export async function getDashboardData(): Promise<DashboardData> {
       .maybeSingle(),
     supabase
       .from("study_sessions")
-      .select("id, subject, language_mode, topic, status, last_active_at")
+      .select("id, subject, language_mode, topic, status, last_active_at, started_at")
       .eq("user_id", user.id)
       .order("last_active_at", { ascending: false })
       .limit(1)
@@ -104,4 +107,28 @@ export async function getDashboardData(): Promise<DashboardData> {
     recentLessons: lessonsResult.data ?? [],
     subjects: subjectsResult.data ?? [],
   };
+}
+
+export async function getSessionHistory(): Promise<Session[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("study_sessions")
+    .select("id, subject, language_mode, topic, status, last_active_at, started_at")
+    .eq("user_id", user.id)
+    .order("last_active_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to fetch session history:", error);
+    return [];
+  }
+
+  return data ?? [];
 }
