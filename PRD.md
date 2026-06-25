@@ -310,6 +310,7 @@ Recommended entities:
 
 - Use Next.js as the primary web application framework.
 - Use a modern Next.js stack suitable for mobile-first delivery.
+- Use Supabase as the primary backend platform for Postgres, authentication, storage, and row-level access control.
 - The application should support AI inference or API-backed generation for:
   - tutoring responses,
   - lesson generation,
@@ -321,6 +322,7 @@ Recommended entities:
   - grade level,
   - adaptation state.
 - Separate product logic from prompt configuration so subject and level behavior can be improved without rewriting the whole app.
+- Use server-side integration patterns that keep browser clients on publishable keys only and reserve privileged operations for trusted server code.
 - Log generation requests and key outcomes in a privacy-conscious way for quality improvement.
 - Add automated tests for:
   - adaptation logic,
