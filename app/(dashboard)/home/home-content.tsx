@@ -178,32 +178,38 @@ export default function HomeContent({ error, profile, latestSession }: HomeConte
       ) : null}
 
       <div className={styles.topRow}>
-        <div className={`${styles.card} ${styles.courseCard}`}>
-          <div className={styles.courseHeader}>
-            <span className={styles.courseTag}>{subjectLabel}</span>
-            <button className={styles.playButton} aria-label="Continue course">
-              <span className="material-symbols-outlined fill">play_arrow</span>
-            </button>
-          </div>
-          <h3 className={styles.courseTitle}>{courseTitle}</h3>
-          <p className={styles.courseSubtitle}>
-            {primaryTopic
-              ? `${gradeLabel} • ${primaryTopic.status} session`
-              : `${gradeLabel} • Start your first AI-guided session`}
-          </p>
+        {latestSession ? (
+          <div className={`${styles.card} ${styles.courseCard}`}>
+            <div className={styles.courseHeader}>
+              <span className={styles.courseTag}>{subjectLabel}</span>
+              <Link
+                href={`/tutor?sessionId=${latestSession.id}`}
+                className={styles.playButton}
+                aria-label="Continue course"
+              >
+                <span className="material-symbols-outlined fill">play_arrow</span>
+              </Link>
+            </div>
+            <h3 className={styles.courseTitle}>{courseTitle}</h3>
+            <p className={styles.courseSubtitle}>
+              {primaryTopic
+                ? `${gradeLabel} • ${primaryTopic.status} session`
+                : `${gradeLabel} • Start your first AI-guided session`}
+            </p>
 
-          <div className={styles.courseProgress}>
-            <div
-              className={styles.progressCircleSmall}
-              style={{ background: `conic-gradient(#4A6741 ${goalProgress}%, #EAF0E5 0)` }}
-            >
-              <span className={styles.progressValue}>{goalProgress}%</span>
-            </div>
-            <div className={styles.progressBar}>
-              <div className={styles.progressFill} style={{ width: `${goalProgress}%` }}></div>
+            <div className={styles.courseProgress}>
+              <div
+                className={styles.progressCircleSmall}
+                style={{ background: `conic-gradient(#4A6741 ${goalProgress}%, #EAF0E5 0)` }}
+              >
+                <span className={styles.progressValue}>{goalProgress}%</span>
+              </div>
+              <div className={styles.progressBar}>
+                <div className={styles.progressFill} style={{ width: `${goalProgress}%` }}></div>
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
 
         <div className={`${styles.card} ${styles.goalCard}`}>
           <h3 className={styles.goalTitle}>{goalTitle}</h3>
