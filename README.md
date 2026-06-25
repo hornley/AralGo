@@ -1,5 +1,5 @@
 # AralGo
-
+![home](HomePage.png)
 AralGo is a web-based AI study companion for Filipino learners, with Progressive Web App support planned for installability and resilient access. It is designed to provide bilingual academic support in Filipino, English, or mixed Filipino-English, with personalized tutoring, practice generation, and study flows that remain usable in low-bandwidth conditions.
 
 The project currently has a Next.js app scaffold, Supabase client/server utilities, initial learner and study routes, planning documents, and the first Supabase migration for guest learning data.
