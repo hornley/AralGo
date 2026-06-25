@@ -59,12 +59,14 @@
 - [x] `learner_profiles`
 - [x] `study_sessions`
 - [x] `tutor_messages`
-- [ ] `generated_lessons`
-- [ ] `practice_sets`
-- [ ] `practice_questions`
-- [ ] `practice_attempts`
-- [ ] `practice_responses`
-- [ ] `topic_performance`
+- [x] `generated_lessons`
+- [x] `practice_sets`
+- [x] `practice_questions`
+- [x] `practice_attempts`
+- [x] `practice_responses`
+- [x] `topic_performance`
+- [x] `subjects` (seed data: 4 subjects)
+- [x] `topics` (seed data: 48 topics across grade bands)
 - [x] Add RLS policies for learner-owned data.
 - [x] Add migration files for schema and policies.
 
