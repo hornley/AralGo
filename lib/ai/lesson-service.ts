@@ -1,4 +1,4 @@
-import { generateObject } from 'ai';
+import { generateObject, jsonSchema } from 'ai';
 import { aiModel } from './ai-client';
 import { buildLessonPrompt } from './prompts';
 import { GradeBand, StudySubject, LanguageMode, LearningStyle, LessonContent } from '@/lib/types/supabase';
@@ -19,7 +19,7 @@ export async function generateLesson(input: LessonInput): Promise<LessonContent>
   const result = await generateObject({
     model: aiModel,
     prompt,
-    schema: {
+    schema: jsonSchema<LessonContent>({
       type: 'object',
       properties: {
         overview: { type: 'string' },
@@ -59,7 +59,7 @@ export async function generateLesson(input: LessonInput): Promise<LessonContent>
         recap: { type: 'string' },
       },
       required: ['overview', 'keyTerms', 'workedExamples', 'commonMistakes', 'recap'],
-    },
+    }),
   });
 
   return result.object;

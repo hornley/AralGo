@@ -1,12 +1,14 @@
 import { createClient } from '@/lib/supabase/server';
 import LessonStudioWizard from '@/components/lesson-studio/LessonStudioWizard';
+import type { StudySubject } from '@/lib/types/supabase';
 
 export const metadata = {
   title: 'Lesson Studio - AralGo',
   description: 'Create AI-generated lessons and practice quizzes',
 };
 
-export default async function LessonStudioPage() {
+export default async function LessonStudioPage(props: { searchParams: Promise<{ subject?: string }> }) {
+  const { subject } = await props.searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
@@ -21,11 +23,17 @@ export default async function LessonStudioPage() {
     .from('subjects')
     .select('*')
     .order('sort_order');
+
+  const validSubjects = ['mathematics', 'science', 'english', 'filipino'] as const;
+  const initialSubject = subject && validSubjects.includes(subject as any)
+    ? (subject as StudySubject)
+    : undefined;
+
   return (
     <div className="lesson-studio-page">
       <LessonStudioWizard
         subjects={subjects || []}
-        initialSubject={undefined}
+        initialSubject={initialSubject}
         gradeBand={profile?.grade_band || 'junior_high'}
         languageMode={profile?.preferred_language_mode || 'mixed'}
       />

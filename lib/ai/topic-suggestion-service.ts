@@ -1,4 +1,4 @@
-import { generateObject } from 'ai';
+import { generateObject, jsonSchema } from 'ai';
 import { aiModel } from './ai-client';
 import { buildTopicSuggestionPrompt } from './prompts';
 import { GradeBand, StudySubject, LanguageMode } from '@/lib/types/supabase';
@@ -23,13 +23,13 @@ export async function suggestTopics(input: TopicSuggestionInput): Promise<TopicS
   const result = await generateObject({
     model: aiModel,
     prompt,
-    schema: {
+    schema: jsonSchema<TopicSuggestionResult>({
       type: 'object',
       properties: {
         topics: { type: 'array', items: { type: 'string' } },
       },
       required: ['topics'],
-    },
+    }),
   });
 
   return result.object;

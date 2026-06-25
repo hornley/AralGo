@@ -14,7 +14,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   
   const [step, setStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 5;
   
   const [language, setLanguage] = useState<string | null>(null);
   const [gradeLevel, setGradeLevel] = useState<string | null>(null);
@@ -24,59 +24,112 @@ export default function OnboardingPage() {
   const [isPending, startTransition] = useTransition();
 
   const handleNext = () => {
-    if (step < totalSteps) {
-      setStep(step + 1);
-    } else {
-      startTransition(async () => {
-        setStatusMessage('Saving your setup and creating a learner session...');
-        const supabase = createClient();
+    setStep(step + 1);
+  };
 
-        const draft = buildStudyDraft({
-          language,
-          gradeLevel,
-          subjects,
-        });
-        saveStudySetup(draft);
+  const handleCreateLesson = () => {
+    startTransition(async () => {
+      setStatusMessage('Saving your setup and creating a learner session...');
+      const supabase = createClient();
 
-        const {
-          data: { session },
-          error: sessionError,
-        } = await supabase.auth.getSession();
-
-        if (sessionError) {
-          setStatusMessage(sessionError.message);
-          return;
-        }
-
-        if (!session?.user) {
-          const { data, error } = await supabase.auth.signInAnonymously();
-
-          if (error) {
-            setStatusMessage(
-              'Anonymous sign-in failed. Enable Anonymous Sign-Ins in Supabase Auth to finish onboarding.',
-            );
-            return;
-          }
-
-          if (!data.user) {
-            setStatusMessage('Anonymous sign-in did not return a user session.');
-            return;
-          }
-        }
-
-        setStatusMessage('Saving your learner profile...');
-
-        const persistResult = await persistLearnerSession(supabase, draft);
-
-        if (!persistResult.ok) {
-          setStatusMessage(persistResult.message);
-          return;
-        }
-
-        setStatusMessage('Setup saved. Taking you to your dashboard...');
-        router.push('/home');
+      const draft = buildStudyDraft({
+        language,
+        gradeLevel,
+        subjects,
       });
-    }
+      saveStudySetup(draft);
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        setStatusMessage(sessionError.message);
+        return;
+      }
+
+      if (!session?.user) {
+        const { data, error } = await supabase.auth.signInAnonymously();
+
+        if (error) {
+          setStatusMessage(
+            'Anonymous sign-in failed. Enable Anonymous Sign-Ins in Supabase Auth to finish onboarding.',
+          );
+          return;
+        }
+
+        if (!data.user) {
+          setStatusMessage('Anonymous sign-in did not return a user session.');
+          return;
+        }
+      }
+
+      setStatusMessage('Saving your learner profile...');
+
+      const persistResult = await persistLearnerSession(supabase, draft);
+
+      if (!persistResult.ok) {
+        setStatusMessage(persistResult.message);
+        return;
+      }
+
+      const subjectSlug = mapSubject(subjects[0]);
+      setStatusMessage('Setup saved. Taking you to your first lesson...');
+      router.push(`/lesson-studio?subject=${subjectSlug}`);
+    });
+  };
+
+  const handleGoToDashboard = () => {
+    startTransition(async () => {
+      setStatusMessage('Saving your setup...');
+      const supabase = createClient();
+
+      const draft = buildStudyDraft({
+        language,
+        gradeLevel,
+        subjects,
+      });
+      saveStudySetup(draft);
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        setStatusMessage(sessionError.message);
+        return;
+      }
+
+      if (!session?.user) {
+        const { data, error } = await supabase.auth.signInAnonymously();
+
+        if (error) {
+          setStatusMessage(
+            'Anonymous sign-in failed. Enable Anonymous Sign-Ins in Supabase Auth to finish onboarding.',
+          );
+          return;
+        }
+
+        if (!data.user) {
+          setStatusMessage('Anonymous sign-in did not return a user session.');
+          return;
+        }
+      }
+
+      setStatusMessage('Saving your learner profile...');
+
+      const persistResult = await persistLearnerSession(supabase, draft);
+
+      if (!persistResult.ok) {
+        setStatusMessage(persistResult.message);
+        return;
+      }
+
+      setStatusMessage('Setup saved. Taking you to your dashboard...');
+      router.push('/home');
+    });
   };
 
   const handleBack = () => {
@@ -316,16 +369,77 @@ export default function OnboardingPage() {
             <footer className={styles.footer}>
               <div className={styles.buttonGroup}>
                 {goal ? (
-                  <button className={styles.nextButton} onClick={handleNext} disabled={isPending}>
-                    {t(language, 'common.finish')}
-                    <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>check</span>
+                  <button className={styles.nextButton} onClick={handleNext}>
+                    {t(language, 'common.next')}
+                    <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>arrow_forward</span>
                   </button>
                 ) : (
-                  <button className={styles.skipButton} onClick={handleNext} disabled={isPending}>
+                  <button className={styles.skipButton} onClick={handleNext}>
                     {t(language, 'common.skip')}
                   </button>
                 )}
-                {statusMessage ? <p className={styles.statusMessage}>{statusMessage}</p> : null}
+              </div>
+            </footer>
+          </>
+        );
+      case 5:
+        return (
+          <>
+            <header className={styles.header}>
+              <div className={styles.headerTop}>
+                <button className={styles.backButton} onClick={() => setStep(4)}>
+                  <span className="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div className={styles.spacer}></div>
+              </div>
+              <div className={styles.celebration}>
+                <span className={styles.celebrationIcon}>check_circle</span>
+                <h1 className={styles.title}>You&apos;re all set!</h1>
+                <p className={styles.subtitle}>Here&apos;s what you chose. Ready for your first lesson?</p>
+              </div>
+            </header>
+            <div className={styles.content}>
+              <div className={styles.summaryCards}>
+                <div className={styles.summaryCard}>
+                  <span className="material-symbols-outlined">chat</span>
+                  <div>
+                    <p className={styles.summaryLabel}>Language</p>
+                    <p className={styles.summaryValue}>{language || 'Mixed'}</p>
+                  </div>
+                </div>
+                <div className={styles.summaryCard}>
+                  <span className="material-symbols-outlined">school</span>
+                  <div>
+                    <p className={styles.summaryLabel}>Grade Level</p>
+                    <p className={styles.summaryValue}>{gradeLevel || 'Junior High'}</p>
+                  </div>
+                </div>
+                <div className={styles.summaryCard}>
+                  <span className="material-symbols-outlined">menu_book</span>
+                  <div>
+                    <p className={styles.summaryLabel}>Subjects</p>
+                    <p className={styles.summaryValue}>{subjects.join(', ')}</p>
+                  </div>
+                </div>
+                <div className={styles.summaryCard}>
+                  <span className="material-symbols-outlined">flag</span>
+                  <div>
+                    <p className={styles.summaryLabel}>Goal</p>
+                    <p className={styles.summaryValue}>{goal || 'Learn'}</p>
+                  </div>
+                </div>
+              </div>
+              {statusMessage ? <p className={styles.statusMessage}>{statusMessage}</p> : null}
+            </div>
+            <footer className={styles.footer}>
+              <div className={styles.buttonGroup}>
+                <button className={styles.primaryButton} onClick={handleCreateLesson} disabled={isPending}>
+                  <span className="material-symbols-outlined">auto_stories</span>
+                  Create your first lesson
+                </button>
+                <button className={styles.secondaryButton} onClick={handleGoToDashboard} disabled={isPending}>
+                  Go to Dashboard
+                </button>
               </div>
             </footer>
           </>

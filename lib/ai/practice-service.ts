@@ -1,4 +1,4 @@
-import { generateObject } from 'ai';
+import { generateObject, jsonSchema } from 'ai';
 import { aiModel } from './ai-client';
 import { buildPracticePrompt } from './prompts';
 import { GradeBand, StudySubject, LanguageMode, LearningStyle } from '@/lib/types/supabase';
@@ -35,7 +35,7 @@ export async function generatePractice(input: PracticeInput): Promise<PracticeRe
   const result = await generateObject({
     model: aiModel,
     prompt,
-    schema: {
+    schema: jsonSchema<PracticeResult>({
       type: 'object',
       properties: {
         questions: {
@@ -46,7 +46,7 @@ export async function generatePractice(input: PracticeInput): Promise<PracticeRe
               type: { type: 'string', enum: ['multiple_choice', 'short_answer', 'problem_solving'] },
               prompt: { type: 'string' },
               options: {
-                type: ['array', 'null'],
+                type: 'array',
                 items: {
                   type: 'object',
                   properties: { label: { type: 'string' }, text: { type: 'string' } },
@@ -54,16 +54,16 @@ export async function generatePractice(input: PracticeInput): Promise<PracticeRe
                 },
               },
               correctAnswer: { type: 'string' },
-              acceptableAnswers: { type: ['array', 'null'], items: { type: 'string' } },
+              acceptableAnswers: { type: 'array', items: { type: 'string' } },
               explanation: { type: 'string' },
-              commonMistake: { type: ['string', 'null'] },
+              commonMistake: { type: 'string' },
             },
             required: ['type', 'prompt', 'correctAnswer', 'explanation'],
           },
         },
       },
       required: ['questions'],
-    },
+    }),
   });
 
   return result.object;

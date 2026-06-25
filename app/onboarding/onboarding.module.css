@@ -202,3 +202,100 @@
   font-size: 14px;
   color: var(--color-secondary);
 }
+
+/* Step 5: Celebration & Summary */
+.celebration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.celebrationIcon {
+  font-size: 64px;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.summaryCards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summaryCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--color-surface-dim);
+  border: 1px solid var(--color-outline-variant);
+}
+
+.summaryLabel {
+  font-size: 12px;
+  color: var(--color-on-surface-variant);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summaryValue {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  margin: 2px 0 0;
+}
+
+.primaryButton {
+  width: 100%;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-lexend), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 16px 20px;
+  border-radius: 9999px;
+  border: none;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+}
+
+.primaryButton:active {
+  transform: scale(0.95);
+}
+
+.primaryButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  width: 100%;
+  background-color: transparent;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-lexend), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-outline-variant);
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+}
+
+.secondaryButton:active {
+  transform: scale(0.95);
+  background-color: var(--color-surface-dim);
+}
+
+.secondaryButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
