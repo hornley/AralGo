@@ -23,7 +23,7 @@
 - [x] Build subject selection UI and flow.
 - [x] Enable anonymous sign-ins.
 - [x] PWA support (manifest, service worker, offline page).
-- [ ] Build tutoring chat UI.
+- [x] Build tutoring chat UI (static prototype at `/tutor`).
 - [ ] Decide AI provider/model for tutoring and practice generation.
 
 ## Blocked / Waiting
@@ -84,7 +84,7 @@
 
 - [x] Build onboarding and learner profile setup.
 - [ ] Build subject selection.
-- [ ] Build tutoring chat UI.
+- [x] Build tutoring chat UI (static prototype at `/tutor`).
 - [ ] Persist chat sessions and study history.
 - [ ] Build practice generation flow.
 - [ ] Build practice answer feedback flow.
