@@ -31,7 +31,7 @@ export default function Home() {
 
         {/* Goal Card */}
         <div className={`${styles.card} ${styles.goalCard}`}>
-          <h3 className={styles.goalTitle}>Today's Goal</h3>
+          <h3 className={styles.goalTitle}>Today&apos;s Goal</h3>
           <div className={styles.goalCircle}>
             <div className={styles.goalContent}>
               <div className={styles.goalValue}>30</div>
