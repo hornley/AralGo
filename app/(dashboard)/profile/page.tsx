@@ -3,6 +3,13 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
+import {
+  goalMinutesFromGoal,
+  loadStudySetup,
+  mergeRecentTopics,
+  saveStudySetup,
+  type StudySetupDraft,
+} from '@/lib/study/study-setup';
 import styles from './profile.module.css';
 
 const displayToDbLanguage: Record<string, string> = {
@@ -61,6 +68,16 @@ export default function ProfilePage() {
   useEffect(() => {
     async function loadProfile() {
       setLoading(true);
+      const localSetup = loadStudySetup();
+
+      if (localSetup) {
+        setName(localSetup.displayName);
+        setLanguage(dbToDisplayLanguage[localSetup.languageMode]);
+        setGradeLevel(dbToDisplayGrade[localSetup.gradeBand]);
+        setSubjects([dbToDisplaySubject[localSetup.subject]]);
+        if (localSetup.goal) setGoal(localSetup.goal);
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setLoading(false);
@@ -80,6 +97,16 @@ export default function ProfilePage() {
         if (profile.preferred_language_mode) setLanguage(dbToDisplayLanguage[profile.preferred_language_mode] ?? 'English');
         if (profile.grade_band) setGradeLevel(dbToDisplayGrade[profile.grade_band] ?? 'Junior High');
         if (profile.preferred_subject) setSubjects([dbToDisplaySubject[profile.preferred_subject]]);
+        saveStudySetup({
+          displayName: profile.display_name ?? '',
+          languageMode: mapLanguageMode(profile.preferred_language_mode),
+          gradeBand: mapGradeBand(profile.grade_band),
+          subject: mapSubject(profile.preferred_subject),
+          topic: localSetup?.topic ?? '',
+          goal: localSetup?.goal ?? 'Review',
+          dailyGoalMinutes: localSetup?.dailyGoalMinutes ?? goalMinutesFromGoal(localSetup?.goal ?? 'Review'),
+          recentTopics: localSetup?.recentTopics ?? [],
+        });
       }
       setLoading(false);
     }
@@ -96,16 +123,30 @@ export default function ProfilePage() {
     setSaving(true);
     setFeedback(null);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setFeedback({ type: 'error', message: 'You must be logged in to save.' });
-      setSaving(false);
-      return;
-    }
-
+    const localSetup = loadStudySetup();
     const dbLanguage = displayToDbLanguage[language];
     const dbGrade = displayToDbGrade[gradeLevel];
     const dbSubject = subjects.length > 0 ? displayToDbSubject[subjects[0]] : null;
+    const savedGoal = mapGoal(goal);
+    const localDraft: StudySetupDraft = {
+      displayName: name,
+      languageMode: mapLanguageMode(dbLanguage),
+      gradeBand: mapGradeBand(dbGrade),
+      subject: mapSubject(dbSubject),
+      topic: localSetup?.topic ?? '',
+      goal: savedGoal,
+      dailyGoalMinutes: goalMinutesFromGoal(savedGoal),
+      recentTopics: mergeRecentTopics(localSetup?.recentTopics ?? [], null),
+    };
+
+    saveStudySetup(localDraft);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setFeedback({ type: 'success', message: 'Profile saved on this device.' });
+      setSaving(false);
+      return;
+    }
 
     const { error } = await supabase
       .from('learner_profiles')
@@ -294,4 +335,37 @@ export default function ProfilePage() {
 
     </div>
   );
+}
+
+function mapLanguageMode(value: string | undefined): StudySetupDraft['languageMode'] {
+  if (value === 'english' || value === 'filipino' || value === 'mixed') {
+    return value;
+  }
+  return 'mixed';
+}
+
+function mapGradeBand(value: string | undefined): StudySetupDraft['gradeBand'] {
+  if (
+    value === 'elementary' ||
+    value === 'junior_high' ||
+    value === 'senior_high' ||
+    value === 'college_general'
+  ) {
+    return value;
+  }
+  return 'junior_high';
+}
+
+function mapSubject(value: string | null): StudySetupDraft['subject'] {
+  if (value === 'mathematics' || value === 'science' || value === 'english' || value === 'filipino') {
+    return value;
+  }
+  return 'science';
+}
+
+function mapGoal(value: string | null): StudySetupDraft['goal'] {
+  if (value === 'Habol' || value === 'Review' || value === 'Learn') {
+    return value;
+  }
+  return null;
 }

@@ -49,6 +49,7 @@
 - [~] Create initial app routes for landing, study, chat, practice, and history.
   - `/` (landing), `/home` (study), `/tutor` (chat), `/practice`, `/practice/results`, `/profile`, `/onboarding`, `/offline` all exist.
   - `/history` route is missing (sidebar links to it but page is 404).
+  - `/settings` and `/help` are also linked from the sidebar but do not exist yet.
 - [x] Add a shared layout and mobile-first shell.
 
 ## Supabase Integration
@@ -93,6 +94,9 @@
 - [~] Build practice generation flow (UI complete, but generates hardcoded mock data — no AI backend).
 - [~] Build practice answer feedback flow (results page UI complete, but mock data only — no grading).
 - [x] Add language mode switching for Filipino, English, and mixed mode (onboarding step 1 + profile page).
+- [~] Build the `/home` dashboard from learner data.
+  - Course card, recent topics, and goal card now read from Supabase/session data plus offline local storage.
+  - Continue action, real history page, and richer progress tracking are not implemented yet.
 
 ## AI Layer
 
@@ -102,17 +106,24 @@
 - [ ] Define structured output contracts for tutoring responses.
 - [ ] Define structured output contracts for practice generation.
 - [ ] Add validation and fallback handling for malformed AI outputs.
-- [ ] Add prompt context wiring for subject, language mode, grade band, and performance signals (system prompt is currently static).
+- [~] Add prompt context wiring for subject, language mode, grade band, and performance signals.
+  - Subject, language mode, grade band, and topic are already wired into the tutor system prompt.
+  - Performance signals and richer learner context are not wired yet.
 
 ## Performance And Reliability
 
-- [ ] Add local caching for recent sessions and generated study items.
+- [~] Add local caching for recent sessions and generated study items.
+  - Learner setup, daily goal state, and recent topics now persist in browser local storage for offline-friendly dashboard rendering.
+  - Generated lessons, tutor transcripts, and practice artifacts are not cached locally yet.
 - [ ] Add degraded-network UI states and retry handling.
 - [ ] Reduce payload sizes for core study flows.
 - [ ] Test mobile-first usability on small screens.
 
 ## Testing
 
+- [~] Add baseline end-to-end smoke coverage.
+  - `e2e/smoke.mjs` exists and checks the main routes, PWA assets, and basic rendering.
+  - It is not wired into `package.json` scripts and does not cover behavior deeply.
 - [ ] Add tests for adaptation logic.
 - [ ] Add tests for language-mode behavior.
 - [ ] Add tests for practice rendering and grading flow.

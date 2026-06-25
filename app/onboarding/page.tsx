@@ -6,7 +6,12 @@ import { LeafProgress } from '@/components/LeafProgress';
 import { StationeryCard } from '@/components/StationeryCard';
 import { createClient } from '@/lib/supabase/client';
 import { persistLearnerSession } from '@/lib/study/learner-session';
-import { saveStudySetup, type StudySetupDraft } from '@/lib/study/study-setup';
+import {
+  createRecentStudyTopic,
+  goalMinutesFromGoal,
+  saveStudySetup,
+  type StudySetupDraft,
+} from '@/lib/study/study-setup';
 import styles from './onboarding.module.css';
 
 export default function OnboardingPage() {
@@ -34,6 +39,7 @@ export default function OnboardingPage() {
           language,
           gradeLevel,
           subjects,
+          goal,
         });
         saveStudySetup(draft);
 
@@ -350,12 +356,14 @@ function buildStudyDraft({
   language,
   gradeLevel,
   subjects,
+  goal,
 }: {
   language: string | null;
   gradeLevel: string | null;
   subjects: string[];
+  goal: string | null;
 }): StudySetupDraft {
-  return {
+  const draft: StudySetupDraft = {
     displayName: "",
     languageMode:
       language === "Filipino" ? "filipino" : language === "English" ? "english" : "mixed",
@@ -369,7 +377,26 @@ function buildStudyDraft({
           : "junior_high",
     subject: mapSubject(subjects[0]),
     topic: "",
+    goal: mapGoal(goal),
+    dailyGoalMinutes: goalMinutesFromGoal(mapGoal(goal)),
+    recentTopics: [],
   };
+
+  draft.recentTopics = [
+    createRecentStudyTopic(draft, {
+      status: "setup",
+    }),
+  ];
+
+  return draft;
+}
+
+function mapGoal(goal: string | null): StudySetupDraft["goal"] {
+  if (goal === "Habol" || goal === "Review" || goal === "Learn") {
+    return goal;
+  }
+
+  return null;
 }
 
 function mapSubject(subject?: string): StudySetupDraft["subject"] {
