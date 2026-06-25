@@ -15,12 +15,21 @@
 - [x] Verify the scaffold with `npm run typecheck`, `npm run lint`, and `npm run build`.
 - [x] Add hosted Supabase anonymous session setup using the `.env.local` project.
 - [x] Create the first Supabase migration file for learner profiles, study sessions, and tutor messages.
+- [x] Create `USER_FLOW.md` documenting all core user journeys.
 
 ## Current Focus
 
-- [ ] Enable anonymous sign-ins in the hosted Supabase project if they are not already enabled.
+- [x] Create user flow document (`USER_FLOW.md`) covering all core journeys.
+- [ ] Build subject selection UI and flow.
+- [ ] Build tutoring chat UI.
+- [ ] Decide AI provider/model for tutoring and practice generation.
+
+## Blocked / Waiting
+
+- [ ] Enable anonymous sign-ins in the hosted Supabase project.
 - [ ] Apply the initial migration to the hosted Supabase database.
 - [ ] Persist learner setup and session rows after the hosted tables are available.
+- [ ] Add placeholder handling for server-only Supabase secrets once provided.
 
 ## Product Decisions To Confirm
 
@@ -42,7 +51,6 @@
 - [x] Add `lib/supabase/server.ts`.
 - [x] Add `lib/supabase/proxy.ts`.
 - [x] Add SSR auth session refresh flow.
-- [ ] Add placeholder handling for server-only Supabase secrets once provided.
 - [x] Add hosted anonymous session setup on the study route.
 
 ## Database
