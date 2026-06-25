@@ -17,8 +17,22 @@ const quicksand = Quicksand({
 });
 
 export const metadata: Metadata = {
-  title: "AralGo",
+  title: {
+    default: "AralGo",
+    template: "%s — AralGo",
+  },
   description: "AI study companion for Filipino learners.",
+  manifest: "/manifest.json",
+  themeColor: "#456732",
+  appleWebApp: {
+    capable: true,
+    title: "AralGo",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -34,7 +48,20 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
+      </body>
     </html>
   );
 }

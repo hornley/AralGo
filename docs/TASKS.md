@@ -21,12 +21,14 @@
 
 - [x] Create user flow document (`USER_FLOW.md`) covering all core journeys.
 - [x] Build subject selection UI and flow.
+- [x] Enable anonymous sign-ins.
+- [x] PWA support (manifest, service worker, offline page).
 - [ ] Build tutoring chat UI.
 - [ ] Decide AI provider/model for tutoring and practice generation.
 
 ## Blocked / Waiting
 
-- [ ] Enable anonymous sign-ins in the hosted Supabase project.
+- [x] Enable anonymous sign-ins in the hosted Supabase project.
 - [x] Apply the initial migration to the hosted Supabase database.
 - [ ] Persist learner setup and session rows after the hosted tables are available.
 - [ ] Add placeholder handling for server-only Supabase secrets once provided.
@@ -69,6 +71,14 @@
 - [x] `topics` (seed data: 48 topics across grade bands)
 - [x] Add RLS policies for learner-owned data.
 - [x] Add migration files for schema and policies.
+
+## PWA
+
+- [x] Web app manifest with brand colors and icons.
+- [x] SVG app icon.
+- [x] Service worker with offline fallback and data caching.
+- [x] Offline fallback page.
+- [x] Service worker registration in root layout.
 
 ## MVP Features
 
