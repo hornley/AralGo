@@ -1,0 +1,397 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1200px;
+}
+
+.topRow {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr 1fr;
+  gap: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+/* Course Card */
+.courseCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.courseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.courseTag {
+  background-color: #EAF0E5;
+  color: #4A6741;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.playButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #4A6741;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(74, 103, 65, 0.3);
+}
+
+.courseTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #171D17;
+}
+
+.courseSubtitle {
+  font-size: 0.875rem;
+  color: #6C7063;
+  margin: 0 0 24px;
+}
+
+.courseProgress {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.progressCircleSmall {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(#4A6741 65%, #EAF0E5 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.progressCircleSmall::before {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+}
+
+.progressValue {
+  position: relative;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #171D17;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8px;
+  background-color: #EAF0E5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #4A6741;
+  width: 65%;
+  border-radius: 4px;
+}
+
+/* Goal Card */
+.goalCard {
+  background: linear-gradient(135deg, #F8F1EB 0%, #F5EAE0 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.goalCard::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255,160,122,0.2) 0%, rgba(255,160,122,0) 70%);
+}
+
+.goalTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  align-self: flex-start;
+  margin: 0 0 24px;
+}
+
+.goalCircle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(#8CBA80 50%, #E7E2DA 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.goalCircle::before {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: #F5EAE0;
+  border-radius: 50%;
+}
+
+.goalContent {
+  position: relative;
+  text-align: center;
+}
+
+.goalValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #171D17;
+  line-height: 1;
+}
+
+.goalTotal {
+  font-size: 0.875rem;
+  color: #6C7063;
+  margin-top: 4px;
+}
+
+.goalMessage {
+  background-color: rgba(255,255,255,0.5);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  color: #6C7063;
+  font-weight: 600;
+}
+
+/* Topics Card */
+.topicsCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.topicsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.topicsTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.viewAll {
+  color: #4A6741;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.topicsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.topicItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topicIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topicIcon[data-color="red"] {
+  background-color: #FCE8E8;
+  color: #D32F2F;
+}
+
+.topicIcon[data-color="brown"] {
+  background-color: #F5EAE0;
+  color: #7C5637;
+}
+
+.topicIcon[data-color="blue"] {
+  background-color: #E3F2FD;
+  color: #1976D2;
+}
+
+.topicInfo {
+  flex: 1;
+}
+
+.topicName {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: #171D17;
+}
+
+.topicStatus {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.topicStatus[data-status="warning"] {
+  color: #D32F2F;
+}
+
+.topicStatus[data-status="default"] {
+  color: #6C7063;
+}
+
+.topicArrow {
+  color: #C3C8BA;
+}
+
+/* Bottom Area */
+.bottomRow {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 32px;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.actionBtn {
+  background: white;
+  border-radius: 20px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  transition: transform 0.2s ease;
+}
+
+.actionBtn:hover {
+  transform: translateY(-2px);
+}
+
+.actionBtnIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.actionBtnIcon[data-color="green"] {
+  background-color: #EAF0E5;
+  color: #4A6741;
+}
+
+.actionBtnIcon[data-color="brown"] {
+  background-color: #F5EAE0;
+  color: #7C5637;
+}
+
+.actionBtnIcon[data-color="blue"] {
+  background-color: #E3F2FD;
+  color: #1976D2;
+}
+
+.actionBtnLabel {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #171D17;
+}
+
+.actionBtnDashed {
+  background: transparent;
+  border: 2px dashed #C3C8BA;
+  box-shadow: none;
+}
+
+.actionBtnDashed .actionBtnIcon {
+  background-color: transparent;
+  color: #6C7063;
+}
+
+/* Tip Card */
+.tipCard {
+  background-color: #EAF0E5;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  margin-top: 48px; /* align with the grid */
+}
+
+.tipIcon {
+  color: #4A6741;
+  font-size: 1.5rem;
+}
+
+.tipContent {
+  flex: 1;
+}
+
+.tipTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #171D17;
+  margin: 0 0 8px;
+}
+
+.tipText {
+  font-size: 0.875rem;
+  color: #43483E;
+  line-height: 1.5;
+  margin: 0;
+}
