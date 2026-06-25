@@ -1,15 +1,24 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, FormEvent } from 'react';
 import Image from 'next/image';
 import styles from './tutor.module.css';
 
 export default function TutorPage() {
-  const { messages, sendMessage, status, error } = useChat();
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('sessionId');
+
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new DefaultChatTransport({
+      body: { sessionId },
+    }),
+  });
   const [input, setInput] = useState('');
   const chatAreaRef = useRef<HTMLDivElement>(null);
-  
+
   const isLoading = status === 'submitted' || status === 'streaming';
 
   useEffect(() => {
@@ -96,10 +105,10 @@ export default function TutorPage() {
           <button type="button" className={styles.attachBtn}>
             <span className="material-symbols-outlined">attach_file</span>
           </button>
-          <input 
-            type="text" 
-            placeholder="Ask a question..." 
-            className={styles.chatInput} 
+          <input
+            type="text"
+            placeholder="Ask a question..."
+            className={styles.chatInput}
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
