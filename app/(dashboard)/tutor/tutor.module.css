@@ -142,6 +142,16 @@
   line-height: 1.5;
 }
 
+.bubbleError {
+  background-color: #fff1f1;
+  border: 1px solid #f3b7b7;
+  color: #8a1f1f;
+  padding: 16px;
+  border-radius: 0 16px 16px 16px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .timeLabel {
   font-size: 0.75rem;
   color: var(--color-on-surface-variant);
@@ -196,34 +206,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.quickActions {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-
-.quickActions::-webkit-scrollbar {
-  display: none;
-}
-
-.quickActionBtn {
-  background: white;
-  border: 1px solid var(--color-outline-variant);
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  color: var(--color-on-surface);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.quickActionBtn:hover {
-  background: var(--color-surface-container);
-  border-color: var(--color-primary);
 }
 
 .inputWrapper {

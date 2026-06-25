@@ -1,7 +1,30 @@
+'use client';
+
+import { useChat } from '@ai-sdk/react';
+import { useEffect, useRef, useState, FormEvent } from 'react';
 import Image from 'next/image';
 import styles from './tutor.module.css';
 
 export default function TutorPage() {
+  const { messages, sendMessage, status, error } = useChat();
+  const [input, setInput] = useState('');
+  const chatAreaRef = useRef<HTMLDivElement>(null);
+  
+  const isLoading = status === 'submitted' || status === 'streaming';
+
+  useEffect(() => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    sendMessage({ role: 'user', parts: [{ type: 'text', text: input }] });
+    setInput('');
+  };
+
   return (
     <div className={styles.tutorContainer}>
       <header className={styles.header}>
@@ -25,85 +48,68 @@ export default function TutorPage() {
         </div>
       </header>
 
-      <div className={styles.chatArea}>
+      <div className={styles.chatArea} ref={chatAreaRef}>
         <div className={styles.dateSeparator}>Today</div>
 
-        <div className={styles.messageRowAI}>
-          <div className={styles.avatarSmallWrapper}>
-            <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+        {messages.map((m, index) => (
+          <div key={m.id || `message-${index}`} className={m.role === 'user' ? styles.messageRowUser : styles.messageRowAI}>
+            {m.role !== 'user' && (
+              <div className={styles.avatarSmallWrapper}>
+                <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+              </div>
+            )}
+            <div className={m.role === 'user' ? styles.bubbleUser : styles.bubbleAI}>
+              {m.parts?.map((part: any, i: number) => (
+                <span key={i}>{part.type === 'text' ? part.text : ''}</span>
+              ))}
+            </div>
           </div>
-          <div className={styles.bubbleAI}>
-            Hi Juan! I&apos;m ready to help you with Math today. What should we look at first? ✨
-          </div>
-          <div className={styles.timeLabel}>10:41 AM</div>
-        </div>
+        ))}
 
-        <div className={styles.messageRowUser}>
-          <div className={styles.bubbleUser}>
-            Can you explain the Pythagorean theorem simpler?
+        {isLoading && (
+          <div className={styles.messageRowAI}>
+            <div className={styles.avatarSmallWrapper}>
+              <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+            </div>
+            <div className={styles.typingIndicator}>
+               <span className={styles.dot}></span>
+               <span className={styles.dot}></span>
+               <span className={styles.dot}></span>
+            </div>
           </div>
-          <div className={styles.timeLabel}>10:42 AM</div>
-        </div>
+        )}
 
-        <div className={styles.messageRowAI}>
-          <div className={styles.avatarSmallWrapper}>
-            <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+        {error && (
+          <div className={styles.messageRowAI}>
+            <div className={styles.avatarSmallWrapper}>
+              <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+            </div>
+            <div className={styles.bubbleError}>
+              {error.message || 'The tutor could not reply. Please try again.'}
+            </div>
           </div>
-          <div className={styles.bubbleAI}>
-            I&apos;d love to help you with that! Let&apos;s build it up together. Picture a triangle with one perfectly square corner (a right angle). Do you remember what we call the longest side of this kind of triangle?
-          </div>
-          <div className={styles.timeLabel}>10:43 AM</div>
-        </div>
-
-        <div className={styles.messageRowUser}>
-          <div className={styles.bubbleUser}>
-            I think it&apos;s called the hypotenuse?
-          </div>
-          <div className={styles.timeLabel}>10:44 AM</div>
-        </div>
-
-        <div className={styles.messageRowAI}>
-          <div className={styles.avatarSmallWrapper}>
-            <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
-          </div>
-          <div className={styles.bubbleAI}>
-            Spot on! The Pythagorean theorem is simply a rule that connects the lengths of the two shorter sides (let&apos;s call them a and b) to the length of that hypotenuse (c). If we square the two shorter sides and add them together (a² + b²), what do you think it might equal?
-          </div>
-          <div className={styles.timeLabel}>10:45 AM</div>
-        </div>
-        
-        <div className={styles.messageRowAI}>
-          <div className={styles.avatarSmallWrapper}>
-            <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
-          </div>
-          <div className={styles.typingIndicator}>
-             <span className={styles.dot}></span>
-             <span className={styles.dot}></span>
-             <span className={styles.dot}></span>
-          </div>
-        </div>
+        )}
       </div>
 
       <div className={styles.bottomArea}>
-        <div className={styles.quickActions}>
-          <button className={styles.quickActionBtn}>Explain Simpler</button>
-          <button className={styles.quickActionBtn}>Give Example</button>
-          <button className={styles.quickActionBtn}>Step by Step</button>
-          <button className={styles.quickActionBtn}>Practice Questions</button>
-        </div>
-        
-        <div className={styles.inputWrapper}>
-          <button className={styles.attachBtn}>
+        <form className={styles.inputWrapper} onSubmit={handleSubmit}>
+          <button type="button" className={styles.attachBtn}>
             <span className="material-symbols-outlined">attach_file</span>
           </button>
-          <input type="text" placeholder="Ask a question..." className={styles.chatInput} />
-          <button className={styles.micBtn}>
+          <input 
+            type="text" 
+            placeholder="Ask a question..." 
+            className={styles.chatInput} 
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <button type="button" className={styles.micBtn}>
             <span className="material-symbols-outlined">mic</span>
           </button>
-          <button className={styles.sendBtn}>
+          <button type="submit" className={styles.sendBtn} disabled={isLoading || !input.trim()}>
             <span className="material-symbols-outlined">arrow_upward</span>
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
