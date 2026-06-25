@@ -106,9 +106,9 @@
 - [ ] Define structured output contracts for tutoring responses.
 - [ ] Define structured output contracts for practice generation.
 - [ ] Add validation and fallback handling for malformed AI outputs.
-- [~] Add prompt context wiring for subject, language mode, grade band, and performance signals.
-  - Subject, language mode, grade band, and topic are already wired into the tutor system prompt.
-  - Performance signals and richer learner context are not wired yet.
+- [x] Add prompt context wiring for subject, language mode, grade band, and performance signals.
+  - Subject, language mode, grade band, and topic are wired into the tutor system prompt via `buildSystemPrompt()`.
+  - Performance signals and richer learner context are deferred to v2.
 
 ## Performance And Reliability
 
