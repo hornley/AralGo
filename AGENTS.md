@@ -63,3 +63,10 @@ Pull requests should include scope, affected files, setup or env changes, and sc
 - Do not commit server-only secrets.
 - Keep Supabase privileged keys out of client code.
 - Treat `.env.local` as local development configuration and review changes carefully before committing.
+
+## Supabase CLI vs MCP Quirks
+
+- The remote Supabase MCP server (`mcp.supabase.com`) returns permission errors for schema operations. Use `supabase db query "SQL" --linked` (after `supabase link`) as the working alternative.
+- `supabase db query` defaults to local Docker Postgres (port 54322). Always pass `--linked` for remote queries or it will fail with "connection refused" when local stack isn't running.
+- Use `--output json` with `supabase db query` for reliable programmatic results instead of parsing table output.
+- `SUPABASE_DATABASE_URL` hostname format `db.<project-ref>.supabase.co` does not resolve. Use the pooler endpoint (`<region>.pooler.supabase.com`) for direct psql connections.
