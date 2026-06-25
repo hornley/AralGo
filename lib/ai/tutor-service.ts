@@ -159,11 +159,63 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
     mode: mode,
   };
 
+  // Persist the latest user message and update session status
+  const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+  if (lastUserMsg) {
+    const { error: msgErr } = await supabase
+      .from('tutor_messages')
+      .insert({
+        study_session_id: resolvedSessionId,
+        user_id: user.id,
+        role: 'learner',
+        language_mode: session.language_mode,
+        content: extractTextFromUIMessage(lastUserMsg),
+      });
+
+    if (msgErr) {
+      throw new TutorError('Failed to save message', 500);
+    }
+
+    const { error: sessErr } = await supabase
+      .from('study_sessions')
+      .update({ status: 'active', last_active_at: new Date().toISOString() })
+      .eq('id', resolvedSessionId);
+
+    if (sessErr) {
+      console.error('Failed to update session status:', sessErr);
+    }
+  }
+
   const result = await streamText({
     model: tutorModel,
     system: buildSystemPrompt(context),
     messages: await convertToModelMessages(messages),
+    onFinish: async (event) => {
+      const { error: saveErr } = await supabase
+        .from('tutor_messages')
+        .insert({
+          study_session_id: resolvedSessionId,
+          user_id: user.id,
+          role: 'assistant',
+          language_mode: session.language_mode,
+          content: event.text,
+        });
+
+      if (saveErr) {
+        console.error('Failed to save AI message:', saveErr);
+      }
+    },
   });
 
   return result;
+}
+
+function extractTextFromUIMessage(msg: UIMessage): string {
+  if (msg.parts && msg.parts.length > 0) {
+    return msg.parts
+      .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+      .map(p => p.text)
+      .join('');
+  }
+  return '';
 }

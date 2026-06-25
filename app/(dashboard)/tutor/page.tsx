@@ -72,11 +72,21 @@ export default function TutorPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('sessionId');
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, setMessages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({
       body: { sessionId },
     }),
   });
+
+  useEffect(() => {
+    if (!sessionId) return;
+    fetch(`/api/chat/history?sessionId=${sessionId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.messages?.length) setMessages(data.messages);
+      })
+      .catch(err => console.error('Failed to load chat history:', err));
+  }, [sessionId, setMessages]);
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<TutorMode>('socratic');
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
