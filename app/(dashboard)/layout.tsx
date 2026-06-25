@@ -29,7 +29,7 @@ export default async function DashboardLayout({
       <aside className={styles.sidebar}>
         <div className={styles.profileSection}>
           <div className={styles.avatarWrapper}>
-             <Image src="/avatar.png" alt="Avatar" width={80} height={80} className={styles.avatarImage} />
+             <Image src="/images/avatar.png" alt="Avatar" width={80} height={80} className={styles.avatarImage} />
           </div>
           <h2 className={styles.userName}>{displayName}</h2>
           <p className={styles.greeting}>

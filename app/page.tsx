@@ -40,7 +40,7 @@ export default function HomePage() {
           </div>
           <div className={styles.heroImageWrapper}>
             <Image 
-              src="/hero.png" 
+              src="/images/hero.png" 
               alt="Student using AralGo" 
               width={600} 
               height={600} 
@@ -111,7 +111,7 @@ export default function HomePage() {
           <div className={styles.infoContent}>
             <div className={styles.infoImageWrapper}>
               <Image 
-                src="/teacher.png" 
+                src="/images/teacher.png" 
                 alt="Teacher thumbs up" 
                 width={500} 
                 height={500} 

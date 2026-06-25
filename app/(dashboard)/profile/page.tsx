@@ -36,7 +36,7 @@ export default function ProfilePage() {
       <section className={styles.section}>
         <div className={styles.profileHero}>
           <div className={styles.avatarWrapper}>
-            <Image src="/avatar.png" alt="Profile avatar" width={100} height={100} className={styles.avatarImage} />
+            <Image src="/images/avatar.png" alt="Profile avatar" width={100} height={100} className={styles.avatarImage} />
             <div className={styles.avatarEditBtn}>Edit</div>
           </div>
           <div className={styles.profileInfo}>

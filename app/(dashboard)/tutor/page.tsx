@@ -30,7 +30,7 @@ export default function TutorPage() {
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.avatarWrapper}>
-            <Image src="/avatar.png" alt="Tutor Avatar" width={40} height={40} className={styles.avatarImage} />
+            <Image src="/images/avatar.png" alt="Tutor Avatar" width={40} height={40} className={styles.avatarImage} />
           </div>
           <div>
             <h1 className={styles.title}>AralGo Tutor</h1>
@@ -55,7 +55,7 @@ export default function TutorPage() {
           <div key={m.id || `message-${index}`} className={m.role === 'user' ? styles.messageRowUser : styles.messageRowAI}>
             {m.role !== 'user' && (
               <div className={styles.avatarSmallWrapper}>
-                <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+                <Image src="/images/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
               </div>
             )}
             <div className={m.role === 'user' ? styles.bubbleUser : styles.bubbleAI}>
@@ -69,7 +69,7 @@ export default function TutorPage() {
         {isLoading && (
           <div className={styles.messageRowAI}>
             <div className={styles.avatarSmallWrapper}>
-              <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+              <Image src="/images/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
             </div>
             <div className={styles.typingIndicator}>
                <span className={styles.dot}></span>
@@ -82,7 +82,7 @@ export default function TutorPage() {
         {error && (
           <div className={styles.messageRowAI}>
             <div className={styles.avatarSmallWrapper}>
-              <Image src="/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+              <Image src="/images/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
             </div>
             <div className={styles.bubbleError}>
               {error.message || 'The tutor could not reply. Please try again.'}
