@@ -7,6 +7,7 @@ import { StationeryCard } from '@/components/StationeryCard';
 import { createClient } from '@/lib/supabase/client';
 import { persistLearnerSession } from '@/lib/study/learner-session';
 import { saveStudySetup, type StudySetupDraft } from '@/lib/study/study-setup';
+import { t } from '@/lib/i18n';
 import styles from './onboarding.module.css';
 
 export default function OnboardingPage() {
@@ -156,34 +157,34 @@ export default function OnboardingPage() {
                 <LeafProgress currentStep={2} totalSteps={totalSteps} />
                 <div className={styles.spacer}></div>
               </div>
-              <h1 className={styles.title}>What&apos;s your grade level?</h1>
-              <p className={styles.subtitle}>This helps us tailor your study plan.</p>
+              <h1 className={styles.title}>{t(language, 'grade.title')}</h1>
+              <p className={styles.subtitle}>{t(language, 'grade.subtitle')}</p>
             </header>
             <div className={styles.content}>
               <div className={styles.grid}>
                 <StationeryCard
-                  title="Elementary (Grades 1–6)"
+                  title={t(language, 'grade.elementary')}
                   icon="child_care"
                   colorTheme="tertiary"
                   selected={gradeLevel === 'Elementary'}
                   onClick={() => setGradeLevel('Elementary')}
                 />
                 <StationeryCard
-                  title="Junior High (Grades 7–10)"
+                  title={t(language, 'grade.junior')}
                   icon="school"
                   colorTheme="primary"
                   selected={gradeLevel === 'Junior High'}
                   onClick={() => setGradeLevel('Junior High')}
                 />
                 <StationeryCard
-                  title="Senior High (Grades 11–12)"
+                  title={t(language, 'grade.senior')}
                   icon="local_library"
                   colorTheme="secondary"
                   selected={gradeLevel === 'Senior High'}
                   onClick={() => setGradeLevel('Senior High')}
                 />
                 <StationeryCard
-                  title="College / General"
+                  title={t(language, 'grade.college')}
                   icon="menu_book"
                   colorTheme="surface-dim"
                   selected={gradeLevel === 'College'}
@@ -195,7 +196,7 @@ export default function OnboardingPage() {
               <div className={styles.stickyNote}>
                 <span className={`material-symbols-outlined ${styles.stickyNoteIcon}`}>lightbulb</span>
                 <p className={styles.stickyNoteText}>
-                  You can always change this later in your settings!
+                  {t(language, 'grade.sticky')}
                 </p>
               </div>
               <button 
@@ -203,7 +204,7 @@ export default function OnboardingPage() {
                 onClick={handleNext}
                 disabled={!gradeLevel}
               >
-                Next
+                {t(language, 'common.next')}
                 <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>arrow_forward</span>
               </button>
             </footer>
@@ -220,8 +221,8 @@ export default function OnboardingPage() {
                 <LeafProgress currentStep={3} totalSteps={totalSteps} />
                 <div className={styles.spacer}></div>
               </div>
-              <h1 className={styles.title}>Pick at least one subject</h1>
-              <p className={styles.subtitle}>You can choose multiple subjects.</p>
+              <h1 className={styles.title}>{t(language, 'subject.title')}</h1>
+              <p className={styles.subtitle}>{t(language, 'subject.subtitle')}</p>
             </header>
             <div className={styles.content}>
               <div className={styles.grid}>
@@ -259,7 +260,7 @@ export default function OnboardingPage() {
               <div className={styles.stickyNote}>
                 <span className={`material-symbols-outlined ${styles.stickyNoteIcon}`}>lightbulb</span>
                 <p className={styles.stickyNoteText}>
-                  Maaaring magdagdag pa mamaya / Can add more later
+                  {t(language, 'subject.sticky')}
                 </p>
               </div>
               <button 
@@ -267,7 +268,7 @@ export default function OnboardingPage() {
                 onClick={handleNext}
                 disabled={subjects.length === 0}
               >
-                Next
+                {t(language, 'common.next')}
                 <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>arrow_forward</span>
               </button>
             </footer>
@@ -284,27 +285,27 @@ export default function OnboardingPage() {
                 <LeafProgress currentStep={4} totalSteps={totalSteps} />
                 <div className={styles.spacer}></div>
               </div>
-              <h1 className={styles.title}>What are your study goals?</h1>
-              <p className={styles.subtitle}>Feel free to skip or choose one.</p>
+              <h1 className={styles.title}>{t(language, 'goal.title')}</h1>
+              <p className={styles.subtitle}>{t(language, 'goal.subtitle')}</p>
             </header>
             <div className={styles.content}>
               <div className={styles.grid}>
                 <StationeryCard
-                  title="Habol sa klase"
+                  title={t(language, 'goal.catchup')}
                   icon="directions_run"
                   colorTheme="primary"
                   selected={goal === 'Habol'}
                   onClick={() => setGoal('Habol')}
                 />
                 <StationeryCard
-                  title="Nagre-review para sa exam"
+                  title={t(language, 'goal.review')}
                   icon="fact_check"
                   colorTheme="tertiary"
                   selected={goal === 'Review'}
                   onClick={() => setGoal('Review')}
                 />
                 <StationeryCard
-                  title="Gusto ko lang matuto"
+                  title={t(language, 'goal.learn')}
                   icon="lightbulb"
                   colorTheme="secondary"
                   selected={goal === 'Learn'}
@@ -316,12 +317,12 @@ export default function OnboardingPage() {
               <div className={styles.buttonGroup}>
                 {goal ? (
                   <button className={styles.nextButton} onClick={handleNext} disabled={isPending}>
-                    Finish
+                    {t(language, 'common.finish')}
                     <span className={`material-symbols-outlined ${styles.nextButtonIcon}`}>check</span>
                   </button>
                 ) : (
                   <button className={styles.skipButton} onClick={handleNext} disabled={isPending}>
-                    Skip for now
+                    {t(language, 'common.skip')}
                   </button>
                 )}
                 {statusMessage ? <p className={styles.statusMessage}>{statusMessage}</p> : null}
