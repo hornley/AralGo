@@ -4,13 +4,13 @@
 
 This repository is currently planning-first. The main artifacts are:
 
-- `PRD.md`: product requirements for AralGo.
-- `architecture.md`: implementation architecture for Next.js, Supabase, and AI services.
-- `TASKS.md`: working checklist and progress tracker.
+- `docs/PRD.md`: product requirements for AralGo.
+- `docs/architecture.md`: implementation architecture for Next.js, Supabase, and AI services.
+- `docs/TASKS.md`: working checklist and progress tracker.
 - `.agents/`: project-local skill files used by the agent workflow.
 - `.env.local`: local environment values for development.
 
-When the app scaffold is added, keep runtime code under `app/`, shared UI in `components/`, and backend helpers in `lib/` as described in `architecture.md`.
+When the app scaffold is added, keep runtime code under `app/`, shared UI in `components/`, and backend helpers in `lib/` as described in `docs/architecture.md`.
 
 ## Build, Test, and Development Commands
 
