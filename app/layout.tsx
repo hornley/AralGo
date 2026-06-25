@@ -2,6 +2,23 @@ import type { Metadata } from "next";
 import { Lexend, Quicksand } from "next/font/google";
 import "./globals.css";
 
+const serviceWorkerScript =
+  process.env.NODE_ENV === "production"
+    ? `
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    `
+    : `
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          registrations.forEach((registration) => registration.unregister());
+        });
+      }
+    `;
+
 const lexend = Lexend({
   subsets: ["latin"],
   weight: ["500", "600"],
@@ -52,13 +69,7 @@ export default function RootLayout({
         {children}
         <script
           dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js');
-                });
-              }
-            `,
+            __html: serviceWorkerScript,
           }}
         />
       </body>
