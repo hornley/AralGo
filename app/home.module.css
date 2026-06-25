@@ -12,6 +12,104 @@
   padding: 0 24px;
 }
 
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: rgba(250, 246, 239, 0.72);
+  backdrop-filter: blur(18px);
+}
+
+.topbarInner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #22351F;
+  font-size: 1.08rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.brandMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.95) 0 18%, transparent 19%),
+    linear-gradient(135deg, #9BCB8F 0%, #4A6741 100%);
+  color: #172812;
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  box-shadow: 0 8px 18px rgba(74, 103, 65, 0.22);
+}
+
+.brandMark span {
+  font-size: 20px;
+  font-variation-settings: "FILL" 1, "wght" 700;
+}
+
+.brandText {
+  color: #22351F;
+  letter-spacing: 0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.topnav {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid rgba(74, 103, 65, 0.1);
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 10px 30px rgba(74, 103, 65, 0.08);
+  transform: translateX(-50%);
+}
+
+.topnavLink {
+  color: #4F5A49;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.topnavLink:hover {
+  background-color: #EAF0E5;
+  color: #4A6741;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .topbarInner {
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    min-height: 82px;
+  }
+
+  .topnav {
+    position: static;
+    transform: none;
+  }
+}
+
 /* Hero Section */
 .hero {
   display: grid;

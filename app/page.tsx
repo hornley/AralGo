@@ -1,10 +1,22 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { LandingNav } from './landing-nav';
 import styles from './home.module.css';
 
 export default function HomePage() {
   return (
     <main className={styles.main}>
+      <header className={styles.topbar}>
+        <div className={styles.topbarInner}>
+          <Link href="/" className={styles.brand}>
+            <span className={styles.brandMark} aria-hidden="true">
+              <span className="material-symbols-outlined">school</span>
+            </span>
+            <span className={styles.brandText}>AralGo Scholar</span>
+          </Link>
+          <LandingNav />
+        </div>
+      </header>
       
       {/* Hero Section */}
       <section className={styles.container}>
@@ -40,7 +52,7 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section className={styles.servicesSection}>
+      <section id="services" className={styles.servicesSection}>
         <div className={styles.container}>
           <div className={styles.servicesHeader}>
             <div className={styles.servicesTag}>
@@ -94,7 +106,7 @@ export default function HomePage() {
       </section>
 
       {/* Info Section */}
-      <section className={styles.infoSection}>
+      <section id="about" className={styles.infoSection}>
         <div className={styles.container}>
           <div className={styles.infoContent}>
             <div className={styles.infoImageWrapper}>
