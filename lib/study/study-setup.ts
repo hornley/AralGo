@@ -1,6 +1,6 @@
 export type StudySetupDraft = {
   displayName: string;
-  gradeBand: "elementary" | "junior_high" | "senior_high";
+  gradeBand: "elementary" | "junior_high" | "senior_high" | "college_general";
   languageMode: "english" | "filipino" | "mixed";
   subject: "mathematics" | "science" | "english" | "filipino";
   topic: string;

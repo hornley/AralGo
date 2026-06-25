@@ -364,6 +364,8 @@ function buildStudyDraft({
         ? "elementary"
         : gradeLevel === "Senior High"
           ? "senior_high"
+          : gradeLevel === "College"
+            ? "college_general"
           : "junior_high",
     subject: mapSubject(subjects[0]),
     topic: "",

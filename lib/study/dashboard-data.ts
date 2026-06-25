@@ -1,5 +1,8 @@
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import type { StudySetupDraft } from "@/lib/study/study-setup";
+
+type GradeBand = StudySetupDraft["gradeBand"];
 
 export type DashboardData = {
   user: User | null;
@@ -7,7 +10,7 @@ export type DashboardData = {
   profile: {
     id: string;
     display_name: string | null;
-    grade_band: "elementary" | "junior_high" | "senior_high";
+    grade_band: GradeBand;
     preferred_language_mode: "english" | "filipino" | "mixed";
     preferred_subject: "mathematics" | "science" | "english" | "filipino" | null;
   } | null;
@@ -96,6 +99,8 @@ export function formatGradeBand(gradeBand: DashboardData["profile"] extends { gr
       return "Junior High";
     case "senior_high":
       return "Senior High";
+    case "college_general":
+      return "College / General";
     default:
       return "Learner";
   }
