@@ -22,6 +22,19 @@ export type DashboardData = {
     status: "setup" | "active" | "completed" | "archived";
     last_active_at: string;
   } | null;
+  recentLessons: Array<{
+    id: string;
+    subject: "mathematics" | "science" | "english" | "filipino";
+    topic: string;
+    topics: string[] | null;
+    created_at: string;
+  }>;
+  subjects: Array<{
+    id: number;
+    name: "mathematics" | "science" | "english" | "filipino";
+    display_name: string;
+    icon: string;
+  }>;
 };
 
 export async function getDashboardData(): Promise<DashboardData> {
@@ -36,10 +49,12 @@ export async function getDashboardData(): Promise<DashboardData> {
       error: null,
       profile: null,
       latestSession: null,
+      recentLessons: [],
+      subjects: [],
     };
   }
 
-  const [profileResult, latestSessionResult] = await Promise.all([
+  const [profileResult, latestSessionResult, lessonsResult, subjectsResult] = await Promise.all([
     supabase
       .from("learner_profiles")
       .select("id, display_name, grade_band, preferred_language_mode, preferred_subject")
@@ -52,6 +67,16 @@ export async function getDashboardData(): Promise<DashboardData> {
       .order("last_active_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    supabase
+      .from("generated_lessons")
+      .select("id, subject, topic, topics, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(3),
+    supabase
+      .from("subjects")
+      .select("*")
+      .order("sort_order"),
   ]);
 
   if (profileResult.error || latestSessionResult.error) {
@@ -65,6 +90,8 @@ export async function getDashboardData(): Promise<DashboardData> {
       error: "We could not load your latest study data yet.",
       profile: null,
       latestSession: null,
+      recentLessons: [],
+      subjects: [],
     };
   }
 
@@ -73,6 +100,8 @@ export async function getDashboardData(): Promise<DashboardData> {
     error: null,
     profile: profileResult.data ?? null,
     latestSession: latestSessionResult.data ?? null,
+    recentLessons: lessonsResult.data ?? [],
+    subjects: subjectsResult.data ?? [],
   };
 }
 

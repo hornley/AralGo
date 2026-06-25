@@ -18,7 +18,7 @@ function getGoalProgress(latestSessionExists: boolean) {
 }
 
 export default async function Home() {
-  const { error, profile, latestSession } = await getDashboardData();
+  const { error, profile, latestSession, recentLessons } = await getDashboardData();
   const subjectLabel = formatSubject(latestSession?.subject ?? profile?.preferred_subject ?? "science");
   const courseTitle = getSessionLabel(latestSession?.topic ?? null, subjectLabel);
   const gradeLabel = profile ? formatGradeBand(profile.grade_band) : "Guest learner";
@@ -144,6 +144,12 @@ export default async function Home() {
               </div>
               <span className={styles.actionBtnLabel}>Scan<br/>Homework</span>
             </button>
+            <Link href="/lesson-studio" className={styles.actionBtn}>
+              <div className={styles.actionBtnIcon} data-color="green">
+                <span className="material-symbols-outlined">auto_stories</span>
+              </div>
+              <span className={styles.actionBtnLabel}>Create<br/>Lesson</span>
+            </Link>
             <button className={styles.actionBtn}>
               <div className={styles.actionBtnIcon} data-color="brown">
                 <span className="material-symbols-outlined">smart_toy</span>

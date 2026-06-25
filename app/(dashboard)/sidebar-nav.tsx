@@ -8,6 +8,7 @@ const primaryLinks = [
   { href: '/home', icon: 'home', label: 'Home', fill: true },
   { href: '/tutor', icon: 'smart_toy', label: 'Tutor' },
   { href: '/practice', icon: 'fitness_center', label: 'Practice' },
+  { href: '/lesson-studio', icon: 'auto_stories', label: 'Lesson Studio' },
   { href: '/history', icon: 'history', label: 'History' },
   { href: '/profile', icon: 'person', label: 'Profile' },
 ];
