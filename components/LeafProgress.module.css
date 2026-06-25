@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  color: var(--color-primary);
+  font-size: 24px;
+}
+
+.track {
+  width: 128px;
+  height: 8px;
+  background-color: var(--color-surface-variant);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 9999px;
+  transition: width 0.5s ease-in-out;
+}
+
+.text {
+  font-family: var(--font-lexend), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.02em;
+}

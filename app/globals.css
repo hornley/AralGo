@@ -9,6 +9,31 @@
   --accent-2: #f59e0b;
   --border: rgba(23, 33, 43, 0.12);
   --shadow: 0 24px 60px rgba(23, 33, 43, 0.08);
+
+  /* New Theme Variables (from THEME.html) */
+  --color-primary: #456732;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #8bb174;
+  --color-on-primary-container: #234313;
+  --color-surface: #f6fbf1;
+  --color-on-surface: #171d17;
+  --color-surface-variant: #dfe4da;
+  --color-outline-variant: #c3c8ba;
+  --color-tertiary: #7c5637;
+  --color-tertiary-container: #cc9d79;
+  --color-on-tertiary-container: #553418;
+  --color-secondary: #615e58;
+  --color-secondary-container: #e7e2da;
+  --color-on-secondary-container: #67645e;
+  --color-surface-dim: #d6dcd2;
+  --color-on-surface-variant: #43483e;
+  --color-surface-container-low: #f0f5eb;
+  --color-surface-container: #eaf0e5;
+  --color-warning-container: #fef08a; /* Yellow sticky note */
+  
+  --shadow-cozy: 0 4px 20px rgba(69, 103, 50, 0.06);
+  --shadow-cozy-active: 0 2px 10px rgba(69, 103, 50, 0.04);
+  --shadow-cozy-selected: 0 4px 20px rgba(69, 103, 50, 0.1);
 }
 
 * {
@@ -24,8 +49,32 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  color: var(--text);
-  font-family: Georgia, "Times New Roman", serif;
+  color: var(--color-on-surface);
+  font-family: var(--font-quicksand), "Georgia", "Times New Roman", serif;
+  background-color: #FFF9F1;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-lexend), sans-serif;
+}
+
+/* Material Symbols Adjustments */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-outlined.fill {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
 a {

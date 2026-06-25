@@ -1,0 +1,312 @@
+.main {
+  width: 100%;
+  overflow-x: hidden;
+  background-color: var(--color-surface);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Hero Section */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: center;
+  padding: 80px 0 120px;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr 1fr;
+    padding: 120px 0 160px;
+  }
+}
+
+.heroContent {
+  max-width: 540px;
+}
+
+.heroTitle {
+  font-size: 48px;
+  line-height: 1.1;
+  color: var(--color-on-surface);
+  margin-bottom: 24px;
+  font-family: var(--font-lexend), sans-serif;
+}
+
+@media (min-width: 768px) {
+  .heroTitle {
+    font-size: 64px;
+  }
+}
+
+.heroTitleHighlight {
+  color: var(--color-primary);
+}
+
+.heroSubtitle {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--color-secondary);
+  margin-bottom: 40px;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.buttonPrimary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  padding: 16px 32px;
+  border-radius: 9999px;
+  font-family: var(--font-lexend), sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonPrimary:hover {
+  background-color: var(--color-on-primary-fixed-variant);
+  transform: translateY(-2px);
+}
+
+.buttonOutline {
+  background-color: transparent;
+  color: var(--color-primary);
+  padding: 16px 32px;
+  border-radius: 9999px;
+  font-family: var(--font-lexend), sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  border: 2px solid var(--color-primary-container);
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonOutline:hover {
+  background-color: var(--color-surface-container-low);
+  transform: translateY(-2px);
+}
+
+.heroImageWrapper {
+  position: relative;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: var(--shadow-cozy-selected);
+  background-color: var(--color-tertiary-container);
+}
+
+.heroImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 32px;
+}
+
+/* Services / Features Section */
+.servicesSection {
+  padding: 80px 0;
+  background-color: #ffffff; /* pure white contrast */
+}
+
+.servicesHeader {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.servicesTag {
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-family: var(--font-lexend), sans-serif;
+}
+
+.servicesTagIcon {
+  font-size: 16px;
+}
+
+.servicesTitle {
+  font-size: 36px;
+  color: var(--color-on-surface);
+  font-family: var(--font-lexend), sans-serif;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+@media (min-width: 768px) {
+  .servicesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.serviceCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: transparent;
+  border-radius: 16px;
+  padding: 24px;
+  transition: background-color 0.2s;
+}
+
+.serviceCard:hover {
+  background-color: var(--color-surface-container-lowest);
+  box-shadow: var(--shadow-cozy);
+}
+
+.serviceIconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.serviceIconWrapper[data-color="primary"] { background-color: var(--color-primary-container); color: var(--color-on-primary-container); }
+.serviceIconWrapper[data-color="tertiary"] { background-color: var(--color-tertiary-container); color: var(--color-on-tertiary-container); }
+.serviceIconWrapper[data-color="secondary"] { background-color: var(--color-secondary-container); color: var(--color-on-secondary-container); }
+
+.serviceIcon {
+  font-size: 32px;
+}
+
+.serviceTitle {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: var(--color-on-surface);
+  font-family: var(--font-lexend), sans-serif;
+}
+
+.serviceDesc {
+  color: var(--color-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+
+.serviceLink {
+  color: var(--color-primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-lexend), sans-serif;
+  text-decoration: none;
+}
+
+.serviceLink:hover {
+  text-decoration: underline;
+}
+
+.serviceLinkIcon {
+  font-size: 18px;
+}
+
+/* Info Section */
+.infoSection {
+  padding: 120px 0;
+  background-color: var(--color-surface-container-low);
+  overflow: hidden;
+  position: relative;
+}
+
+.infoContent {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .infoContent {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.infoImageWrapper {
+  position: relative;
+  border-radius: 50% 50% 16px 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-cozy-selected);
+  background-color: var(--color-secondary-container);
+}
+
+.infoImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.infoTextContainer {
+  max-width: 500px;
+}
+
+.infoTitle {
+  font-size: 36px;
+  line-height: 1.2;
+  color: var(--color-on-surface);
+  margin-bottom: 24px;
+  font-family: var(--font-lexend), sans-serif;
+}
+
+.infoTitleHighlight {
+  color: var(--color-tertiary);
+}
+
+.infoDesc {
+  font-size: 18px;
+  color: var(--color-secondary);
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.buttonTertiary {
+  background-color: var(--color-tertiary);
+  color: var(--color-on-tertiary);
+  padding: 16px 32px;
+  border-radius: 9999px;
+  font-family: var(--font-lexend), sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+}
+
+.buttonTertiary:hover {
+  transform: translateY(-2px);
+}

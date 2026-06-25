@@ -1,0 +1,68 @@
+.card {
+  background-color: var(--color-on-primary);
+  box-shadow: var(--shadow-cozy);
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  width: 100%;
+}
+
+.card:hover, .card:focus-visible {
+  box-shadow: var(--shadow-cozy-active);
+  transform: translateY(2px);
+}
+
+.cardSelected {
+  background-color: var(--color-surface-container-low);
+  box-shadow: var(--shadow-cozy-selected);
+  border-color: var(--color-primary-container);
+}
+
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.iconWrapper[data-color="tertiary"] { background-color: var(--color-tertiary-container); color: var(--color-on-tertiary-container); }
+.iconWrapper[data-color="primary"] { background-color: var(--color-primary-container); color: var(--color-on-primary-container); }
+.iconWrapper[data-color="surface-dim"] { background-color: var(--color-surface-dim); color: var(--color-on-surface-variant); }
+.iconWrapper[data-color="secondary"] { background-color: var(--color-secondary-container); color: var(--color-on-secondary-container); }
+
+.icon {
+  font-size: 32px;
+}
+
+.title {
+  font-family: var(--font-lexend), sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.titleSelected {
+  color: var(--color-primary);
+}
+
+.sparkle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: var(--color-primary);
+  font-size: 24px;
+}
