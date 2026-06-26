@@ -26,29 +26,29 @@ const STEP_ICONS: Record<string, string> = {
 interface LessonStudioWizardProps {
   subjects: { name: StudySubject; display_name: string; icon: string }[];
   initialSubject?: StudySubject;
+  preferredSubjects: StudySubject[];
   gradeBand: GradeBand;
   languageMode: LanguageMode;
 }
 
-export default function LessonStudioWizard({ subjects, initialSubject, gradeBand, languageMode }: LessonStudioWizardProps) {
+export default function LessonStudioWizard({ subjects, initialSubject, preferredSubjects, gradeBand, languageMode }: LessonStudioWizardProps) {
   const router = useRouter();
+  const defaultSubject = initialSubject ?? preferredSubjects[0] ?? null;
+  const buildDefaultDraft = useCallback((): LessonStudioDraft => ({
+    ...defaultDraft(),
+    subject: defaultSubject,
+    step: defaultSubject ? 1 : 0,
+  }), [defaultSubject]);
   const [draft, setDraft] = useState<LessonStudioDraft>(() => {
     const saved = loadDraft();
     if (saved) {
       return {
         ...saved,
-        step: saved.step >= 4 ? 0 : saved.step,
+        step: saved.step >= 4 ? (saved.subject ? 1 : 0) : saved.step,
       };
     }
 
-    if (initialSubject) {
-      return {
-        ...defaultDraft(),
-        subject: initialSubject,
-      };
-    }
-
-    return defaultDraft();
+    return buildDefaultDraft();
   });
   const [suggestedTopics, setSuggestedTopics] = useState<string[]>([]);
   const [topicsLoading, setTopicsLoading] = useState(false);
@@ -62,10 +62,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
   const [sourceIsSaved, setSourceIsSaved] = useState(false);
   const pendingSaveRef = useRef<SavedLesson | null>(null);
   const savedIdRef = useRef(new Set<string>());
-
-  useEffect(() => {
-    saveDraft(draft);
-  }, [draft]);
+  const prefetchedSubjectRef = useRef<StudySubject | null>(null);
 
   const suggestTopics = useCallback(async (subject: StudySubject) => {
     setTopicsLoading(true);
@@ -87,7 +84,21 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
     }
   }, [gradeBand, languageMode]);
 
+  useEffect(() => {
+    saveDraft(draft);
+  }, [draft]);
+
+  useEffect(() => {
+    if (!draft.subject || prefetchedSubjectRef.current === draft.subject) {
+      return;
+    }
+
+    prefetchedSubjectRef.current = draft.subject;
+    suggestTopics(draft.subject);
+  }, [draft.subject, suggestTopics]);
+
   const handleSubjectSelect = (subject: StudySubject) => {
+    prefetchedSubjectRef.current = subject;
     setDraft((d) => ({ ...d, subject, topics: [] }));
     suggestTopics(subject);
   };
@@ -228,7 +239,8 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
 
   const handleReset = () => {
     clearDraft();
-    setDraft(defaultDraft());
+    prefetchedSubjectRef.current = null;
+    setDraft(buildDefaultDraft());
     setSuggestedTopics([]);
     setLessonContent(null);
     setPracticeQuestions(null);
@@ -300,6 +312,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, gradeBand
         return (
           <SubjectPicker
             availableSubjects={subjects}
+            preferredSubjects={preferredSubjects}
             selected={draft.subject}
             onSelect={handleSubjectSelect}
           />
