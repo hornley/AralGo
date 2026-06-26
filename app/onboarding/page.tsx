@@ -6,7 +6,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { LeafProgress } from '@/components/LeafProgress';
 import { StationeryCard } from '@/components/StationeryCard';
 import { createClient } from '@/lib/supabase/client';
-import { t } from '@/lib/i18n';
+import { languageModeLabel, normalizeLanguageMode, t } from '@/lib/i18n';
 import type { StudySubject } from '@/lib/types/supabase';
 import { persistLearnerSession } from '@/lib/study/learner-session';
 import {
@@ -205,27 +205,27 @@ export default function OnboardingPage() {
           <>
             {renderHeader({
               currentStep: 1,
-              title: stepDetails[1].title,
-              subtitle: stepDetails[1].subtitle,
+              title: t(language, 'onboarding.language.title'),
+              subtitle: t(language, 'onboarding.language.subtitle'),
             })}
             <div className={styles.content}>
               <div className={`${styles.grid} ${styles.singleColumnGrid}`}>
                 <StationeryCard
-                  title="Filipino"
+                  title={t(language, 'onboarding.language.filipino')}
                   icon="chat_bubble"
                   colorTheme="primary"
                   selected={language === 'Filipino'}
                   onClick={() => setLanguage('Filipino')}
                 />
                 <StationeryCard
-                  title="English"
+                  title={t(language, 'onboarding.language.english')}
                   icon="chat"
                   colorTheme="secondary"
                   selected={language === 'English'}
                   onClick={() => setLanguage('English')}
                 />
                 <StationeryCard
-                  title="Mixed (Filipino-English)"
+                  title={t(language, 'onboarding.language.mixed')}
                   icon="forum"
                   colorTheme="tertiary"
                   selected={language === 'Mixed'}
@@ -316,28 +316,28 @@ export default function OnboardingPage() {
             <div className={styles.content}>
               <div className={styles.grid}>
                 <StationeryCard
-                  title="Mathematics"
+                  title={t(language, 'subject.mathematics')}
                   icon="calculate"
                   colorTheme="primary"
                   selected={subjects.includes('Mathematics')}
                   onClick={() => toggleSubject('Mathematics')}
                 />
                 <StationeryCard
-                  title="Science"
+                  title={t(language, 'subject.science')}
                   icon="science"
                   colorTheme="tertiary"
                   selected={subjects.includes('Science')}
                   onClick={() => toggleSubject('Science')}
                 />
                 <StationeryCard
-                  title="English"
+                  title={t(language, 'subject.english')}
                   icon="menu_book"
                   colorTheme="secondary"
                   selected={subjects.includes('English')}
                   onClick={() => toggleSubject('English')}
                 />
                 <StationeryCard
-                  title="Filipino"
+                  title={t(language, 'subject.filipino')}
                   icon="import_contacts"
                   colorTheme="surface-dim"
                   selected={subjects.includes('Filipino')}
@@ -405,7 +405,7 @@ export default function OnboardingPage() {
                 </button>
                 {!goal ? (
                   <button className={styles.skipButton} onClick={handleNext} type="button">
-                    Skip for now
+                    {t(language, 'common.skip')}
                   </button>
                 ) : null}
               </div>
@@ -417,8 +417,8 @@ export default function OnboardingPage() {
           <>
             {renderHeader({
               currentStep: 5,
-              title: stepDetails[5].title,
-              subtitle: stepDetails[5].subtitle,
+              title: t(language, 'summary.ready.title'),
+              subtitle: t(language, 'summary.ready.subtitle'),
               onBack: () => setStep(4),
             })}
             <div className={styles.content}>
@@ -428,9 +428,9 @@ export default function OnboardingPage() {
                   <AppIcon name="stars" className={styles.celebrationIcon} />
                 </div>
                 <p className={styles.celebrationBadge}>Profile ready</p>
-                <h2 className={styles.celebrationTitle}>Your learner profile is ready.</h2>
+                <h2 className={styles.celebrationTitle}>{t(language, 'summary.ready.title')}</h2>
                 <p className={styles.celebrationSub}>
-                  Review your choices, then start with a lesson or go to your dashboard.
+                  {t(language, 'summary.ready.subtitle')}
                 </p>
                 <div className={styles.notebookLine} />
               </div>
@@ -438,29 +438,29 @@ export default function OnboardingPage() {
                 <div className={styles.summaryCard}>
                   <AppIcon name="chat" />
                   <div>
-                    <p className={styles.summaryLabel}>Language Mode</p>
-                    <p className={styles.summaryValue}>{language || 'Mixed (Filipino-English)'}</p>
+                    <p className={styles.summaryLabel}>{t(language, 'summary.language')}</p>
+                    <p className={styles.summaryValue}>{languageModeLabel(language)}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
                   <AppIcon name="school" />
                   <div>
-                    <p className={styles.summaryLabel}>Grade Level</p>
+                    <p className={styles.summaryLabel}>{t(language, 'summary.grade')}</p>
                     <p className={styles.summaryValue}>{gradeLevel || 'Junior High School'}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
                   <AppIcon name="menu_book" />
                   <div>
-                    <p className={styles.summaryLabel}>Subjects</p>
-                    <p className={styles.summaryValue}>{subjects.join(', ') || 'None selected yet'}</p>
+                    <p className={styles.summaryLabel}>{t(language, 'summary.subjects')}</p>
+                    <p className={styles.summaryValue}>{subjects.join(', ') || t(language, 'summary.none')}</p>
                   </div>
                 </div>
                 <div className={styles.summaryCard}>
                   <AppIcon name="flag" />
                   <div>
-                    <p className={styles.summaryLabel}>Study Goal</p>
-                    <p className={styles.summaryValue}>{goal || 'Learn something new'}</p>
+                    <p className={styles.summaryLabel}>{t(language, 'summary.goal')}</p>
+                    <p className={styles.summaryValue}>{goal || t(language, 'summary.defaultGoal')}</p>
                   </div>
                 </div>
               </div>
@@ -470,10 +470,10 @@ export default function OnboardingPage() {
               <div className={styles.buttonGroup}>
                 <button className={styles.primaryButton} onClick={handleCreateLesson} disabled={isPending} type="button">
                   <AppIcon name="auto_stories" />
-                  Create your first lesson
+                  {t(language, 'summary.createLesson')}
                 </button>
                 <button className={styles.secondaryButton} onClick={handleGoToDashboard} disabled={isPending} type="button">
-                  Go to dashboard instead
+                  {t(language, 'summary.dashboard')}
                 </button>
               </div>
             </footer>
@@ -512,8 +512,7 @@ function buildStudyDraft({
 }): StudySetupDraft {
   const draft: StudySetupDraft = {
     displayName: "",
-    languageMode:
-      language === "Filipino" ? "filipino" : language === "English" ? "english" : "mixed",
+    languageMode: normalizeLanguageMode(language),
     gradeBand:
       gradeLevel === "Elementary"
         ? "elementary"

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { t } from '@/lib/i18n';
 import { formatGradeBand } from '@/lib/study/format';
 import { useLocalStudySetup } from '@/lib/study/use-local-study-setup';
 import styles from './layout.module.css';
@@ -8,6 +9,7 @@ import styles from './layout.module.css';
 type DashboardProfileProps = {
   initialDisplayName: string | null;
   initialGradeBand: string | null;
+  initialLanguageMode: string | null;
   isAnonymous: boolean;
   greeting: string;
 };
@@ -15,16 +17,18 @@ type DashboardProfileProps = {
 export default function DashboardProfile({
   initialDisplayName,
   initialGradeBand,
+  initialLanguageMode,
   isAnonymous,
   greeting,
 }: DashboardProfileProps) {
   const localSetup = useLocalStudySetup();
-  const displayName = localSetup?.displayName || initialDisplayName || 'Learner';
+  const languageMode = localSetup?.languageMode ?? initialLanguageMode;
+  const displayName = localSetup?.displayName || initialDisplayName || t(languageMode, 'dashboard.learner');
   const gradeLabel = localSetup
     ? formatGradeBand(localSetup.gradeBand)
     : initialGradeBand
       ? formatGradeBand(initialGradeBand)
-      : 'Guest learner';
+      : t(languageMode, 'dashboard.guest');
 
   return (
     <div className={styles.profileSection}>
