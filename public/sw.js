@@ -1,15 +1,24 @@
-const SHELL_CACHE = "aralgo-shell-v1";
-const DATA_CACHE = "aralgo-data-v1";
+const SHELL_CACHE = "aralgo-shell-v2";
+const DATA_CACHE = "aralgo-data-v2";
+const API_CACHE = "aralgo-api-v2";
 
 const SHELL_URLS = [
   "/",
   "/offline",
   "/manifest.json",
   "/icon.svg",
+  "/icon-192x192.png",
+  "/icon-512x512.png",
+  "/icon-512x512-maskable.png",
+  "/apple-icon-120x120.png",
+  "/apple-icon-152x152.png",
+  "/apple-icon-167x167.png",
+  "/apple-icon-180x180.png",
 ];
 
 const STATIC_REGEX = /\.(js|css|woff2?|png|svg|ico|json)$/;
 const DATA_REGEX = /^https:\/\/[^/]+\.supabase\.co\/rest\/v1\//;
+const API_GET_REGEX = /^\/api\//;
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -23,7 +32,7 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((k) => k !== SHELL_CACHE && k !== DATA_CACHE)
+          .filter((k) => k !== SHELL_CACHE && k !== DATA_CACHE && k !== API_CACHE)
           .map((k) => caches.delete(k)),
       ),
     ),
@@ -45,6 +54,11 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  if (request.method === "GET" && API_GET_REGEX.test(url.pathname)) {
+    event.respondWith(staleWhileRevalidate(request));
+    return;
+  }
+
   if (request.mode === "navigate") {
     event.respondWith(networkFirst(request, SHELL_CACHE));
     return;
@@ -52,6 +66,49 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(networkFirst(request));
 });
+
+function addStaleHeaders(response) {
+  const headers = new Headers(response.headers);
+  headers.set("X-AralGo-Cached", "true");
+  headers.set("X-AralGo-Cached-At", new Date().toISOString());
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(API_CACHE);
+  const cached = await cache.match(request);
+
+  if (cached) {
+    const staleResponse = addStaleHeaders(cached);
+
+    fetch(request)
+      .then((response) => {
+        if (response.ok) {
+          cache.put(request, response);
+        }
+      })
+      .catch(() => {});
+
+    return staleResponse;
+  }
+
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    return new Response(JSON.stringify({ error: "offline" }), {
+      status: 503,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
 
 async function cacheFirst(request) {
   const cached = await caches.match(request);

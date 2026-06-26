@@ -79,21 +79,26 @@ export default function TutorPage() {
     }),
   });
 
-  useEffect(() => {
-    if (!sessionId) return;
-    fetch(`/api/chat/history?sessionId=${sessionId}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.messages?.length) setMessages(data.messages);
-      })
-      .catch(err => console.error('Failed to load chat history:', err));
-  }, [sessionId, setMessages]);
+  const [historyCached, setHistoryCached] = useState(false);
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<TutorMode>('socratic');
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
   const chatAreaRef = useRef<HTMLDivElement>(null);
   const selectedMode = tutorModes.find((tutorMode) => tutorMode.value === mode) ?? tutorModes[0];
   const isLoading = status === 'submitted' || status === 'streaming';
+
+  useEffect(() => {
+    if (!sessionId) return;
+    fetch(`/api/chat/history?sessionId=${sessionId}`)
+      .then(r => {
+        setHistoryCached(r.headers.get('X-AralGo-Cached') === 'true');
+        return r.json();
+      })
+      .then(data => {
+        if (data.messages?.length) setMessages(data.messages);
+      })
+      .catch(err => console.error('Failed to load chat history:', err));
+  }, [sessionId, setMessages]);
 
   useEffect(() => {
     if (chatAreaRef.current) {
@@ -123,6 +128,7 @@ export default function TutorPage() {
             <div className={styles.status}>
               <span className={styles.statusDot}></span>
               Online
+              {historyCached && <span className={styles.cachedBadge}>Cached / Naka-cache</span>}
             </div>
           </div>
         </div>
