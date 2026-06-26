@@ -2,6 +2,7 @@
 
 .pageContainer {
   min-height: 100dvh;
+  width: 100%;
   padding: 24px 16px 48px;
   max-width: 720px;
   margin: 0 auto;
@@ -16,6 +17,8 @@
   padding: 28px 24px;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  min-width: 0;
 }
 
 /* Step indicator — notebook tabs */
@@ -113,6 +116,7 @@
 .stepNav {
   display: flex;
   justify-content: space-between;
+  gap: 12px;
   padding: 20px 0 0;
   margin-top: 8px;
   border-top: 1px solid var(--border);
@@ -264,6 +268,7 @@
   color: var(--color-on-surface);
   cursor: pointer;
   transition: all 0.12s ease;
+  overflow-wrap: anywhere;
 }
 
 .topicChip:active {
@@ -304,6 +309,7 @@
 
 .customTopicInput input {
   flex: 1;
+  min-width: 0;
   padding: 10px 16px;
   border-radius: 999px;
   border: 1.5px solid var(--border);
@@ -390,6 +396,7 @@
   cursor: pointer;
   transition: all 0.12s ease;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .chip:active {
@@ -442,6 +449,7 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--color-on-surface-variant);
+  text-align: center;
 }
 
 .dropTypes {
@@ -469,6 +477,7 @@
 
 .fileName {
   flex: 1;
+  min-width: 0;
   font-size: 14px;
   font-weight: 600;
   color: var(--color-on-surface);
@@ -531,7 +540,9 @@
   transition: all 0.12s ease;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  max-width: 100%;
 }
 
 .generateBtn:active {
@@ -574,6 +585,9 @@
 .generateSummaryValue {
   color: var(--color-on-surface);
   font-weight: 700;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .errorMessage {
@@ -653,6 +667,8 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .lessonSection h3 {
@@ -671,6 +687,7 @@
   line-height: 1.7;
   color: var(--color-on-surface);
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .termDef {
@@ -720,6 +737,7 @@
   border-radius: 20px;
   border: 1px solid var(--border);
   background: var(--color-surface-container-low);
+  min-width: 0;
 }
 
 .practiceResult h3 {
@@ -745,6 +763,7 @@
   border-radius: 14px;
   background: var(--surface-strong);
   border: 1px solid var(--border);
+  min-width: 0;
 }
 
 .qNumber {
@@ -767,6 +786,7 @@
   font-size: 14px;
   color: var(--color-on-surface);
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .actionButtons {
@@ -884,6 +904,7 @@
   transition: all 0.12s ease;
   text-decoration: none;
   color: inherit;
+  min-width: 0;
 }
 
 .savedLessonItem:active {
@@ -992,4 +1013,179 @@
   align-items: center;
   gap: 10px;
   margin-top: 12px;
+}
+
+@media (max-width: 560px) {
+  .pageContainer {
+    padding: 12px 10px 32px;
+  }
+
+  .wizardCard {
+    padding: 18px 14px;
+    border-radius: 18px;
+  }
+
+  .stepIndicator {
+    margin-right: -14px;
+    margin-left: -14px;
+    padding: 4px 14px 14px;
+    scroll-padding-inline: 14px;
+  }
+
+  .stepTab {
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .stepTab.savedTab {
+    margin-left: 0;
+  }
+
+  .stepContent {
+    min-height: 280px;
+  }
+
+  .stepContent h2 {
+    font-size: 18px;
+  }
+
+  .stepNav {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    margin: 8px -14px -18px;
+    padding: 14px;
+    background: color-mix(in srgb, var(--surface-strong) 92%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .navBack,
+  .navNext {
+    min-height: 46px;
+    justify-content: center;
+  }
+
+  .navBack {
+    flex: 1;
+    padding: 12px 14px;
+  }
+
+  .navNext {
+    flex: 1.2;
+    padding: 12px 16px;
+  }
+
+  .stepNav .navNext:first-child {
+    flex: 1;
+    width: 100%;
+  }
+
+  .subjectCard {
+    padding: 20px 14px 18px;
+  }
+
+  .topicChips,
+  .chipGroup {
+    gap: 8px;
+  }
+
+  .topicChip,
+  .chip {
+    flex: 1 1 calc(50% - 8px);
+    min-height: 42px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .customTopicInput {
+    flex-direction: column;
+  }
+
+  .customTopicInput button {
+    min-height: 44px;
+  }
+
+  .dropZone {
+    padding: 28px 16px;
+    min-height: 132px;
+  }
+
+  .fileItem {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+  }
+
+  .fileSize {
+    margin-left: 30px;
+  }
+
+  .fileRemove {
+    margin-left: auto;
+  }
+
+  .generateStep {
+    padding: 28px 0;
+  }
+
+  .generateBtn,
+  .startPracticeBtn,
+  .createAnotherBtn {
+    width: 100%;
+    min-height: 48px;
+    white-space: normal;
+  }
+
+  .generateSummary {
+    padding: 12px 14px;
+  }
+
+  .generateSummaryItem {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .practiceResult {
+    padding: 18px 14px;
+    border-radius: 16px;
+  }
+
+  .questionPreview {
+    padding: 12px 14px;
+  }
+
+  .lessonResult {
+    gap: 20px;
+  }
+
+  .lessonSection h3,
+  .practiceResult h3 {
+    align-items: flex-start;
+    font-size: 16px;
+  }
+
+  .termDef,
+  .exampleBlock,
+  .mistakeBlock {
+    padding: 12px 14px;
+  }
+
+  .savedLessonItem {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .savedLessonMeta {
+    grid-column: 2 / 4;
+    justify-content: space-between;
+    white-space: normal;
+  }
+
+  .practiceError {
+    align-items: flex-start;
+    padding: 14px;
+  }
 }
