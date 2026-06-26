@@ -31,6 +31,8 @@ It combines an adaptive Lesson Studio, an AI tutor with chat and Socratic modes,
 - Chloe Maxine A. Carbonell — UI Designer
 - Josiah B. Abrogar — Developer
 
+![MobileScreenshots](public/Mobile.png)
+
 ## Why AralGo Exists
 
 Many Filipino students do not struggle because they lack effort. They struggle because the support system around them is uneven.
