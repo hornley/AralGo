@@ -14,6 +14,10 @@
   </p>
 </div>
 
+<p align="center">
+  <a href="https://aral-go.vercel.app/"><strong>Try it here →</strong></a>
+</p>
+
 AralGo Scholar is a mobile-first AI study companion built for Filipino learners who need personalized academic support in the language, pace, and device conditions that actually match their daily lives.
 
 It combines an adaptive Lesson Studio, an AI tutor with chat and Socratic modes, generated practice quizzes, session history, multilingual support across English, Filipino, and Taglish, and Progressive Web App foundations for low-bandwidth learning.
