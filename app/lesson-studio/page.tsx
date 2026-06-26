@@ -31,6 +31,11 @@ export default async function LessonStudioPage(props: { searchParams: Promise<{ 
   const initialSubject = subject && validSubjects.includes(subject as any)
     ? (subject as StudySubject)
     : undefined;
+  const preferredSubjects = Array.isArray(profile?.preferred_subjects)
+    ? profile.preferred_subjects.filter((value): value is StudySubject =>
+        validSubjects.includes(value as StudySubject)
+      )
+    : [];
 
   return (
     <div className={styles.pageContainer}>
@@ -45,6 +50,7 @@ export default async function LessonStudioPage(props: { searchParams: Promise<{ 
         <LessonStudioWizard
           subjects={subjects || []}
           initialSubject={initialSubject}
+          preferredSubjects={preferredSubjects}
           gradeBand={profile?.grade_band || 'junior_high'}
           languageMode={profile?.preferred_language_mode || 'mixed'}
         />

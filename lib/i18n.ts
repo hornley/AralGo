@@ -30,16 +30,16 @@ const dict: Record<string, Record<Locale, string>> = {
     fil: "Maaari mo itong baguhin sa iyong settings!",
   },
   "subject.title": {
-    en: "Pick at least one subject",
-    fil: "Pumili ng kahit isang subject",
+    en: "Choose your focus subjects",
+    fil: "Piliin ang iyong mga pokus na subject",
   },
   "subject.subtitle": {
-    en: "You can choose multiple subjects.",
-    fil: "Puwede kang pumili ng marami.",
+    en: "These help AralGo personalize recommendations and shortcuts for you.",
+    fil: "Ginagamit ito ng AralGo para iangkop ang mga rekomendasyon at shortcut para sa iyo.",
   },
   "subject.sticky": {
-    en: "Can add more later",
-    fil: "Puwede pang magdagdag mamaya",
+    en: "You can update these focus subjects later.",
+    fil: "Maaari mo pang baguhin ang mga pokus na subject na ito mamaya.",
   },
   "goal.title": {
     en: "What are your study goals?",
