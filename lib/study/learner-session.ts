@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { StudySetupDraft } from "@/lib/study/study-setup";
+import type { StudySubject } from "@/lib/types/supabase";
 
 type PersistResult =
   | { ok: true; learnerProfileId: string; studySessionId: string }
@@ -8,6 +9,7 @@ type PersistResult =
 export async function persistLearnerSession(
   supabase: SupabaseClient,
   draft: StudySetupDraft,
+  preferredSubjects?: StudySubject[],
 ): Promise<PersistResult> {
   const {
     data: { user },
@@ -27,6 +29,10 @@ export async function persistLearnerSession(
     grade_band: draft.gradeBand,
     preferred_language_mode: draft.languageMode,
     preferred_subject: draft.subject,
+    preferred_subjects:
+      preferredSubjects && preferredSubjects.length > 0
+        ? preferredSubjects
+        : [draft.subject],
   };
 
   const { data: profile, error: profileError } = await supabase

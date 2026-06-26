@@ -7,6 +7,7 @@ import { LeafProgress } from '@/components/LeafProgress';
 import { StationeryCard } from '@/components/StationeryCard';
 import { createClient } from '@/lib/supabase/client';
 import { t } from '@/lib/i18n';
+import type { StudySubject } from '@/lib/types/supabase';
 import { persistLearnerSession } from '@/lib/study/learner-session';
 import {
   createRecentStudyTopic,
@@ -44,6 +45,7 @@ export default function OnboardingPage() {
         subjects,
         goal,
       });
+      const preferredSubjects = mapSubjects(subjects);
       saveStudySetup(draft);
 
       const {
@@ -74,7 +76,7 @@ export default function OnboardingPage() {
 
       setStatusMessage('Saving your learner profile...');
 
-      const persistResult = await persistLearnerSession(supabase, draft);
+      const persistResult = await persistLearnerSession(supabase, draft, preferredSubjects);
 
       if (!persistResult.ok) {
         setStatusMessage(persistResult.message);
@@ -98,6 +100,7 @@ export default function OnboardingPage() {
         subjects,
         goal,
       });
+      const preferredSubjects = mapSubjects(subjects);
       saveStudySetup(draft);
 
       const {
@@ -128,7 +131,7 @@ export default function OnboardingPage() {
 
       setStatusMessage('Saving your learner profile...');
 
-      const persistResult = await persistLearnerSession(supabase, draft);
+      const persistResult = await persistLearnerSession(supabase, draft, preferredSubjects);
 
       if (!persistResult.ok) {
         setStatusMessage(persistResult.message);
@@ -536,4 +539,9 @@ function mapSubject(subject?: string): StudySetupDraft["subject"] {
     default:
       return "science";
   }
+}
+
+function mapSubjects(subjects: string[]): StudySubject[] {
+  const normalized = subjects.map((subject) => mapSubject(subject));
+  return [...new Set(normalized)];
 }

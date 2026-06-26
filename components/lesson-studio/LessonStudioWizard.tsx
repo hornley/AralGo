@@ -40,6 +40,14 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
     step: defaultSubject ? 1 : 0,
   }), [defaultSubject]);
   const [draft, setDraft] = useState<LessonStudioDraft>(() => {
+    if (initialSubject) {
+      return {
+        ...defaultDraft(),
+        subject: initialSubject,
+        step: 1,
+      };
+    }
+
     const saved = loadDraft();
     if (saved) {
       return {

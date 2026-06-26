@@ -19,7 +19,7 @@ export default async function LessonStudioPage(props: { searchParams: Promise<{ 
   }
   const { data: profile } = await supabase
     .from('learner_profiles')
-    .select('preferred_subjects, grade_band, preferred_language_mode')
+    .select('preferred_subject, preferred_subjects, grade_band, preferred_language_mode')
     .eq('user_id', user.id)
     .single();
   const { data: subjects } = await supabase
@@ -35,7 +35,9 @@ export default async function LessonStudioPage(props: { searchParams: Promise<{ 
     ? profile.preferred_subjects.filter((value): value is StudySubject =>
         validSubjects.includes(value as StudySubject)
       )
-    : [];
+    : profile?.preferred_subject && validSubjects.includes(profile.preferred_subject as StudySubject)
+      ? [profile.preferred_subject as StudySubject]
+      : [];
 
   return (
     <div className={styles.pageContainer}>
