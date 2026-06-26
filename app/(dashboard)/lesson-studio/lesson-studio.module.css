@@ -175,6 +175,17 @@
   gap: 12px;
 }
 
+@media (max-width: 480px) {
+  .subjectGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .wizardCard {
+    padding: 20px 16px;
+    border-radius: 20px;
+  }
+}
+
 .subjectCard {
   display: flex;
   flex-direction: column;
