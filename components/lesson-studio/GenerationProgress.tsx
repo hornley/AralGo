@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '../../app/lesson-studio/lesson-studio.module.css';
+import styles from '../../app/(dashboard)/lesson-studio/lesson-studio.module.css';
 
 interface GenerationProgressProps {
   stage: 'topics' | 'lesson' | 'practice' | null;

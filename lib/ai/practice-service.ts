@@ -1,6 +1,7 @@
-import { generateObject, jsonSchema, NoObjectGeneratedError, type RepairTextFunction } from 'ai';
-import { aiModel } from './ai-client';
+import { jsonSchema, NoObjectGeneratedError, type RepairTextFunction } from 'ai';
+import { generateObjectWithFallback } from './ai-client';
 import { buildPracticePrompt } from './prompts';
+import { verifyQuestions } from './verify-service';
 import { GradeBand, StudySubject, LanguageMode, LearningStyle } from '@/lib/types/supabase';
 
 interface PracticeInput {
@@ -44,7 +45,7 @@ const schema = jsonSchema<PracticeResult>({
           type: { type: 'string', enum: ['multiple_choice', 'short_answer', 'problem_solving'] },
           prompt: { type: 'string' },
           options: {
-            type: 'array',
+            type: ['array', 'null'],
             items: {
               type: 'object',
               properties: { label: { type: 'string' }, text: { type: 'string' } },
@@ -53,11 +54,11 @@ const schema = jsonSchema<PracticeResult>({
             },
           },
           correctAnswer: { type: 'string' },
-          acceptableAnswers: { type: 'array', items: { type: 'string' } },
+          acceptableAnswers: { type: ['array', 'null'], items: { type: 'string' } },
           explanation: { type: 'string' },
-          commonMistake: { type: 'string' },
+          commonMistake: { type: ['string', 'null'] },
         },
-        required: ['type', 'prompt', 'correctAnswer', 'explanation'],
+        required: ['type', 'prompt', 'options', 'correctAnswer', 'acceptableAnswers', 'explanation', 'commonMistake'],
         additionalProperties: false,
       },
     },
@@ -75,14 +76,39 @@ export async function generatePractice(input: PracticeInput): Promise<GeneratePr
   try {
     const prompt = buildPracticePrompt(input);
 
-    const result = await generateObject({
-      model: aiModel,
-      prompt,
+    const result = await generateObjectWithFallback<{ questions: { type: string; prompt: string; options: { label: string; text: string }[] | null; correctAnswer: string; acceptableAnswers: string[] | null; explanation: string; commonMistake: string | null }[] }>({
       schema,
+      prompt,
       experimental_repairText: repairText,
     });
 
-    return { ok: true, data: result.object };
+    const rawQuestions = (result.object as PracticeResult).questions;
+    const questionsWithIndex = rawQuestions.map((q, i) => ({
+      index: i,
+      type: q.type,
+      prompt: q.prompt,
+      options: q.options,
+      correctAnswer: q.correctAnswer,
+      acceptableAnswers: q.acceptableAnswers,
+    }));
+
+    const { questions: verifiedQuestions, corrections } = await verifyQuestions(
+      questionsWithIndex,
+      input.subject,
+      input.gradeBand,
+    );
+
+    if (corrections.length > 0) {
+      console.log('Practice answer verification corrections:', corrections);
+    }
+
+    const finalQuestions = rawQuestions.map((q, i) => ({
+      ...q,
+      correctAnswer: verifiedQuestions[i]?.correctAnswer ?? q.correctAnswer,
+      acceptableAnswers: verifiedQuestions[i]?.acceptableAnswers ?? q.acceptableAnswers,
+    }));
+
+    return { ok: true, data: { questions: finalQuestions } };
   } catch (err) {
     const message =
       err instanceof NoObjectGeneratedError

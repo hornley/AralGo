@@ -1,7 +1,7 @@
 'use client';
 
 import { LearningStyle, PracticeFormat } from '@/lib/types/supabase';
-import styles from '../../app/lesson-studio/lesson-studio.module.css';
+import styles from '../../app/(dashboard)/lesson-studio/lesson-studio.module.css';
 
 interface PreferencePickerProps {
   learningStyle: LearningStyle | null;

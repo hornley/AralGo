@@ -30,37 +30,39 @@ export async function POST(req: NextRequest) {
     const content = gen.data;
 
     const supabase = await createClient();
+    let lesson: any = null;
+
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
+    if (user) {
+      const { data: profile } = await supabase
+        .from('learner_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
 
-    const { data: profile } = await supabase
-      .from('learner_profiles')
-      .select('id')
-      .eq('user_id', user.id)
-      .single();
+      if (profile) {
+        const { data: ls, error } = await supabase
+          .from('generated_lessons')
+          .insert({
+            learner_profile_id: profile.id,
+            user_id: user.id,
+            subject,
+            topic: topics[0],
+            grade_band: gradeBand,
+            language_mode: languageMode,
+            content_json: content,
+          })
+          .select()
+          .single();
 
-    if (!profile) {
-      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
-    }
-
-    const { data: lesson, error } = await supabase
-      .from('generated_lessons')
-      .insert({
-        learner_profile_id: profile.id,
-        user_id: user.id,
-        subject,
-        topic: topics[0],
-        grade_band: gradeBand,
-        language_mode: languageMode,
-        content_json: content,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.warn('Lesson DB insert failed, returning content anyway:', error.message);
+        if (error) {
+          console.warn('Lesson DB insert failed, returning content anyway:', error.message);
+        } else {
+          lesson = ls;
+        }
+      } else {
+        console.warn('No learner profile found, skipping lesson DB persistence');
+      }
     }
 
     return NextResponse.json({ lesson: lesson || null, content });

@@ -1,5 +1,5 @@
-import { generateObject, jsonSchema, NoObjectGeneratedError, type RepairTextFunction } from 'ai';
-import { aiModel } from './ai-client';
+import { jsonSchema, NoObjectGeneratedError, type RepairTextFunction } from 'ai';
+import { generateObjectWithFallback } from './ai-client';
 import { buildLessonPrompt } from './prompts';
 import { GradeBand, StudySubject, LanguageMode, LearningStyle, LessonContent } from '@/lib/types/supabase';
 
@@ -72,10 +72,9 @@ export async function generateLesson(input: LessonInput): Promise<GenerateLesson
   try {
     const prompt = buildLessonPrompt(input);
 
-    const result = await generateObject({
-      model: aiModel,
-      prompt,
+    const result = await generateObjectWithFallback<{ overview: string; keyTerms: { term: string; definition: string }[]; workedExamples: { title: string; content: string }[]; commonMistakes: { mistake: string; correction: string }[]; recap: string }>({
       schema,
+      prompt,
       experimental_repairText: repairText,
     });
 

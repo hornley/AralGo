@@ -32,56 +32,55 @@ export async function POST(req: NextRequest) {
     const practice = gen.data;
 
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    const { data: profile } = await supabase
-      .from('learner_profiles')
-      .select('id')
-      .eq('user_id', user.id)
-      .single();
-
-    if (!profile) {
-      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
-    }
-
     let practiceSet: any = null;
-    const { data: ps, error: setError } = await supabase
-      .from('practice_sets')
-      .insert({
-        learner_profile_id: profile.id,
-        user_id: user.id,
-        subject,
-        topic: topics[0],
-        difficulty: 'medium',
-        language_mode: languageMode,
-      })
-      .select()
-      .single();
 
-    if (!setError) {
-      practiceSet = ps;
-      const questions = practice.questions.map((q: any, i: number) => ({
-        practice_set_id: practiceSet.id,
-        question_type: q.type,
-        prompt: q.prompt,
-        options_json: q.options,
-        answer_key_json: { correctAnswer: q.correctAnswer, acceptableAnswers: q.acceptableAnswers },
-        explanation_json: { explanation: q.explanation, commonMistake: q.commonMistake },
-        ordinal: i,
-      }));
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from('learner_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
 
-      const { error: qError } = await supabase
-        .from('practice_questions')
-        .insert(questions);
+      if (profile) {
+        const { data: ps, error: setError } = await supabase
+          .from('practice_sets')
+          .insert({
+            learner_profile_id: profile.id,
+            user_id: user.id,
+            subject,
+            topic: topics[0],
+            difficulty: 'medium',
+            language_mode: languageMode,
+          })
+          .select()
+          .single();
 
-      if (qError) {
-        console.warn('Practice questions DB insert failed:', qError.message);
+        if (!setError) {
+          practiceSet = ps;
+          const questions = practice.questions.map((q: any, i: number) => ({
+            practice_set_id: practiceSet.id,
+            question_type: q.type,
+            prompt: q.prompt,
+            options_json: q.options,
+            answer_key_json: { correctAnswer: q.correctAnswer, acceptableAnswers: q.acceptableAnswers },
+            explanation_json: { explanation: q.explanation, commonMistake: q.commonMistake },
+            ordinal: i,
+          }));
+
+          const { error: qError } = await supabase
+            .from('practice_questions')
+            .insert(questions);
+
+          if (qError) {
+            console.warn('Practice questions DB insert failed:', qError.message);
+          }
+        } else {
+          console.warn('Practice set DB insert failed, returning questions anyway:', setError.message);
+        }
+      } else {
+        console.warn('No learner profile found, skipping practice DB persistence');
       }
-    } else {
-      console.warn('Practice set DB insert failed, returning questions anyway:', setError.message);
     }
 
     return NextResponse.json({ practiceSet: practiceSet || null, questions: practice.questions });

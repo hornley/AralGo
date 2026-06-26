@@ -1,7 +1,7 @@
 'use client';
 
 import { AppIcon } from '@/components/AppIcon';
-import styles from '../../app/lesson-studio/lesson-studio.module.css';
+import styles from '../../app/(dashboard)/lesson-studio/lesson-studio.module.css';
 
 interface PracticeQuestionView {
   type: string;

@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { AppIcon } from '@/components/AppIcon';
 import { FileDraft } from '@/lib/types/supabase';
-import styles from '../../app/lesson-studio/lesson-studio.module.css';
+import styles from '../../app/(dashboard)/lesson-studio/lesson-studio.module.css';
 
 interface FileUploaderProps {
   files: FileDraft[];

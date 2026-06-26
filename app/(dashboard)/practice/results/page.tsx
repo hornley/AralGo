@@ -2,12 +2,41 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { AppIcon } from '@/components/AppIcon';
 import styles from './results.module.css';
 
+interface QuestionResult {
+  prompt: string;
+  type: string;
+  userAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+  feedback?: string;
+  options?: { label: string; text: string }[] | null;
+}
+
+function resolveLabel(label: string, options?: { label: string; text: string }[] | null): string {
+  if (options) {
+    const opt = options.find((o) => o.label === label);
+    if (opt) return `${opt.label}. ${opt.text}`;
+  }
+  return label;
+}
+
 function ResultsContent() {
   const params = useSearchParams();
+  const [reviewing, setReviewing] = useState(false);
+  const [questions, setQuestions] = useState<QuestionResult[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem('practice.quizResults');
+      if (stored) {
+        setQuestions(JSON.parse(stored));
+      }
+    } catch {}
+  }, []);
 
   const rawScore = params.get('score');
   const total = Number(params.get('total')) || 1;
@@ -24,6 +53,52 @@ function ResultsContent() {
   const seconds = time % 60;
   const formattedTime = `${minutes}m ${seconds}s`;
 
+  const incorrectQuestions = questions.filter((q) => !q.isCorrect);
+
+  if (reviewing) {
+    return (
+      <div className={styles.resultsContainer}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Review Mistakes</h1>
+          <p className={styles.subtitle}>
+            {incorrectQuestions.length} of {questions.length} questions need review
+          </p>
+        </div>
+
+        <div className={styles.reviewList}>
+          {incorrectQuestions.map((q, i) => (
+            <div key={i} className={styles.reviewCard}>
+              <div className={styles.reviewQuestion}>{q.prompt}</div>
+              <div className={styles.reviewRow}>
+                <span className={styles.reviewLabel}>Your answer:</span>
+                <span className={styles.reviewWrong}>{resolveLabel(q.userAnswer, q.options) || '(no answer)'}</span>
+              </div>
+              <div className={styles.reviewRow}>
+                <span className={styles.reviewLabel}>Correct answer:</span>
+                <span className={styles.reviewCorrect}>{resolveLabel(q.correctAnswer, q.options)}</span>
+              </div>
+              {q.feedback && (
+                <div className={styles.reviewFeedback}>{q.feedback}</div>
+              )}
+            </div>
+          ))}
+          {incorrectQuestions.length === 0 && (
+            <div className={styles.reviewCard}>
+              <p className={styles.reviewEmpty}>Perfect score! No mistakes to review.</p>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.actions}>
+          <button onClick={() => setReviewing(false)} className={styles.btnPrimary}>
+            <AppIcon name="arrow_back" />
+            Back to results
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.resultsContainer}>
       <div className={styles.header}>
@@ -35,12 +110,8 @@ function ResultsContent() {
         <div className={styles.scoreRingWrapper}>
           <svg className={styles.scoreRing} viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="40" className={styles.ringTrack} />
-            <circle
-              cx="50" cy="50" r="40"
-              className={styles.ringProgress}
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-            />
+            <circle cx="50" cy="50" r="40" className={styles.ringProgress}
+              strokeDasharray={circumference} strokeDashoffset={offset} />
           </svg>
           <div className={styles.scoreContent}>
             <span className={styles.scoreValue}>{score}%</span>
@@ -86,7 +157,11 @@ function ResultsContent() {
           <AppIcon name="refresh" />
           Practice Again
         </Link>
-        <button className={styles.btnSecondary}>
+        <button
+          className={styles.btnSecondary}
+          onClick={() => setReviewing(true)}
+          disabled={questions.length === 0}
+        >
           <AppIcon name="rule" />
           Review Mistakes
         </button>

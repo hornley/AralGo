@@ -2,7 +2,7 @@
 
 import { AppIcon } from '@/components/AppIcon';
 import { LessonContent } from '@/lib/types/supabase';
-import styles from '../../app/lesson-studio/lesson-studio.module.css';
+import styles from '../../app/(dashboard)/lesson-studio/lesson-studio.module.css';
 
 export default function LessonResultView({ content }: { content: LessonContent }) {
   return (
