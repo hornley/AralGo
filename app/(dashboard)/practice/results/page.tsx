@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState } from 'react';
 import { AppIcon } from '@/components/AppIcon';
 import styles from './results.module.css';
 
@@ -27,16 +27,15 @@ function resolveLabel(label: string, options?: { label: string; text: string }[]
 function ResultsContent() {
   const params = useSearchParams();
   const [reviewing, setReviewing] = useState(false);
-  const [questions, setQuestions] = useState<QuestionResult[]>([]);
-
-  useEffect(() => {
+  const [questions] = useState<QuestionResult[]>(() => {
     try {
       const stored = sessionStorage.getItem('practice.quizResults');
       if (stored) {
-        setQuestions(JSON.parse(stored));
+        return JSON.parse(stored);
       }
     } catch {}
-  }, []);
+    return [];
+  });
 
   const rawScore = params.get('score');
   const total = Number(params.get('total')) || 1;
