@@ -7,6 +7,7 @@ import { AppIcon } from '@/components/AppIcon';
 import styles from './practice.module.css';
 import { createClient } from '@/lib/supabase/client';
 import { loadStudySetup } from '@/lib/study/study-setup';
+import { withRetry } from '@/lib/ai/with-retry';
 
 interface Subject {
   id: number;
@@ -40,6 +41,8 @@ export default function PracticePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   const supabase = useMemo(() => createClient(), []);
 
@@ -125,9 +128,47 @@ export default function PracticePage() {
     setSelectedSubjectId(id);
   }, []);
 
-  const handleGenerate = useCallback(() => {
-    router.push('/practice/results?score=85&total=20&correct=17&time=165');
-  }, [router]);
+  const handleGenerate = useCallback(async () => {
+    if (!selectedSubjectId || !selectedTopicId || !gradeBand) return;
+    setGenerating(true);
+    setGenerationError(null);
+
+    const subject = subjects.find(s => s.id === selectedSubjectId);
+    const topic = topics.find(t => t.id === selectedTopicId);
+
+    if (!subject || !topic) {
+      setGenerationError('Please select a subject and topic.');
+      setGenerating(false);
+      return;
+    }
+
+    const result = await withRetry(async () => {
+      const res = await fetch('/api/practice/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: subject.name,
+          topics: [topic.name],
+          gradeBand,
+          languageMode: 'mixed',
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Failed to generate practice');
+      }
+      return res.json();
+    });
+
+    if (!result.ok) {
+      setGenerationError(result.error);
+      setGenerating(false);
+      return;
+    }
+
+    sessionStorage.setItem('practice.result', JSON.stringify(result.data));
+    router.push('/practice/results');
+  }, [selectedSubjectId, selectedTopicId, gradeBand, subjects, topics, router]);
 
   if (loading) {
     return (
@@ -258,8 +299,16 @@ export default function PracticePage() {
         </div>
       </div>
 
-      <button onClick={handleGenerate} className={styles.generateBtn}>
-        Generate Practice ✨
+      {generationError && (
+        <div className={styles.errorBox}>
+          <span>{generationError}</span>
+          <button onClick={handleGenerate} className={styles.retryBtn} disabled={generating}>
+            Subukan muli / Try again
+          </button>
+        </div>
+      )}
+      <button onClick={handleGenerate} className={styles.generateBtn} disabled={generating}>
+        {generating ? 'Generating...' : 'Generate Practice ✨'}
       </button>
     </div>
   );

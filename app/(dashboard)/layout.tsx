@@ -1,6 +1,7 @@
 import { getDashboardData } from '@/lib/study/dashboard-data';
 import DashboardProfile from './dashboard-profile';
 import SidebarNav from './sidebar-nav';
+import NetworkBanner from '@/components/NetworkBanner';
 import styles from './layout.module.css';
 
 function getGreeting() {
@@ -37,6 +38,7 @@ export default async function DashboardLayout({
 
       {/* Main Content */}
       <main className={styles.mainContent}>
+        <NetworkBanner />
         {children}
       </main>
     </div>

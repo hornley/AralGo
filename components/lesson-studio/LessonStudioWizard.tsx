@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppIcon } from '@/components/AppIcon';
 import { StudySubject, LearningStyle, PracticeFormat, LessonStudioDraft, FileDraft, LessonContent, GradeBand, LanguageMode, SavedLesson } from '@/lib/types/supabase';
 import { loadDraft, saveDraft, clearDraft, defaultDraft, saveLesson, loadSavedLessons, deleteSavedLesson } from '@/lib/study/lesson-studio';
+import { withRetry } from '@/lib/ai/with-retry';
 import SubjectPicker from './SubjectPicker';
 import TopicSelector from './TopicSelector';
 import PreferencePicker from './PreferencePicker';
@@ -171,9 +172,12 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
 
   const handleGenerate = async () => {
     setError(null);
+    setLessonContent(null);
+    setPracticeQuestions(null);
+
     setGenStage('lesson');
-    try {
-      const lessonRes = await fetch('/api/lessons/generate', {
+    const lessonResult = await withRetry(async () => {
+      const res = await fetch('/api/lessons/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -186,28 +190,40 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
           referenceTexts: [],
         }),
       });
-      if (!lessonRes.ok) throw new Error('Lesson generation failed');
-      const lessonData = await lessonRes.json();
-      setLessonContent(lessonData.content);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Lesson generation failed');
+      }
+      return res.json();
+    });
 
-      // Save lesson immediately (even before practice)
-      const lessonOnly: SavedLesson = {
-        id: crypto.randomUUID(),
-        subject: draft.subject!,
-        topics: draft.topics,
-        gradeBand,
-        languageMode,
-        lessonContent: lessonData.content,
-        practiceQuestions: [],
-        createdAt: new Date().toISOString(),
-      };
-      pendingSaveRef.current = lessonOnly;
-      savedIdRef.current.add(lessonOnly.id);
-      saveLesson(lessonOnly);
-      setSavedLessons(loadSavedLessons());
+    if (!lessonResult.ok) {
+      setError('Lesson generation failed. ' + lessonResult.error);
+      setGenStage(null);
+      return;
+    }
 
-      setGenStage('practice');
-      const practiceRes = await fetch('/api/practice/generate', {
+    const lessonData = lessonResult.data;
+    setLessonContent(lessonData.content);
+
+    const lessonOnly: SavedLesson = {
+      id: crypto.randomUUID(),
+      subject: draft.subject!,
+      topics: draft.topics,
+      gradeBand,
+      languageMode,
+      lessonContent: lessonData.content,
+      practiceQuestions: [],
+      createdAt: new Date().toISOString(),
+    };
+    pendingSaveRef.current = lessonOnly;
+    savedIdRef.current.add(lessonOnly.id);
+    saveLesson(lessonOnly);
+    setSavedLessons(loadSavedLessons());
+
+    setGenStage('practice');
+    const practiceResult = await withRetry(async () => {
+      const res = await fetch('/api/practice/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -223,26 +239,33 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
           generatedLessonId: lessonData.lesson?.id,
         }),
       });
-      if (!practiceRes.ok) throw new Error('Practice generation failed');
-      const practiceData = await practiceRes.json();
-      setPracticeQuestions(practiceData.questions);
-
-      // Update saved lesson with practice questions
-      if (pendingSaveRef.current) {
-        const updated = {
-          ...pendingSaveRef.current,
-          practiceQuestions: practiceData.questions,
-        };
-        saveLesson(updated);
-        setSavedLessons(loadSavedLessons());
-        pendingSaveRef.current = null;
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Practice generation failed');
       }
-      setSourceIsSaved(false);
-    } catch (e) {
-      setError('Generation failed. Please try again.');
-    } finally {
+      return res.json();
+    });
+
+    if (!practiceResult.ok) {
+      setError('Practice generation failed. ' + practiceResult.error + '. The lesson was saved.');
       setGenStage(null);
+      return;
     }
+
+    const practiceData = practiceResult.data;
+    setPracticeQuestions(practiceData.questions);
+
+    if (pendingSaveRef.current) {
+      const updated = {
+        ...pendingSaveRef.current,
+        practiceQuestions: practiceData.questions,
+      };
+      saveLesson(updated);
+      setSavedLessons(loadSavedLessons());
+      pendingSaveRef.current = null;
+    }
+    setSourceIsSaved(false);
+    setGenStage(null);
   };
 
   const handleReset = () => {
@@ -362,7 +385,14 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
               <strong>{draft.subject}</strong> on{' '}
               <strong>{draft.topics.join(', ')}</strong>.
             </p>
-            {error && <p className={styles.errorMessage}>{error}</p>}
+            {error && (
+              <div>
+                <p className={styles.errorMessage}>{error}</p>
+                <button className={styles.retryBtn} onClick={handleGenerate} disabled={!canProceed(4)} type="button">
+                  Subukan muli / Try again
+                </button>
+              </div>
+            )}
             <button className={styles.generateBtn} onClick={handleGenerate} disabled={!canProceed(4)}>
               <AppIcon name="auto_stories" />
               Generate Lesson & Practice

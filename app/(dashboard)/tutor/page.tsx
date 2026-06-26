@@ -73,7 +73,7 @@ export default function TutorPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('sessionId');
 
-  const { messages, setMessages, sendMessage, status, error } = useChat({
+  const { messages, setMessages, sendMessage, regenerate, status, error } = useChat({
     transport: new DefaultChatTransport({
       body: { sessionId },
     }),
@@ -206,8 +206,13 @@ export default function TutorPage() {
             <div className={styles.avatarSmallWrapper}>
               <Image src="/images/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
             </div>
-            <div className={styles.bubbleError}>
-              {error.message || 'The tutor could not reply. Please try again.'}
+            <div>
+              <div className={styles.bubbleError}>
+                {error.message || 'The tutor could not reply. Please try again.'}
+              </div>
+              <button className={styles.retryBtn} onClick={() => regenerate()} type="button">
+                Subukan muli / Try again
+              </button>
             </div>
           </div>
         )}
