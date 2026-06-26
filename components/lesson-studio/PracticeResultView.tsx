@@ -1,6 +1,7 @@
 'use client';
 
 import { AppIcon } from '@/components/AppIcon';
+import MathRenderer from '@/components/MathRenderer';
 import styles from '../../app/(dashboard)/lesson-studio/lesson-studio.module.css';
 
 interface PracticeQuestionView {
@@ -27,7 +28,7 @@ export default function PracticeResultView({ questions, onStartPractice }: Pract
           <div key={i} className={styles.questionPreview}>
             <span className={styles.qNumber}>{i + 1}.</span>
             <span className={styles.qType}>{q.type.replace(/_/g, ' ')}</span>
-            <p className={styles.qPrompt}>{q.prompt}</p>
+            <p className={styles.qPrompt}><MathRenderer text={q.prompt} /></p>
           </div>
         ))}
       </div>
