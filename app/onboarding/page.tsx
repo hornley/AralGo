@@ -17,6 +17,23 @@ import {
 } from '@/lib/study/study-setup';
 import styles from './onboarding.module.css';
 
+const stepDetails = {
+  1: {
+    title: 'Pick your study language',
+    subtitle: 'Choose the language you want AralGo to use while teaching.',
+  },
+  2: {
+  },
+  3: {
+  },
+  4: {
+  },
+  5: {
+    title: "You're all set",
+    subtitle: 'Check your setup, then start learning or head straight to your dashboard.',
+  },
+} as const;
+
 export default function OnboardingPage() {
   const router = useRouter();
 
@@ -157,24 +174,42 @@ export default function OnboardingPage() {
     );
   };
 
+  const renderHeader = ({
+    currentStep,
+    title,
+    subtitle,
+    onBack = handleBack,
+  }: {
+    currentStep: keyof typeof stepDetails;
+    title: string;
+    subtitle: string;
+    onBack?: () => void;
+  }) => (
+    <header className={styles.header}>
+      <div className={styles.headerTop}>
+        <button className={styles.backButton} onClick={onBack} type="button" aria-label="Go back">
+          <AppIcon name="arrow_back" />
+          <span>Back</span>
+        </button>
+        <LeafProgress currentStep={currentStep} totalSteps={totalSteps} />
+      </div>
+      <h1 className={styles.title}>{title}</h1>
+      <p className={styles.subtitle}>{subtitle}</p>
+    </header>
+  );
+
   const renderStep = () => {
     switch (step) {
       case 1:
         return (
           <>
-            <header className={styles.header}>
-              <div className={styles.headerTop}>
-                <button className={styles.backButton} onClick={handleBack}>
-                  <AppIcon name="arrow_back" />
-                </button>
-                <LeafProgress currentStep={1} totalSteps={totalSteps} />
-                <div className={styles.spacer}></div>
-              </div>
-              <h1 className={styles.title}>Choose preferred mode</h1>
-              <p className={styles.subtitle}>Select the language you are most comfortable with.</p>
-            </header>
+            {renderHeader({
+              currentStep: 1,
+              title: stepDetails[1].title,
+              subtitle: stepDetails[1].subtitle,
+            })}
             <div className={styles.content}>
-              <div className={styles.grid}>
+              <div className={`${styles.grid} ${styles.singleColumnGrid}`}>
                 <StationeryCard
                   title="Filipino"
                   icon="chat_bubble"
@@ -203,6 +238,7 @@ export default function OnboardingPage() {
                 className={styles.nextButton}
                 onClick={handleNext}
                 disabled={!language}
+                type="button"
               >
                 {t(language, 'common.next')}
                 <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
@@ -213,17 +249,11 @@ export default function OnboardingPage() {
       case 2:
         return (
           <>
-            <header className={styles.header}>
-              <div className={styles.headerTop}>
-                <button className={styles.backButton} onClick={handleBack}>
-                  <AppIcon name="arrow_back" />
-                </button>
-                <LeafProgress currentStep={2} totalSteps={totalSteps} />
-                <div className={styles.spacer}></div>
-              </div>
-              <h1 className={styles.title}>{t(language, 'grade.title')}</h1>
-              <p className={styles.subtitle}>{t(language, 'grade.subtitle')}</p>
-            </header>
+            {renderHeader({
+              currentStep: 2,
+              title: t(language, 'grade.title'),
+              subtitle: t(language, 'grade.subtitle'),
+            })}
             <div className={styles.content}>
               <div className={styles.grid}>
                 <StationeryCard
@@ -267,6 +297,7 @@ export default function OnboardingPage() {
                 className={styles.nextButton}
                 onClick={handleNext}
                 disabled={!gradeLevel}
+                type="button"
               >
                 {t(language, 'common.next')}
                 <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
@@ -277,17 +308,11 @@ export default function OnboardingPage() {
       case 3:
         return (
           <>
-            <header className={styles.header}>
-              <div className={styles.headerTop}>
-                <button className={styles.backButton} onClick={handleBack}>
-                  <AppIcon name="arrow_back" />
-                </button>
-                <LeafProgress currentStep={3} totalSteps={totalSteps} />
-                <div className={styles.spacer}></div>
-              </div>
-              <h1 className={styles.title}>{t(language, 'subject.title')}</h1>
-              <p className={styles.subtitle}>{t(language, 'subject.subtitle')}</p>
-            </header>
+            {renderHeader({
+              currentStep: 3,
+              title: t(language, 'subject.title'),
+              subtitle: t(language, 'subject.subtitle'),
+            })}
             <div className={styles.content}>
               <div className={styles.grid}>
                 <StationeryCard
@@ -331,6 +356,7 @@ export default function OnboardingPage() {
                 className={styles.nextButton}
                 onClick={handleNext}
                 disabled={subjects.length === 0}
+                type="button"
               >
                 {t(language, 'common.next')}
                 <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
@@ -341,17 +367,11 @@ export default function OnboardingPage() {
       case 4:
         return (
           <>
-            <header className={styles.header}>
-              <div className={styles.headerTop}>
-                <button className={styles.backButton} onClick={handleBack}>
-                  <AppIcon name="arrow_back" />
-                </button>
-                <LeafProgress currentStep={4} totalSteps={totalSteps} />
-                <div className={styles.spacer}></div>
-              </div>
-              <h1 className={styles.title}>{t(language, 'goal.title')}</h1>
-              <p className={styles.subtitle}>{t(language, 'goal.subtitle')}</p>
-            </header>
+            {renderHeader({
+              currentStep: 4,
+              title: t(language, 'goal.title'),
+              subtitle: t(language, 'goal.subtitle'),
+            })}
             <div className={styles.content}>
               <div className={styles.grid}>
                 <StationeryCard
@@ -379,16 +399,15 @@ export default function OnboardingPage() {
             </div>
             <footer className={styles.footer}>
               <div className={styles.buttonGroup}>
-                {goal ? (
-                  <button className={styles.nextButton} onClick={handleNext}>
-                    {t(language, 'common.next')}
-                    <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
+                <button className={styles.nextButton} onClick={handleNext} type="button">
+                  {t(language, 'common.next')}
+                  <AppIcon name="arrow_forward" className={styles.nextButtonIcon} />
+                </button>
+                {!goal ? (
+                  <button className={styles.skipButton} onClick={handleNext} type="button">
+                    Skip for now
                   </button>
-                ) : (
-                  <button className={styles.skipButton} onClick={handleNext}>
-                    {t(language, 'common.skip')}
-                  </button>
-                )}
+                ) : null}
               </div>
             </footer>
           </>
@@ -396,23 +415,22 @@ export default function OnboardingPage() {
       case 5:
         return (
           <>
-            <header className={styles.header}>
-              <div className={styles.headerTop}>
-                <button className={styles.backButton} onClick={() => setStep(4)}>
-                  <AppIcon name="arrow_back" />
-                </button>
-                <div className={styles.spacer}></div>
-              </div>
-            </header>
+            {renderHeader({
+              currentStep: 5,
+              title: stepDetails[5].title,
+              subtitle: stepDetails[5].subtitle,
+              onBack: () => setStep(4),
+            })}
             <div className={styles.content}>
               <div className={styles.celebration}>
                 <div className={styles.starWrapper}>
                   <div className={styles.starGlow} />
                   <AppIcon name="stars" className={styles.celebrationIcon} />
                 </div>
-                <h2 className={styles.celebrationTitle}>You&apos;re all set!</h2>
+                <p className={styles.celebrationBadge}>Profile ready</p>
+                <h2 className={styles.celebrationTitle}>Your learner profile is ready.</h2>
                 <p className={styles.celebrationSub}>
-                  Your study profile is ready. Here&apos;s a quick look at what you chose.
+                  Review your choices, then start with a lesson or go to your dashboard.
                 </p>
                 <div className={styles.notebookLine} />
               </div>
@@ -450,12 +468,12 @@ export default function OnboardingPage() {
             </div>
             <footer className={styles.footer}>
               <div className={styles.buttonGroup}>
-                <button className={styles.primaryButton} onClick={handleCreateLesson} disabled={isPending}>
+                <button className={styles.primaryButton} onClick={handleCreateLesson} disabled={isPending} type="button">
                   <AppIcon name="auto_stories" />
                   Create your first lesson
                 </button>
-                <button className={styles.secondaryButton} onClick={handleGoToDashboard} disabled={isPending}>
-                  Head to Dashboard
+                <button className={styles.secondaryButton} onClick={handleGoToDashboard} disabled={isPending} type="button">
+                  Go to dashboard instead
                 </button>
               </div>
             </footer>
