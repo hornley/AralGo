@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 32px;
   max-width: 1200px;
+  width: 100%;
 }
 
 .alert {
@@ -414,4 +415,104 @@
   color: #43483E;
   line-height: 1.5;
   margin: 0;
+}
+
+@media (max-width: 900px) {
+  .container {
+    max-width: none;
+    gap: 28px;
+    overflow: hidden;
+  }
+
+  .alert {
+    margin: 0 16px;
+  }
+
+  .topRow {
+    display: flex;
+    grid-template-columns: none;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 0 16px 8px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .topRow::-webkit-scrollbar,
+  .actionsGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .card {
+    flex: 0 0 78vw;
+    max-width: 340px;
+    min-width: 260px;
+    border-radius: 20px;
+    padding: 22px;
+    scroll-snap-align: start;
+  }
+
+  .courseTitle {
+    font-size: 1.35rem;
+  }
+
+  .goalCircle {
+    width: 128px;
+    height: 128px;
+  }
+
+  .goalCircle::before {
+    width: 108px;
+    height: 108px;
+  }
+
+  .topicItem {
+    align-items: flex-start;
+  }
+
+  .topicArrow {
+    display: none;
+  }
+
+  .bottomRow {
+    display: block;
+  }
+
+  .sectionTitle {
+    margin: 0 16px 16px;
+  }
+
+  .actionsGrid {
+    display: flex;
+    grid-template-columns: none;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 0 16px 8px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .actionBtn {
+    flex: 0 0 38vw;
+    min-width: 148px;
+    max-width: 180px;
+    padding: 22px 14px;
+    scroll-snap-align: start;
+    text-decoration: none;
+  }
+
+  .tipCard {
+    margin: 20px 16px 0;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  .card {
+    flex-basis: 82vw;
+  }
+
+  .actionBtn {
+    flex-basis: 42vw;
+  }
 }

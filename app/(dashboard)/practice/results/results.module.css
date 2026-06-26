@@ -241,3 +241,41 @@
 .btnSecondary:hover {
   opacity: 0.9;
 }
+
+@media (max-width: 900px) {
+  .resultsContainer {
+    min-height: auto;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 0 16px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .title {
+    font-size: 1.75rem;
+    line-height: 1.15;
+  }
+
+  .subtitle {
+    line-height: 1.5;
+  }
+
+  .card {
+    max-width: none;
+    padding: 28px 20px;
+    border-radius: 20px;
+  }
+
+  .upNextCard,
+  .actions {
+    max-width: none;
+  }
+
+  .metricsRow {
+    gap: 12px;
+  }
+}

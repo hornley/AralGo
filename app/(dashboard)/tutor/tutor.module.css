@@ -372,3 +372,47 @@
 .sendBtn span {
   font-size: 20px;
 }
+
+@media (max-width: 900px) {
+  .tutorContainer {
+    height: calc(100dvh - 100px);
+    margin: 0 16px;
+    border-radius: 20px;
+  }
+
+  .header {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .headerLeft {
+    min-width: 0;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .modePill {
+    padding: 6px 10px;
+  }
+
+  .chatArea {
+    padding: 18px 16px;
+    gap: 18px;
+  }
+
+  .messageRowAI,
+  .messageRowUser {
+    max-width: 94%;
+  }
+
+  .bottomArea {
+    padding: 16px;
+  }
+
+  .inputWrapper {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+}
