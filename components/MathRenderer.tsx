@@ -29,11 +29,27 @@ function parseAndRender(text: string): (string | { html: string; display: boolea
       continue;
     }
 
+    const displayBracketMatch = remaining.match(/^\\\[([\s\S]+?)\\\]/);
+    if (displayBracketMatch) {
+      const html = renderLatex(displayBracketMatch[1], true);
+      parts.push({ html, display: true });
+      remaining = remaining.slice(displayBracketMatch[0].length);
+      continue;
+    }
+
     const inlineMatch = remaining.match(/^\$(.+?)\$/);
     if (inlineMatch) {
       const html = renderLatex(inlineMatch[1], false);
       parts.push({ html, display: false });
       remaining = remaining.slice(inlineMatch[0].length);
+      continue;
+    }
+
+    const inlineBracketMatch = remaining.match(/^\\\((.+?)\\\)/);
+    if (inlineBracketMatch) {
+      const html = renderLatex(inlineBracketMatch[1], false);
+      parts.push({ html, display: false });
+      remaining = remaining.slice(inlineBracketMatch[0].length);
       continue;
     }
 
