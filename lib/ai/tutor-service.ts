@@ -159,7 +159,7 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
 
   const { data: profile, error: profileError } = await supabase
     .from('learner_profiles')
-    .select('display_name, grade_band')
+    .select('display_name, grade_band, preferred_language_mode')
     .eq('user_id', user.id)
     .single();
 
@@ -167,11 +167,13 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
     throw new TutorError('Learner profile not found.', 404);
   }
 
+  const languageMode = (profile.preferred_language_mode ?? session.language_mode) as LanguageMode;
+
   const context: TutorContext = {
     displayName: profile.display_name || '',
     gradeBand: profile.grade_band as GradeBand,
     subject: session.subject as StudySubject,
-    languageMode: session.language_mode as LanguageMode,
+    languageMode,
     topic: session.topic,
     mode: mode,
   };
@@ -209,7 +211,7 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
         study_session_id: resolvedSessionId,
         user_id: user.id,
         role: 'learner',
-        language_mode: session.language_mode,
+        language_mode: languageMode,
         content: userText,
       });
 
@@ -225,7 +227,7 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
       study_session_id: resolvedSessionId,
       user_id: user.id,
       role: 'assistant',
-      language_mode: session.language_mode,
+      language_mode: languageMode,
       content: responseText,
     });
 
