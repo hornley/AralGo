@@ -18,6 +18,15 @@ AralGo Scholar is a mobile-first AI study companion built for Filipino learners 
 
 It combines an adaptive Lesson Studio, an AI tutor with chat and Socratic modes, generated practice quizzes, session history, multilingual support across English, Filipino, and Taglish, and Progressive Web App foundations for low-bandwidth learning.
 
+## Team
+
+**larp final boss**
+
+- Harley Albert C. Buendia — Team Representative/Developer
+- Wayne Andrei C. Garcia — AI Developer
+- Chloe Maxine A. Carbonell — UI Designer
+- Josiah B. Abrogar — Developer
+
 ## Why AralGo Exists
 
 Many Filipino students do not struggle because they lack effort. They struggle because the support system around them is uneven.
