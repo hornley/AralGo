@@ -1,4 +1,18 @@
-# AralGo Scholar
+<div align="center">
+  <img src="public/images/aki.png" alt="Aki, the AralGo study buddy" width="132" />
+  <h1>AralGo Scholar</h1>
+  <p><strong>A mobile-first AI study companion for Filipino learners.</strong></p>
+  <p>
+    <img alt="Aki" src="https://img.shields.io/badge/Aki-Study%20Buddy-f59e0b?style=for-the-badge" />
+    <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16.2-black?style=for-the-badge&logo=nextdotjs" />
+    <img alt="React" src="https://img.shields.io/badge/React-19.2-149eca?style=for-the-badge&logo=react&logoColor=white" />
+    <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-6.0-3178c6?style=for-the-badge&logo=typescript&logoColor=white" />
+    <img alt="Supabase" src="https://img.shields.io/badge/Supabase-2.108-3ecf8e?style=for-the-badge&logo=supabase&logoColor=white" />
+    <img alt="Azure OpenAI" src="https://img.shields.io/badge/Azure%20OpenAI-AI%20Tutor-0078d4?style=for-the-badge&logo=openai&logoColor=white" />
+    <img alt="AI SDK" src="https://img.shields.io/badge/AI%20SDK-6.0-111827?style=for-the-badge" />
+    <img alt="PWA" src="https://img.shields.io/badge/PWA-Offline%20Ready-5a0fc8?style=for-the-badge&logo=pwa&logoColor=white" />
+  </p>
+</div>
 
 AralGo Scholar is a mobile-first AI study companion built for Filipino learners who need personalized academic support in the language, pace, and device conditions that actually match their daily lives.
 
