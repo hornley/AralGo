@@ -34,7 +34,12 @@ const renderInlineText = (text: string) => {
 };
 
 const renderMessageText = (text: string) => {
-  const normalizedText = text.replace(/\s+-\s+/g, '\n- ').trim();
+  const protectedText = text
+    .replace(/\\\([\s\S]*?\\\)/g, (m) => m.replace(/\n/g, '\u200B'))
+    .replace(/\\\[[\s\S]*?\\\]/g, (m) => m.replace(/\n/g, '\u200B'))
+    .replace(/\$\$[\s\S]*?\$\$/g, (m) => m.replace(/\n/g, '\u200B'))
+    .replace(/\$[^$]*?\$/g, (m) => m.replace(/\n/g, '\u200B'));
+  const normalizedText = protectedText.replace(/\s+-\s+/g, '\n- ').trim();
   const lines = normalizedText.split('\n').map((line) => line.trim()).filter(Boolean);
   const blocks: React.ReactNode[] = [];
   let listItems: string[] = [];
