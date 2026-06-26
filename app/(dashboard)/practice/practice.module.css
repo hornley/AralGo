@@ -272,3 +272,41 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+@media (max-width: 900px) {
+  .practiceContainer {
+    min-height: auto;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 0 16px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .title {
+    font-size: 1.75rem;
+    line-height: 1.15;
+  }
+
+  .subtitle {
+    line-height: 1.5;
+  }
+
+  .configCard {
+    max-width: none;
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  .pill {
+    flex: 0 1 auto;
+  }
+
+  .generateBtn,
+  .errorBox {
+    max-width: none;
+  }
+}

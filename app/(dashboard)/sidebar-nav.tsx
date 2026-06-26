@@ -27,34 +27,36 @@ function SidebarLink({
   href,
   icon,
   label,
+  onNavigate,
 }: {
   href: string;
   icon: string;
   label: string;
+  onNavigate?: () => void;
 }) {
   const pathname = usePathname();
   const active = isActivePath(pathname, href);
 
   return (
-    <Link href={href} className={`${styles.navLink} ${active ? styles.active : ''}`}>
+    <Link href={href} className={`${styles.navLink} ${active ? styles.active : ''}`} onClick={onNavigate}>
       <AppIcon name={icon} />
       {label}
     </Link>
   );
 }
 
-export default function SidebarNav() {
+export default function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
       <nav className={styles.navSection}>
         {primaryLinks.map((link) => (
-          <SidebarLink key={link.href} {...link} />
+          <SidebarLink key={link.href} {...link} onNavigate={onNavigate} />
         ))}
       </nav>
 
       <div className={styles.bottomNav}>
         {secondaryLinks.map((link) => (
-          <SidebarLink key={link.href} {...link} />
+          <SidebarLink key={link.href} {...link} onNavigate={onNavigate} />
         ))}
       </div>
     </>

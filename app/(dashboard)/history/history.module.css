@@ -193,3 +193,79 @@
   color: #C3C8BA;
   font-size: 1.25rem;
 }
+
+@media (max-width: 900px) {
+  .container {
+    max-width: none;
+    gap: 20px;
+    padding: 0 16px;
+  }
+
+  .header {
+    gap: 6px;
+  }
+
+  .title {
+    font-size: 1.7rem;
+    line-height: 1.15;
+  }
+
+  .subtitle {
+    max-width: 32ch;
+    line-height: 1.45;
+  }
+
+  .emptyState {
+    padding: 44px 20px;
+    border-radius: 20px;
+  }
+
+  .list {
+    gap: 12px;
+  }
+
+  .card {
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .cardIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .cardContent {
+    min-width: 0;
+    padding-top: 2px;
+  }
+
+  .cardTitle {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.25;
+  }
+
+  .cardMeta {
+    gap: 5px;
+    line-height: 1.45;
+  }
+
+  .cardRight {
+    align-self: center;
+    gap: 6px;
+  }
+
+  .statusBadge {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .cardRight {
+    flex-direction: column;
+  }
+}

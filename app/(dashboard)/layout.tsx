@@ -1,8 +1,5 @@
 import { getDashboardData } from '@/lib/study/dashboard-data';
-import DashboardProfile from './dashboard-profile';
-import SidebarNav from './sidebar-nav';
-import NetworkBanner from '@/components/NetworkBanner';
-import styles from './layout.module.css';
+import DashboardShell from './dashboard-shell';
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -23,24 +20,13 @@ export default async function DashboardLayout({
   const { profile, user } = await getDashboardData();
 
   return (
-    <div className={styles.layoutContainer}>
-      {/* Sidebar */}
-      <aside className={styles.sidebar}>
-        <DashboardProfile
-          initialDisplayName={profile?.display_name ?? null}
-          initialGradeBand={profile?.grade_band ?? null}
-          isAnonymous={Boolean(user?.is_anonymous)}
-          greeting={getGreeting()}
-        />
-
-        <SidebarNav />
-      </aside>
-
-      {/* Main Content */}
-      <main className={styles.mainContent}>
-        <NetworkBanner />
-        {children}
-      </main>
-    </div>
+    <DashboardShell
+      displayName={profile?.display_name ?? null}
+      gradeBand={profile?.grade_band ?? null}
+      isAnonymous={Boolean(user?.is_anonymous)}
+      greeting={getGreeting()}
+    >
+      {children}
+    </DashboardShell>
   );
 }
