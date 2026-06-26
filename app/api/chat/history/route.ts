@@ -46,7 +46,13 @@ export async function GET(req: Request) {
 
     return new Response(
       JSON.stringify({ messages }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } },
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=300, stale-while-revalidate=86400',
+        },
+      },
     );
   } catch (error) {
     console.error('Chat history API error:', error);

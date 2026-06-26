@@ -1,6 +1,7 @@
-const SHELL_CACHE = "aralgo-shell-v2";
-const DATA_CACHE = "aralgo-data-v2";
-const API_CACHE = "aralgo-api-v2";
+const SHELL_CACHE = "aralgo-shell-v3";
+const DATA_CACHE = "aralgo-data-v3";
+const API_CACHE = "aralgo-api-v3";
+const DYNAMIC_CACHE = "aralgo-dynamic-v3";
 
 const SHELL_URLS = [
   "/",
@@ -32,12 +33,30 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((k) => k !== SHELL_CACHE && k !== DATA_CACHE && k !== API_CACHE)
+          .filter((k) => k !== SHELL_CACHE && k !== DATA_CACHE && k !== API_CACHE && k !== DYNAMIC_CACHE)
           .map((k) => caches.delete(k)),
       ),
     ),
   );
   clients.claim();
+});
+
+self.addEventListener("sync", (event) => {
+  if (event.tag === "sync-outbox") {
+    event.waitUntil(
+      clients.matchAll({ type: "window" }).then((clients) => {
+        for (const client of clients) {
+          client.postMessage({ type: "FLUSH_OUTBOX" });
+        }
+      }),
+    );
+  }
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("fetch", (event) => {
