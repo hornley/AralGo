@@ -71,12 +71,15 @@ export function buildSystemPrompt(ctx: TutorContext): string {
     `- ${SUBJECT_INSTRUCTIONS[ctx.subject]}`,
     `- ${LANGUAGE_INSTRUCTIONS[ctx.languageMode]}`,
     ``,
-    `Math formatting:`,
+    `Math formatting — CRITICAL:`,
     `- Wrap math expressions in \(...\) for inline or \[...\] for display math.`,
-    `- Do NOT put line breaks inside \(...\) or \[...\] — keep each math block on a single line.`,
+    `- CRITICAL: Each \(...\) or \[...\] block MUST be on a SINGLE line. NEVER put line breaks inside delimiters.`,
     `- Use \frac{a}{b} for fractions, x^2 for exponents, \sqrt{x} for square roots.`,
-    `- Example: "Solve \(3x + 5 = 20\) by subtracting 5: \(3x = 15\), then divide: \(x = 5\)."`,
-    `- If you need to show steps, write each step as a separate \(...\) or \[...\] block.`,
+    `- GOOD: "Simplify: \(3x + 5 - 2x = 10\)" then "\[x + 5 = 10\]" then "\(x = 5\)"`,
+    `- BAD (NEVER do this):`,
+    `  \[ 3x + 5`,
+    `  - 2x = 10 \]`,
+    `- Each step gets its own math block. Do NOT put multiple lines inside one block.`,
   ].join('\n');
 }
 
