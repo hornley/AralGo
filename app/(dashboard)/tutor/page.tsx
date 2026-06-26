@@ -24,7 +24,8 @@ const tutorModes: Array<{
 
 const AKI_AVATAR_SRC = '/images/aki.png';
 
-const renderInlineText = (text: string) => {
+const renderInlineText = (text: string, placeholders: Map<string, string>) => {
+  const restore = (s: string) => s.replace(/\x00MATH\d+\x00/g, (m) => placeholders.get(m) ?? m);
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((chunk, index) => {
     const isBold = chunk.startsWith('**') && chunk.endsWith('**');
@@ -33,17 +34,26 @@ const renderInlineText = (text: string) => {
       return <strong key={`${chunk}-${index}`}>{chunk.slice(2, -2)}</strong>;
     }
 
-    return <MathRenderer key={`${chunk}-${index}`} text={chunk} />;
+    return <MathRenderer key={`${chunk}-${index}`} text={restore(chunk)} />;
   });
 };
 
 const renderMessageText = (text: string) => {
-  const protectedText = text
-    .replace(/\\\([\s\S]*?\\\)/g, (m) => m.replace(/\n/g, '\u200B'))
-    .replace(/\\\[[\s\S]*?\\\]/g, (m) => m.replace(/\n/g, '\u200B'))
-    .replace(/\$\$[\s\S]*?\$\$/g, (m) => m.replace(/\n/g, '\u200B'))
-    .replace(/\$[^$]*?\$/g, (m) => m.replace(/\n/g, '\u200B'));
-  const normalizedText = protectedText.replace(/\s+-\s+/g, '\n- ').trim();
+  const placeholders = new Map<string, string>();
+  let counter = 0;
+  const extract = (openDelim: string, closeDelim: string, body: string) => {
+    const key = `\x00MATH${counter++}\x00`;
+    placeholders.set(key, openDelim + body + closeDelim);
+    return key;
+  };
+
+  const extracted = text
+    .replace(/\\\([\s\S]+?\\\)/g, (m) => extract('\\(' , '\\)', m.slice(2, -2)))
+    .replace(/\\\[[\s\S]+?\\\]/g, (m) => extract('\\[', '\\]', m.slice(2, -2)))
+    .replace(/\$\$[\s\S]+?\$\$/g, (m) => extract('$$', '$$', m.slice(2, -2)))
+    .replace(/\$[^$]+?\$/g, (m) => extract('$', '$', m.slice(1, -1)));
+
+  const normalizedText = extracted.replace(/\s+-\s+/g, '\n- ').trim();
   const lines = normalizedText.split('\n').map((line) => line.trim()).filter(Boolean);
   const blocks: React.ReactNode[] = [];
   let listItems: string[] = [];
@@ -54,7 +64,7 @@ const renderMessageText = (text: string) => {
     blocks.push(
       <ul key={`list-${blocks.length}`} className={styles.messageList}>
         {listItems.map((item, index) => (
-          <li key={`${item}-${index}`}>{renderInlineText(item)}</li>
+          <li key={`${item}-${index}`}>{renderInlineText(item, placeholders)}</li>
         ))}
       </ul>,
     );
@@ -70,7 +80,7 @@ const renderMessageText = (text: string) => {
     flushList();
     blocks.push(
       <p key={`paragraph-${blocks.length}`} className={styles.messageParagraph}>
-        {renderInlineText(line)}
+        {renderInlineText(line, placeholders)}
       </p>,
     );
   });
