@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState } from 'react';
 import { AppIcon } from '@/components/AppIcon';
+import MathRenderer from '@/components/MathRenderer';
 import styles from './results.module.css';
 
 interface QuestionResult {
@@ -27,16 +28,13 @@ function resolveLabel(label: string, options?: { label: string; text: string }[]
 function ResultsContent() {
   const params = useSearchParams();
   const [reviewing, setReviewing] = useState(false);
-  const [questions, setQuestions] = useState<QuestionResult[]>([]);
-
-  useEffect(() => {
+  const [questions] = useState<QuestionResult[]>(() => {
     try {
       const stored = sessionStorage.getItem('practice.quizResults');
-      if (stored) {
-        setQuestions(JSON.parse(stored));
-      }
+      if (stored) return JSON.parse(stored);
     } catch {}
-  }, []);
+    return [];
+  });
 
   const rawScore = params.get('score');
   const total = Number(params.get('total')) || 1;
@@ -68,17 +66,17 @@ function ResultsContent() {
         <div className={styles.reviewList}>
           {incorrectQuestions.map((q, i) => (
             <div key={i} className={styles.reviewCard}>
-              <div className={styles.reviewQuestion}>{q.prompt}</div>
+              <div className={styles.reviewQuestion}><MathRenderer text={q.prompt} /></div>
               <div className={styles.reviewRow}>
                 <span className={styles.reviewLabel}>Your answer:</span>
-                <span className={styles.reviewWrong}>{resolveLabel(q.userAnswer, q.options) || '(no answer)'}</span>
+                <span className={styles.reviewWrong}><MathRenderer text={resolveLabel(q.userAnswer, q.options) || '(no answer)'} /></span>
               </div>
               <div className={styles.reviewRow}>
                 <span className={styles.reviewLabel}>Correct answer:</span>
-                <span className={styles.reviewCorrect}>{resolveLabel(q.correctAnswer, q.options)}</span>
+                <span className={styles.reviewCorrect}><MathRenderer text={resolveLabel(q.correctAnswer, q.options)} /></span>
               </div>
               {q.feedback && (
-                <div className={styles.reviewFeedback}>{q.feedback}</div>
+                <div className={styles.reviewFeedback}><MathRenderer text={q.feedback} /></div>
               )}
             </div>
           ))}

@@ -36,6 +36,17 @@
   --shadow-cozy-selected: 0 4px 20px rgba(69, 103, 50, 0.1);
 
   --math: #0f766e;
+
+.math-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 0;
+  text-align: center;
+}
+
+.math-inline {
+  white-space: nowrap;
+}
   --science: #7c3aed;
   --english: #d97706;
   --filipino: #b91c1c;

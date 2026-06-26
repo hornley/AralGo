@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { AppIcon } from '@/components/AppIcon';
+import { languageModeLabel, t } from '@/lib/i18n';
 import type { DashboardData } from '@/lib/study/dashboard-data';
 import { formatGradeBand, formatSubject } from '@/lib/study/format';
 import {
@@ -20,62 +21,109 @@ type HomeContentProps = {
   stats: DashboardData['stats'];
 };
 
-function formatLanguageMode(languageMode: string) {
-  switch (languageMode) {
-    case 'english':
-      return 'English';
-    case 'filipino':
-      return 'Filipino';
-    default:
-      return 'Mixed';
-  }
-}
-
-function getSessionLabel(topic: string | null, subject: string) {
+function getSessionLabel(topic: string | null, subject: string, languageMode: string | null | undefined) {
   if (topic && topic.trim()) {
     return topic;
+  }
+  if (languageMode === 'filipino') {
+    return `Study session sa ${subject}`;
+  }
+  if (languageMode === 'mixed') {
+    return `${subject} study session`;
   }
   return `${subject} study session`;
 }
 
-function getGoalHeading(goal: StudySetupDraft['goal']) {
+function getGoalHeading(goal: StudySetupDraft['goal'], languageMode: string | null | undefined) {
   switch (goal) {
     case 'Habol':
-      return 'Catch-up Goal';
+      return languageMode === 'filipino' ? 'Layuning Humabol' : languageMode === 'mixed' ? 'Catch-up Goal' : 'Catch-up Goal';
     case 'Review':
-      return 'Review Goal';
+      return languageMode === 'filipino' ? 'Layuning Mag-review' : 'Review Goal';
     case 'Learn':
-      return 'Learning Goal';
+      return languageMode === 'filipino' ? 'Layuning Matuto' : 'Learning Goal';
     default:
-      return "Today's Goal";
+      return languageMode === 'filipino' ? 'Layunin Ngayon' : languageMode === 'mixed' ? "Today's Goal" : "Today's Goal";
   }
 }
 
-function getGoalMessage(goal: StudySetupDraft['goal'], progress: number, completedBlocks: number, targetBlocks: number) {
+function getGoalMessage(
+  goal: StudySetupDraft['goal'],
+  progress: number,
+  completedBlocks: number,
+  targetBlocks: number,
+  languageMode: string | null | undefined,
+) {
   if (progress >= 100) {
+    if (languageMode === 'filipino') {
+      return 'Natapos mo na ang focus target mo ngayong araw.';
+    }
+    if (languageMode === 'mixed') {
+      return 'Completed na ang focus target mo today.';
+    }
     return 'You already completed your focus target today.';
   }
 
   const remainingBlocks = Math.max(targetBlocks - completedBlocks, 0);
 
   if (goal === 'Habol') {
+    if (languageMode === 'filipino') {
+      return remainingBlocks > 0
+        ? `${remainingBlocks} study block pa para makahabol ngayong araw.`
+        : 'Nasa tamang takbo ka ngayong araw.';
+    }
+    if (languageMode === 'mixed') {
+      return remainingBlocks > 0
+        ? `${remainingBlocks} study block pa para makahabol today.`
+        : 'On track ka today.';
+    }
     return remainingBlocks > 0
       ? `${remainingBlocks} more study block${remainingBlocks === 1 ? '' : 's'} to catch up today.`
       : 'You are on track for today.';
   }
 
   if (goal === 'Review') {
+    if (languageMode === 'filipino') {
+      return remainingBlocks > 0
+        ? `${remainingBlocks} review block pa ngayong araw.`
+        : 'Tapos na ang review target mo ngayong araw.';
+    }
+    if (languageMode === 'mixed') {
+      return remainingBlocks > 0
+        ? `${remainingBlocks} review block pa today.`
+        : 'Done na ang review target mo today.';
+    }
     return remainingBlocks > 0
       ? `${remainingBlocks} review block${remainingBlocks === 1 ? '' : 's'} left today.`
       : 'Your review target is done for today.';
   }
 
   if (goal === 'Learn') {
+    if (languageMode === 'filipino') {
+      return remainingBlocks > 0
+        ? `${remainingBlocks} learning block pa ngayong araw.`
+        : 'Naabot mo na ang learning target mo ngayong araw.';
+    }
+    if (languageMode === 'mixed') {
+      return remainingBlocks > 0
+        ? `${remainingBlocks} learning block pa today.`
+        : "Naabot mo na today's learning target.";
+    }
     return remainingBlocks > 0
       ? `${remainingBlocks} learning block${remainingBlocks === 1 ? '' : 's'} left today.`
       : "You reached today's learning target.";
   }
 
+  if (languageMode === 'filipino') {
+    return remainingBlocks > 0
+      ? `${remainingBlocks} guided study block pa ngayong araw.`
+      : 'Kumpleto na ang naka-save mong study target.';
+  }
+  if (languageMode === 'mixed') {
+    return remainingBlocks > 0
+      ? `${remainingBlocks} guided study block pa today.`
+      : 'Complete na ang saved study target mo.';
+  }
   return remainingBlocks > 0
     ? `${remainingBlocks} guided study block${remainingBlocks === 1 ? '' : 's'} left today.`
     : 'Your saved study target is complete.';
@@ -122,6 +170,7 @@ function getStudyTip({
   targetBlocks,
   completedBlocks,
   courseTitle,
+  languageMode,
 }: {
   profile: DashboardData['profile'];
   latestSession: DashboardData['latestSession'];
@@ -130,27 +179,58 @@ function getStudyTip({
   targetBlocks: number;
   completedBlocks: number;
   courseTitle: string;
+  languageMode: string | null | undefined;
 }) {
   if (!profile) {
+    if (languageMode === 'filipino') {
+      return 'Tapusin ang onboarding para makagawa ang AralGo ng learner profile at masundan ang progreso mo.';
+    }
+    if (languageMode === 'mixed') {
+      return 'Tapusin ang onboarding para ma-save ng AralGo ang learner profile at progress mo.';
+    }
     return 'Finish onboarding so AralGo can keep a learner profile and track your progress over time.';
   }
 
   if (!latestSession) {
+    if (languageMode === 'filipino') {
+      return 'Magsimula ng study session para magkaroon ng recent topics, tutor context, at progress history ang dashboard mo.';
+    }
+    if (languageMode === 'mixed') {
+      return 'Start ka ng study session para magkaroon ng recent topics, tutor context, at progress history ang dashboard mo.';
+    }
     return 'Start a study session to populate your dashboard with recent topics, tutor context, and progress history.';
   }
 
   if (topicPerformance) {
     const accuracy = normalizeAccuracy(topicPerformance.rolling_accuracy);
     if (accuracy < 70) {
+      if (languageMode === 'filipino') {
+        return `${courseTitle} ay nasa ${accuracy}% accuracy ngayon. Magandang susunod na hakbang ang maikling practice set.`;
+      }
+      if (languageMode === 'mixed') {
+        return `${courseTitle} is currently at ${accuracy}% accuracy. Best next step ang short practice set.`;
+      }
       return `${courseTitle} is currently at ${accuracy}% accuracy. A short practice set would be the highest-value next step.`;
     }
   }
 
   if (goalProgress >= 100) {
+    if (languageMode === 'filipino') {
+      return 'Naabot mo na ang target ngayong araw. Balikan ang recent topic history o magsimula ng bagong subject kung gusto mo pa.';
+    }
+    if (languageMode === 'mixed') {
+      return "Hit mo na today's target. Review recent topic history or start a new subject kung gusto mo pa.";
+    }
     return "You already hit today's target. Review your recent topic history or start a new subject if you want another block.";
   }
 
   const remainingBlocks = Math.max(targetBlocks - completedBlocks, 0);
+  if (languageMode === 'filipino') {
+    return `${remainingBlocks} study block pa ngayong araw. Ipagpatuloy ang pinakahuling session para umusad ang dashboard.`;
+  }
+  if (languageMode === 'mixed') {
+    return `${remainingBlocks} study block pa today. Continue the latest session para umusad ang dashboard.`;
+  }
   return `${remainingBlocks} study block${remainingBlocks === 1 ? '' : 's'} left today. Continue the latest session to move the dashboard forward.`;
 }
 
@@ -168,43 +248,54 @@ function getActionItems({
   courseTitle,
   subjectLabel,
   totalPracticeAttempts,
+  languageMode,
 }: {
   profile: DashboardData['profile'];
   latestSession: DashboardData['latestSession'];
   courseTitle: string;
   subjectLabel: string;
   totalPracticeAttempts: number;
+  languageMode: string | null | undefined;
 }) {
   return [
     {
       href: getResumeHref(latestSession),
       icon: latestSession ? 'play_arrow' : 'school',
-      title: latestSession ? 'Continue session' : 'Finish onboarding',
-      description: latestSession ? courseTitle : 'Create your learner profile first.',
+      title: latestSession ? t(languageMode, 'home.continueSession') : t(languageMode, 'home.finishOnboarding'),
+      description: latestSession ? courseTitle : t(languageMode, 'home.createProfile'),
       color: 'green',
     },
     {
       href: '/practice',
       icon: 'document_scanner',
-      title: 'Practice now',
-      description: `Generate a ${subjectLabel.toLowerCase()} set on demand.`,
+      title: t(languageMode, 'home.practiceNow'),
+      description:
+        languageMode === 'filipino'
+          ? `Gumawa ng ${subjectLabel.toLowerCase()} set kapag kailangan.`
+          : languageMode === 'mixed'
+            ? `Generate ng ${subjectLabel.toLowerCase()} set on demand.`
+            : `Generate a ${subjectLabel.toLowerCase()} set on demand.`,
       color: 'brown',
     },
     {
       href: '/history',
       icon: 'history',
-      title: 'Review history',
+      title: t(languageMode, 'home.reviewHistory'),
       description:
         totalPracticeAttempts > 0
-          ? `${totalPracticeAttempts} saved practice attempt${totalPracticeAttempts === 1 ? '' : 's'}.`
-          : 'No saved practice attempts yet.',
+          ? languageMode === 'filipino'
+            ? `${totalPracticeAttempts} naka-save na practice attempt.`
+            : languageMode === 'mixed'
+              ? `${totalPracticeAttempts} saved practice attempt${totalPracticeAttempts === 1 ? '' : 's'}.`
+              : `${totalPracticeAttempts} saved practice attempt${totalPracticeAttempts === 1 ? '' : 's'}.`
+          : t(languageMode, 'home.noPractice'),
       color: 'blue',
     },
     {
       href: profile ? '/profile' : '/onboarding',
       icon: profile ? 'person' : 'settings',
-      title: profile ? 'Update profile' : 'Set preferences',
-      description: profile ? 'Adjust language, grade, and subject.' : 'Pick your language mode and grade band.',
+      title: profile ? t(languageMode, 'home.updateProfile') : t(languageMode, 'home.setPreferences'),
+      description: profile ? t(languageMode, 'home.adjustPreferences') : t(languageMode, 'home.pickPreferences'),
       color: 'green',
     },
   ] as const;
@@ -281,19 +372,20 @@ function normalizeRecentTopics(
 export default function HomeContent({ error, profile, latestSession, topicPerformance, stats }: HomeContentProps) {
   const localSetup = useLocalStudySetup();
   const recentTopics = normalizeRecentTopics(localSetup, latestSession, profile);
+  const languageMode = localSetup?.languageMode ?? profile?.preferred_language_mode ?? latestSession?.language_mode ?? null;
   const primaryTopic = recentTopics[0] ?? null;
   const subject = primaryTopic?.subject ?? localSetup?.subject ?? profile?.preferred_subject ?? 'science';
   const subjectLabel = formatSubject(subject);
   const topic = primaryTopic?.topic ?? localSetup?.topic ?? null;
-  const courseTitle = getSessionLabel(topic || null, subjectLabel);
+  const courseTitle = getSessionLabel(topic || null, subjectLabel, languageMode);
   const gradeBand = localSetup?.gradeBand ?? profile?.grade_band ?? null;
-  const gradeLabel = gradeBand ? formatGradeBand(gradeBand) : 'Guest learner';
+  const gradeLabel = gradeBand ? formatGradeBand(gradeBand) : t(languageMode, 'dashboard.guest');
   const goal = localSetup?.goal ?? null;
   const targetBlocks = getGoalTargetBlocks(goal);
   const completedBlocks = stats.todayCompletedSessions + stats.todayPracticeAttempts;
   const goalProgress = getGoalProgress(completedBlocks, targetBlocks);
-  const goalMessage = getGoalMessage(goal, goalProgress, completedBlocks, targetBlocks);
-  const goalTitle = getGoalHeading(goal);
+  const goalMessage = getGoalMessage(goal, goalProgress, completedBlocks, targetBlocks, languageMode);
+  const goalTitle = getGoalHeading(goal, languageMode);
   const courseProgress = normalizeAccuracy(topicPerformance?.rolling_accuracy);
   const resumeHref = getResumeHref(latestSession);
   const actionItems = getActionItems({
@@ -302,6 +394,7 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
     courseTitle,
     subjectLabel,
     totalPracticeAttempts: stats.totalPracticeAttempts,
+    languageMode,
   });
   const studyTip = getStudyTip({
     profile,
@@ -311,6 +404,7 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
     targetBlocks,
     completedBlocks,
     courseTitle,
+    languageMode,
   });
 
   return (
@@ -327,7 +421,7 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
           <div className={`${styles.card} ${styles.courseCard}`}>
             <div className={styles.courseHeader}>
               <span className={styles.courseTag}>{subjectLabel}</span>
-              <Link href={resumeHref} className={styles.playButton} aria-label="Continue course">
+                <Link href={resumeHref} className={styles.playButton} aria-label={t(languageMode, 'dashboard.tutor')}>
                 <AppIcon name="play_arrow" />
               </Link>
             </div>
@@ -360,7 +454,7 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
           >
             <div className={styles.goalContent}>
               <div className={styles.goalValue}>{goalProgress}%</div>
-              <div className={styles.goalTotal}>{completedBlocks} / {targetBlocks} study blocks</div>
+              <div className={styles.goalTotal}>{completedBlocks} / {targetBlocks} {t(languageMode, 'home.studyBlocks')}</div>
             </div>
           </div>
           <div className={styles.goalMessage}>{goalMessage}</div>
@@ -368,9 +462,9 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
 
         <div className={`${styles.card} ${styles.topicsCard}`}>
           <div className={styles.topicsHeader}>
-            <h3 className={styles.topicsTitle}>Recent Topics</h3>
+            <h3 className={styles.topicsTitle}>{t(languageMode, 'home.recentTopics')}</h3>
             <Link href="/history" className={styles.viewAll}>
-              View All
+              {t(languageMode, 'home.viewAll')}
             </Link>
           </div>
           <div className={styles.topicsList}>
@@ -384,10 +478,10 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
                     </div>
                     <div className={styles.topicInfo}>
                       <h4 className={styles.topicName}>
-                        {getSessionLabel(entry.topic, formatSubject(entry.subject))}
+                        {getSessionLabel(entry.topic, formatSubject(entry.subject), languageMode)}
                       </h4>
                       <p className={styles.topicStatus} data-status="default">
-                        {formatLanguageMode(entry.languageMode)} • {formatTopicTimestamp(entry.savedAt)}
+                        {languageModeLabel(entry.languageMode)} • {formatTopicTimestamp(entry.savedAt)}
                       </p>
                     </div>
                     <AppIcon name="chevron_right" className={styles.topicArrow} />
@@ -400,9 +494,9 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
                   <AppIcon name="history" />
                 </div>
                 <div className={styles.topicInfo}>
-                  <h4 className={styles.topicName}>No saved topics yet</h4>
+                  <h4 className={styles.topicName}>{t(languageMode, 'home.noTopics')}</h4>
                   <p className={styles.topicStatus} data-status="warning">
-                    Finish onboarding or start a session to build your history.
+                    {t(languageMode, 'home.noTopicsHint')}
                   </p>
                 </div>
               </div>
@@ -413,7 +507,7 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
 
       <div className={styles.bottomRow}>
         <div>
-          <h3 className={styles.sectionTitle}>Quick Actions</h3>
+          <h3 className={styles.sectionTitle}>{t(languageMode, 'home.quickActions')}</h3>
           <div className={styles.actionsGrid}>
             {actionItems.map((item) => (
               <Link key={item.title} href={item.href} className={styles.actionBtn}>
@@ -430,7 +524,7 @@ export default function HomeContent({ error, profile, latestSession, topicPerfor
         <div className={styles.tipCard}>
           <AppIcon name="lightbulb" className={styles.tipIcon} />
           <div className={styles.tipContent}>
-            <h4 className={styles.tipTitle}>Next Best Step</h4>
+            <h4 className={styles.tipTitle}>{t(languageMode, 'home.nextBestStep')}</h4>
             <p className={styles.tipText}>
               {studyTip}
             </p>

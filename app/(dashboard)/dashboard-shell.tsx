@@ -11,6 +11,7 @@ type DashboardShellProps = {
   children: React.ReactNode;
   displayName: string | null;
   gradeBand: string | null;
+  languageMode: string | null;
   isAnonymous: boolean;
   greeting: string;
 };
@@ -19,6 +20,7 @@ export default function DashboardShell({
   children,
   displayName,
   gradeBand,
+  languageMode,
   isAnonymous,
   greeting,
 }: DashboardShellProps) {
@@ -60,11 +62,12 @@ export default function DashboardShell({
         <DashboardProfile
           initialDisplayName={displayName}
           initialGradeBand={gradeBand}
+          initialLanguageMode={languageMode}
           isAnonymous={isAnonymous}
           greeting={greeting}
         />
 
-        <SidebarNav onNavigate={() => setSidebarOpen(false)} />
+        <SidebarNav initialLanguageMode={languageMode} onNavigate={() => setSidebarOpen(false)} />
       </aside>
 
       <main className={styles.mainContent}>

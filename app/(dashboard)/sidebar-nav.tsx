@@ -3,20 +3,22 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AppIcon } from '@/components/AppIcon';
+import { t } from '@/lib/i18n';
+import { useLocalStudySetup } from '@/lib/study/use-local-study-setup';
 import styles from './layout.module.css';
 
 const primaryLinks = [
-  { href: '/home', icon: 'home', label: 'Home' },
-  { href: '/tutor', icon: 'smart_toy', label: 'Tutor' },
-  { href: '/practice', icon: 'fitness_center', label: 'Practice' },
-  { href: '/lesson-studio', icon: 'auto_stories', label: 'Lesson Studio' },
-  { href: '/history', icon: 'history', label: 'History' },
-  { href: '/profile', icon: 'person', label: 'Profile' },
+  { href: '/home', icon: 'home', labelKey: 'dashboard.home' },
+  { href: '/tutor', icon: 'smart_toy', labelKey: 'dashboard.tutor' },
+  { href: '/practice', icon: 'fitness_center', labelKey: 'dashboard.practice' },
+  { href: '/lesson-studio', icon: 'auto_stories', labelKey: 'dashboard.lessonStudio' },
+  { href: '/history', icon: 'history', labelKey: 'dashboard.history' },
+  { href: '/profile', icon: 'person', labelKey: 'dashboard.profile' },
 ];
 
 const secondaryLinks = [
-  { href: '/settings', icon: 'settings', label: 'Settings' },
-  { href: '/help', icon: 'help', label: 'Help' },
+  { href: '/settings', icon: 'settings', labelKey: 'dashboard.settings' },
+  { href: '/help', icon: 'help', labelKey: 'dashboard.help' },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -26,12 +28,14 @@ function isActivePath(pathname: string, href: string) {
 function SidebarLink({
   href,
   icon,
-  label,
+  labelKey,
+  languageMode,
   onNavigate,
 }: {
   href: string;
   icon: string;
-  label: string;
+  labelKey: string;
+  languageMode: string | null | undefined;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
@@ -40,23 +44,32 @@ function SidebarLink({
   return (
     <Link href={href} className={`${styles.navLink} ${active ? styles.active : ''}`} onClick={onNavigate}>
       <AppIcon name={icon} />
-      {label}
+      {t(languageMode, labelKey)}
     </Link>
   );
 }
 
-export default function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+export default function SidebarNav({
+  initialLanguageMode,
+  onNavigate,
+}: {
+  initialLanguageMode: string | null;
+  onNavigate?: () => void;
+}) {
+  const localSetup = useLocalStudySetup();
+  const languageMode = localSetup?.languageMode ?? initialLanguageMode;
+
   return (
     <>
       <nav className={styles.navSection}>
         {primaryLinks.map((link) => (
-          <SidebarLink key={link.href} {...link} onNavigate={onNavigate} />
+          <SidebarLink key={link.href} {...link} languageMode={languageMode} onNavigate={onNavigate} />
         ))}
       </nav>
 
       <div className={styles.bottomNav}>
         {secondaryLinks.map((link) => (
-          <SidebarLink key={link.href} {...link} onNavigate={onNavigate} />
+          <SidebarLink key={link.href} {...link} languageMode={languageMode} onNavigate={onNavigate} />
         ))}
       </div>
     </>
