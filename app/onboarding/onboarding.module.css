@@ -38,43 +38,99 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  gap: 8px;
 }
 
 .backButton {
-  color: var(--color-outline-variant);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(74, 103, 65, 0.18);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--color-on-surface);
   cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 24px;
+  font-family: var(--font-lexend), sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(74, 103, 65, 0.08);
+  backdrop-filter: blur(10px);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
 }
 
-.spacer {
-  width: 24px;
+.backButton:hover,
+.backButton:focus-visible {
+  background: var(--color-surface);
+  box-shadow: 0 10px 28px rgba(74, 103, 65, 0.14);
+}
+
+.backButton:active {
+  transform: translateY(1px);
+}
+
+.backButton:focus-visible,
+.nextButton:focus-visible,
+.skipButton:focus-visible,
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible {
+  outline: 3px solid rgba(74, 103, 65, 0.22);
+  outline-offset: 2px;
+}
+
+.stepLabelGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-lexend), sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.stepLabel {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--color-on-surface-variant);
 }
 
 .title {
   font-family: var(--font-lexend), sans-serif;
-  font-size: 28px;
-  line-height: 36px;
-  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.15;
+  font-weight: 700;
   color: var(--color-primary);
   text-align: center;
-  margin-top: 24px;
-  margin-bottom: 8px;
+  margin: 0 0 10px;
+  max-width: 100%;
+  text-wrap: balance;
 }
 
 @media (min-width: 768px) {
   .title {
-    font-size: 32px;
-    line-height: 40px;
+    font-size: 34px;
   }
 }
 
 .subtitle {
-  font-size: 16px;
-  color: var(--color-secondary);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-on-surface-variant);
   text-align: center;
-  margin-bottom: 32px;
+  margin: 0;
+  max-width: 32ch;
 }
 
 .content {
@@ -92,9 +148,17 @@
   gap: 16px;
 }
 
+.singleColumnGrid {
+  grid-template-columns: 1fr;
+}
+
 @media (min-width: 768px) {
   .grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .singleColumnGrid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -148,12 +212,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 56px;
   cursor: pointer;
-  transition: transform 0.1s ease-in-out;
+  transition: transform 0.1s ease-in-out, box-shadow 0.12s ease;
 }
 
 .nextButton:active {
   transform: scale(0.95);
+}
+
+.nextButton:hover,
+.primaryButton:hover {
+  box-shadow: 0 12px 24px rgba(69, 103, 50, 0.2);
 }
 
 .nextButtonIcon {
@@ -171,16 +241,17 @@
 .skipButton {
   width: 100%;
   background-color: transparent;
-  color: var(--color-on-surface-variant);
+  color: var(--color-on-surface);
   font-family: var(--font-lexend), sans-serif;
   font-size: 14px;
   font-weight: 600;
   padding: 16px;
   border-radius: 9999px;
-  border: 1px solid var(--color-outline-variant);
+  border: 1px solid rgba(74, 103, 65, 0.24);
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 56px;
   cursor: pointer;
   transition: all 0.1s ease-in-out;
 }
@@ -200,7 +271,8 @@
   margin: 12px 0 0;
   text-align: center;
   font-size: 14px;
-  color: var(--color-secondary);
+  line-height: 1.5;
+  color: var(--color-on-surface-variant);
 }
 
 /* Step 5: Celebration & Summary — Notebook "Well Done" Page */
@@ -214,7 +286,7 @@
 
 .starWrapper {
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .starGlow {
@@ -243,7 +315,7 @@
   font-weight: 700;
   color: var(--color-primary);
   text-align: center;
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   line-height: 1.2;
 }
 
@@ -252,8 +324,20 @@
   color: var(--color-on-surface-variant);
   text-align: center;
   margin: 0 0 4px;
-  max-width: 300px;
+  max-width: 320px;
   line-height: 1.5;
+}
+
+.celebrationBadge {
+  margin: 0 0 8px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: rgba(74, 103, 65, 0.12);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* Summary Cards — Sticky Note Style */
@@ -368,25 +452,26 @@
 .secondaryButton {
   width: 100%;
   background: transparent;
-  color: var(--color-on-surface-variant);
+  color: var(--color-on-surface);
   font-family: var(--font-quicksand), sans-serif;
   font-size: 14px;
   font-weight: 600;
-  padding: 14px;
+  padding: 14px 16px;
   border-radius: 9999px;
-  border: 1.5px solid var(--color-outline-variant);
+  border: 1.5px solid rgba(74, 103, 65, 0.24);
   cursor: pointer;
   transition: all 0.12s ease;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 6px;
+  min-height: 52px;
 }
 
 .secondaryButton:active {
   transform: scale(0.97);
   background-color: var(--color-surface-dim);
-  border-color: var(--color-on-surface-variant);
+  border-color: var(--color-on-surface);
 }
 
 .secondaryButton:disabled {
@@ -408,4 +493,16 @@
   );
   margin: 4px 0 16px;
   opacity: 0.3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backButton,
+  .nextButton,
+  .skipButton,
+  .primaryButton,
+  .secondaryButton,
+  .starGlow {
+    transition: none;
+    animation: none;
+  }
 }

@@ -1,17 +1,23 @@
 .container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(74, 103, 65, 0.12);
+  box-shadow: 0 8px 24px rgba(74, 103, 65, 0.06);
+  backdrop-filter: blur(10px);
 }
 
 .icon {
   color: var(--color-primary);
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .track {
-  width: 128px;
-  height: 8px;
+  width: 116px;
+  height: 10px;
   background-color: var(--color-surface-variant);
   border-radius: 9999px;
   overflow: hidden;
@@ -26,8 +32,9 @@
 
 .text {
   font-family: var(--font-lexend), sans-serif;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--color-primary);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
