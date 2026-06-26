@@ -7,6 +7,8 @@ import { useEffect, useRef, useState, FormEvent } from 'react';
 import Image from 'next/image';
 import { AppIcon } from '@/components/AppIcon';
 import MathRenderer from '@/components/MathRenderer';
+import { t } from '@/lib/i18n';
+import { useLocalStudySetup } from '@/lib/study/use-local-study-setup';
 import styles from './tutor.module.css';
 
 type TutorMode = 'socratic' | 'chat';
@@ -19,6 +21,8 @@ const tutorModes: Array<{
   { value: 'socratic', label: 'Socratic mode', icon: 'psychology' },
   { value: 'chat', label: 'Chat mode', icon: 'chat_bubble' },
 ];
+
+const AKI_AVATAR_SRC = '/images/aki.png';
 
 const renderInlineText = (text: string) => {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
@@ -79,6 +83,10 @@ const renderMessageText = (text: string) => {
 export default function TutorPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('sessionId');
+  const localSetup = useLocalStudySetup();
+  const languageMode = localSetup?.languageMode;
+  const chatTitle = t(languageMode, 'dashboard.tutor');
+  const inputPlaceholder = languageMode === 'filipino' ? 'Magtanong kay Aki...' : 'Ask Aki a question...';
 
   const { messages, setMessages, sendMessage, regenerate, status, error } = useChat({
     transport: new DefaultChatTransport({
@@ -128,10 +136,10 @@ export default function TutorPage() {
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.avatarWrapper}>
-            <Image src="/images/avatar.png" alt="Tutor Avatar" width={40} height={40} className={styles.avatarImage} />
+            <Image src={AKI_AVATAR_SRC} alt="Aki" width={160} height={160} className={styles.avatarImage} unoptimized />
           </div>
           <div>
-            <h1 className={styles.title}>AralGo Tutor</h1>
+            <h1 className={styles.title}>{chatTitle}</h1>
             <div className={styles.status}>
               <span className={styles.statusDot}></span>
               Online
@@ -186,7 +194,7 @@ export default function TutorPage() {
           <div key={m.id || `message-${index}`} className={m.role === 'user' ? styles.messageRowUser : styles.messageRowAI}>
             {m.role !== 'user' && (
               <div className={styles.avatarSmallWrapper}>
-                <Image src="/images/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+                <Image src={AKI_AVATAR_SRC} alt="Aki" width={128} height={128} className={styles.avatarImage} unoptimized />
               </div>
             )}
             <div className={m.role === 'user' ? styles.bubbleUser : styles.bubbleAI}>
@@ -204,7 +212,7 @@ export default function TutorPage() {
         {isLoading && (
           <div className={styles.messageRowAI}>
             <div className={styles.avatarSmallWrapper}>
-              <Image src="/images/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+              <Image src={AKI_AVATAR_SRC} alt="Aki" width={128} height={128} className={styles.avatarImage} unoptimized />
             </div>
             <div className={styles.typingIndicator}>
                <span className={styles.dot}></span>
@@ -217,7 +225,7 @@ export default function TutorPage() {
         {error && (
           <div className={styles.messageRowAI}>
             <div className={styles.avatarSmallWrapper}>
-              <Image src="/images/avatar.png" alt="Tutor Avatar" width={32} height={32} className={styles.avatarImage} />
+              <Image src={AKI_AVATAR_SRC} alt="Aki" width={128} height={128} className={styles.avatarImage} unoptimized />
             </div>
             <div>
               <div className={styles.bubbleError}>
@@ -238,7 +246,7 @@ export default function TutorPage() {
           </button>
           <input
             type="text"
-            placeholder="Ask a question..."
+            placeholder={inputPlaceholder}
             className={styles.chatInput}
             value={input}
             onChange={(e) => setInput(e.target.value)}

@@ -102,7 +102,7 @@ async function checkPage(page, route) {
   const tutor = await checkPage(page, '/tutor');
   if (tutor) {
     const headerText = await tutor.locator('h1').first().textContent();
-    if (headerText.includes('AralGo Tutor')) pass('/tutor', `Header: "${headerText}"`);
+    if (headerText.includes('Chat with Aki')) pass('/tutor', `Header: "${headerText}"`);
     else fail('/tutor', `Unexpected header: "${headerText}"`);
 
     const socraticBadge = await tutor.locator('text=Socratic mode').isVisible();
@@ -110,7 +110,7 @@ async function checkPage(page, route) {
     else fail('/tutor', 'Socratic mode badge missing');
 
     // Chat input
-    const chatInput = await tutor.locator('input[placeholder="Ask a question..."]').isVisible();
+    const chatInput = await tutor.locator('input[placeholder="Ask Aki a question..."]').isVisible();
     if (chatInput) pass('/tutor', 'Chat input visible');
     else fail('/tutor', 'Chat input missing');
 

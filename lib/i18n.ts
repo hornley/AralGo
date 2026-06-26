@@ -196,9 +196,9 @@ const dict: Record<string, Record<Locale, string>> = {
     taglish: "Home",
   },
   "dashboard.tutor": {
-    en: "Tutor",
-    fil: "Tutor",
-    taglish: "Tutor",
+    en: "Chat with Aki",
+    fil: "Kausapin si Aki",
+    taglish: "Chat with Aki",
   },
   "dashboard.practice": {
     en: "Practice",
