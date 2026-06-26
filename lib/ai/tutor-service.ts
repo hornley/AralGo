@@ -1,12 +1,11 @@
 import { createAzure } from '@ai-sdk/azure';
-import { streamText, convertToModelMessages, createUIMessageStreamResponse, type UIMessage, type TextStreamPart, type UIMessageChunk } from 'ai';
+import { streamText, convertToModelMessages, createUIMessageStreamResponse, type UIMessage, type UIMessageChunk } from 'ai';
 import { createClient } from '@/lib/supabase/server';
 import {
   validateTutorResponse,
   extractTextFromUIMessage,
-  FALLBACK_MESSAGES,
-  type ValidationReason,
 } from './validate';
+import { getFallbackModel } from './ai-client';
 
 // --- Types ---
 
@@ -177,9 +176,33 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
     mode: mode,
   };
 
-  // Persist the latest user message and update session status
+  // Mark session as active before AI call
+  const { error: sessErr } = await supabase
+    .from('study_sessions')
+    .update({ status: 'active', last_active_at: new Date().toISOString() })
+    .eq('id', resolvedSessionId);
+
+  if (sessErr) {
+    console.error('Failed to update session status:', sessErr);
+  }
+
+  // Extract last user message text for validation context
   const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
-  if (lastUserMsg) {
+  const userText = lastUserMsg ? extractTextFromUIMessage(lastUserMsg) : '';
+
+  // Generate AI response with retry (try primary model, then fallback)
+  const responseText = await generateTutorResponse(
+    messages,
+    context,
+    userText,
+  );
+
+  if (!responseText) {
+    throw new TutorError('Failed to generate a valid response. Please try again.', 500);
+  }
+
+  // Persist user message only after successful AI response
+  if (lastUserMsg && userText) {
     const { error: msgErr } = await supabase
       .from('tutor_messages')
       .insert({
@@ -187,50 +210,15 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
         user_id: user.id,
         role: 'learner',
         language_mode: session.language_mode,
-        content: extractTextFromUIMessage(lastUserMsg),
+        content: userText,
       });
 
     if (msgErr) {
-      throw new TutorError('Failed to save message', 500);
-    }
-
-    const { error: sessErr } = await supabase
-      .from('study_sessions')
-      .update({ status: 'active', last_active_at: new Date().toISOString() })
-      .eq('id', resolvedSessionId);
-
-    if (sessErr) {
-      console.error('Failed to update session status:', sessErr);
+      console.error('Failed to save user message:', msgErr);
     }
   }
 
-  // Generate AI response, buffer full stream, validate, then emit
-  const result = streamText({
-    model: tutorModel,
-    system: buildSystemPrompt(context),
-    messages: await convertToModelMessages(messages),
-  });
-
-  const chunks: TextStreamPart<any>[] = [];
-  let aiText = '';
-
-  try {
-    for await (const chunk of result.fullStream) {
-      chunks.push(chunk);
-      if (chunk.type === 'text-delta') {
-        aiText += chunk.text;
-      }
-    }
-  } catch (streamErr) {
-    console.error('AI streaming failed:', streamErr);
-    aiText = '';
-  }
-
-  // Validate the complete response
-  const validation = validateTutorResponse(aiText, session.language_mode, session.subject, session.topic);
-  const responseText = validation.valid ? aiText : FALLBACK_MESSAGES[validation.reason || 'empty'];
-
-  // Persist AI message (non-fatal if save fails — client already has the response)
+  // Persist AI response
   const { error: saveErr } = await supabase
     .from('tutor_messages')
     .insert({
@@ -245,7 +233,7 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
     console.error('Failed to save AI message:', saveErr);
   }
 
-  // Build UIMessageChunk stream from the validated (or fallback) text
+  // Build UIMessageChunk stream from the validated text
   const chunkStream = new ReadableStream<UIMessageChunk>({
     start(controller) {
       controller.enqueue({ type: 'start' });
@@ -260,4 +248,52 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
   });
 
   return createUIMessageStreamResponse({ stream: chunkStream });
+}
+
+async function generateTutorResponse(
+  messages: UIMessage[],
+  context: TutorContext,
+  userText: string,
+): Promise<string | null> {
+  const models = [tutorModel];
+  const fallbackModel = getFallbackModel();
+  if (fallbackModel) models.push(fallbackModel);
+
+  const convertedMessages = await convertToModelMessages(messages);
+  const system = buildSystemPrompt(context);
+
+  for (const model of models) {
+    try {
+      const result = streamText({
+        model,
+        system,
+        messages: convertedMessages,
+      });
+
+      let aiText = '';
+      for await (const chunk of result.fullStream) {
+        if (chunk.type === 'text-delta') {
+          aiText += chunk.text;
+        }
+      }
+
+      const validation = validateTutorResponse(
+        aiText,
+        context.languageMode,
+        context.subject,
+        context.topic,
+        userText,
+      );
+
+      if (validation.valid) return aiText;
+
+      console.warn(
+        `Tutor response invalid (${validation.reason}), retrying with fallback model...`,
+      );
+    } catch (err) {
+      console.error('AI call failed:', err);
+    }
+  }
+
+  return null;
 }
