@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { AppIcon } from '@/components/AppIcon';
+import MathRenderer from '@/components/MathRenderer';
 import styles from './quiz.module.css';
 
 interface Question {
@@ -143,7 +144,7 @@ export default function QuizView({ questions, subject, topic, onSubmit, onBack }
 
       <div className={styles.questionCard}>
         <div className={styles.questionNumber}>Question {currentIndex + 1}</div>
-        <p className={styles.questionPrompt}>{current?.prompt}</p>
+        <p className={styles.questionPrompt}>{current && <MathRenderer text={current.prompt} />}</p>
 
         {isMultipleChoice && current?.options ? (
           <div className={styles.optionsList}>
@@ -154,7 +155,7 @@ export default function QuizView({ questions, subject, topic, onSubmit, onBack }
                 onClick={() => setAnswer(opt.label)}
               >
                 <span className={styles.optionLabel}>{opt.label}</span>
-                <span className={styles.optionText}>{opt.text}</span>
+                <span className={styles.optionText}><MathRenderer text={opt.text} /></span>
                 {answers[currentIndex] === opt.label && (
                   <AppIcon name="check_circle" className={styles.optionCheck} />
                 )}

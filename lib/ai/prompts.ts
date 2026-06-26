@@ -71,7 +71,16 @@ Create a structured lesson covering ALL of the topics listed above. Return valid
   "recap": "2-3 sentences summarizing the key takeaways"
 }
 
-Keep content mobile-friendly: short paragraphs, clear headings. Return only valid JSON.`;
+Keep content mobile-friendly: short paragraphs, clear headings. Return only valid JSON.
+
+FORMATTING — For any mathematical expressions, formulas, or numbers with operators:
+- Use LaTeX notation wrapped in $...$ for inline math (e.g., $E = mc^2$, $x + 5 = 12$)
+- Use LaTeX notation wrapped in $$...$$ for display/block math (e.g., $$\\frac{a}{b} = \\frac{c}{d}$$)
+- Always wrap ALL math expressions in $...$ even simple ones like $3 + 5 = 8$
+- Write fractions as $\\frac{numerator}{denominator}$
+- Write exponents with ^ like $x^2$ or $a^{b + c}$
+- Write subscripts with _ like $x_1$ or $a_{ij}$
+- Write square roots as $\\sqrt{x}$ or $\\sqrt[3]{x}$`;
 }
 
 export function buildPracticePrompt(ctx: PracticeContext): string {
@@ -117,7 +126,18 @@ Example verification: "Simplify: 3(x+4)-2(2x-1)"
    Step 3: (3x+12) + (-4x+2) = -x + 14
    Check (x=0): LHS = 3(4) - 2(-1) = 12 + 2 = 14, RHS = -0 + 14 = 14 ✓
 
-Return only valid JSON.`;
+Return only valid JSON.
+
+FORMATTING — For any mathematical expressions, formulas, or numbers with operators:
+- Use LaTeX notation wrapped in $...$ for inline math (e.g., $E = mc^2$, $x + 5 = 12$)
+- Use LaTeX notation wrapped in $$...$$ for display/block math
+- Always wrap ALL math expressions in $...$ even simple ones like $3 + 5 = 8$
+- Write fractions as $\\frac{numerator}{denominator}$
+- Write exponents with ^ like $x^2$ or $a^{b + c}$
+- Write subscripts with _ like $x_1$ or $a_{ij}$
+- Write square roots as $\\sqrt{x}$ or $\\sqrt[3]{x}$
+- For multiple choice options, wrap option text in $...$ if it contains math`;
+
 }
 
 export function buildVerificationPrompt(questions: {

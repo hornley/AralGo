@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, FormEvent } from 'react';
 import Image from 'next/image';
 import { AppIcon } from '@/components/AppIcon';
+import MathRenderer from '@/components/MathRenderer';
 import styles from './tutor.module.css';
 
 type TutorMode = 'socratic' | 'chat';
@@ -20,14 +21,15 @@ const tutorModes: Array<{
 ];
 
 const renderInlineText = (text: string) => {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((chunk, index) => {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((chunk, index) => {
     const isBold = chunk.startsWith('**') && chunk.endsWith('**');
 
-    if (!isBold) {
-      return chunk;
+    if (isBold) {
+      return <strong key={`${chunk}-${index}`}>{chunk.slice(2, -2)}</strong>;
     }
 
-    return <strong key={`${chunk}-${index}`}>{chunk.slice(2, -2)}</strong>;
+    return <MathRenderer key={`${chunk}-${index}`} text={chunk} />;
   });
 };
 
