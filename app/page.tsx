@@ -24,17 +24,18 @@ export default function HomePage() {
         <div className={styles.hero}>
           <div className={styles.heroContent}>
             <h1 className={styles.heroTitle}>
-              Master Your Studies with <span className={styles.heroTitleHighlight}>AralGo</span>
+              Meet your friendly study buddy, <span className={styles.heroTitleHighlight}>AralGo</span>
             </h1>
             <p className={styles.heroSubtitle}>
-              AralGo is a modern AI study companion focused on Filipino learners and features: 
-              Bilingual Learning, Adaptive Practice, and Low-Bandwidth Delivery.
+              AralGo helps Filipino learners understand lessons, practice with confidence,
+              and ask questions anytime in English, Filipino, or Taglish. It is made for quick study
+              moments on mobile, even when the internet is not perfect.
             </p>
             <div className={styles.heroActions}>
               <Link href="/onboarding" className={styles.buttonPrimary}>
                 Get Started
               </Link>
-              <Link href="/api/health" className={styles.buttonOutline}>
+              <Link href="#about" className={styles.buttonOutline}>
                 Learn More
               </Link>
             </div>
@@ -60,7 +61,7 @@ export default function HomePage() {
               <AppIcon name="auto_awesome" className={styles.servicesTagIcon} />
               Services
             </div>
-            <h2 className={styles.servicesTitle}>Our Provided Services</h2>
+            <h2 className={styles.servicesTitle}>Little Helpers for Big Learning</h2>
           </div>
           
           <div className={styles.servicesGrid}>
@@ -68,39 +69,33 @@ export default function HomePage() {
               <div className={styles.serviceIconWrapper} data-color="tertiary">
                 <AppIcon name="translate" className={styles.serviceIcon} />
               </div>
-              <h3 className={styles.serviceTitle}>Bilingual Tutoring</h3>
+              <h3 className={styles.serviceTitle}>Ask in Your Language</h3>
               <p className={styles.serviceDesc}>
-                Learn seamlessly in Filipino and English. Our AI tutor adapts to your preferred language mode to ensure complete understanding.
+                Stuck on a lesson? Ask in English, Filipino, or Taglish. AralGo explains things in a way that feels natural and easy to follow.
               </p>
-              <Link href="/onboarding" className={styles.serviceLink}>
-                Learn More <AppIcon name="arrow_forward_ios" className={styles.serviceLinkIcon} />
-              </Link>
+              <span className={styles.servicePill}>Clear explanations</span>
             </div>
             
             <div className={styles.serviceCard}>
               <div className={styles.serviceIconWrapper} data-color="primary">
                 <AppIcon name="quiz" className={styles.serviceIcon} />
               </div>
-              <h3 className={styles.serviceTitle}>Adaptive Practice</h3>
+              <h3 className={styles.serviceTitle}>Lessons Made for You</h3>
               <p className={styles.serviceDesc}>
-                Generate practice questions tailored precisely to your current grade level and subject performance to boost your retention.
+                Choose a topic and get a simple lesson, examples, reminders, and practice questions that match what you are learning.
               </p>
-              <Link href="/onboarding" className={styles.serviceLink}>
-                Learn More <AppIcon name="arrow_forward_ios" className={styles.serviceLinkIcon} />
-              </Link>
+              <span className={styles.servicePill}>Study at your pace</span>
             </div>
             
             <div className={styles.serviceCard}>
               <div className={styles.serviceIconWrapper} data-color="secondary">
                 <AppIcon name="signal_cellular_alt" className={styles.serviceIcon} />
               </div>
-              <h3 className={styles.serviceTitle}>Mobile First</h3>
+              <h3 className={styles.serviceTitle}>Study Anywhere</h3>
               <p className={styles.serviceDesc}>
-                Designed specifically for mobile constraints. Enjoy an optimized, low-bandwidth experience wherever you study.
+                Open AralGo on your phone for quick review, homework help, or exam prep. It stays light and friendly for slow connections.
               </p>
-              <Link href="/onboarding" className={styles.serviceLink}>
-                Learn More <AppIcon name="arrow_forward_ios" className={styles.serviceLinkIcon} />
-              </Link>
+              <span className={styles.servicePill}>Mobile-friendly</span>
             </div>
           </div>
         </div>
@@ -121,14 +116,18 @@ export default function HomePage() {
             </div>
             <div className={styles.infoTextContainer}>
               <h2 className={styles.infoTitle}>
-                Experience Better <span className={styles.infoTitleHighlight}>Learning</span> And <span className={styles.infoTitleHighlight}>Teaching</span> With AralGo
+                Learning feels better when help feels <span className={styles.infoTitleHighlight}>close</span>
               </h2>
               <p className={styles.infoDesc}>
-                Learners of all ages need more immersion and a greater level of exposure to apply what they learn. AralGo provides the targeted support needed to excel in your academics.
+                AralGo Scholar is like a patient study companion beside you. It can explain hard topics,
+                give gentle hints, make quick quizzes, and remember what you studied so you can come back
+                whenever you are ready.
               </p>
-              <Link href="/onboarding" className={styles.buttonTertiary}>
-                Join AralGo
-              </Link>
+              <div className={styles.aboutPoints} aria-label="AralGo Scholar strengths">
+                <span>Gentle hints</span>
+                <span>Saved study sessions</span>
+                <span>Works well on mobile</span>
+              </div>
             </div>
           </div>
         </div>
