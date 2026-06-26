@@ -970,3 +970,15 @@
   margin: 16px 0;
   opacity: 0.25;
 }
+
+.practiceError {
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: var(--color-error-container, #fce4ec);
+  color: var(--color-on-error-container, #7b2020);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}

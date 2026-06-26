@@ -220,6 +220,35 @@
   cursor: not-allowed;
 }
 
+.contextTopics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.contextTopicChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-primary-container, #e8def8);
+  color: var(--color-on-primary-container, #1d192b);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.contextTopicChip span {
+  font-size: 14px;
+}
+
+.emptyText {
+  color: var(--color-on-surface-variant);
+  font-size: 0.9rem;
+  margin: 8px 0;
+  text-align: center;
+}
+
 .generateBtn {
   width: 100%;
   max-width: 500px;

@@ -1,5 +1,5 @@
-import { generateObject, jsonSchema, NoObjectGeneratedError, type RepairTextFunction } from 'ai';
-import { aiModel } from './ai-client';
+import { jsonSchema, NoObjectGeneratedError, type RepairTextFunction } from 'ai';
+import { generateObjectWithFallback } from './ai-client';
 import { buildTopicSuggestionPrompt } from './prompts';
 import { GradeBand, StudySubject, LanguageMode } from '@/lib/types/supabase';
 
@@ -39,10 +39,9 @@ export async function suggestTopics(input: TopicSuggestionInput): Promise<Sugges
       languageMode: input.languageMode,
     });
 
-    const result = await generateObject({
-      model: aiModel,
-      prompt,
+    const result = await generateObjectWithFallback<{ topics: string[] }>({
       schema,
+      prompt,
       experimental_repairText: repairText,
     });
 

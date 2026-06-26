@@ -13,7 +13,7 @@ import FileUploader from './FileUploader';
 import GenerationProgress from './GenerationProgress';
 import LessonResultView from './LessonResultView';
 import PracticeResultView from './PracticeResultView';
-import styles from '../../app/lesson-studio/lesson-studio.module.css';
+import styles from '../../app/(dashboard)/lesson-studio/lesson-studio.module.css';
 
 const STEPS = ['Subject', 'Topics', 'Preferences', 'Files', 'Generate'];
 const STEP_ICONS: Record<string, string> = {
@@ -51,9 +51,11 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
 
     const saved = loadDraft();
     if (saved) {
+      const stale = saved.step >= 4;
       return {
         ...saved,
-        step: saved.step >= 4 ? (saved.subject ? 1 : 0) : saved.step,
+        topics: stale ? [] : saved.topics,
+        step: stale ? (saved.subject ? 1 : 0) : saved.step,
       };
     }
 
@@ -65,6 +67,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
   const [genStage, setGenStage] = useState<'topics' | 'lesson' | 'practice' | null>(null);
   const [lessonContent, setLessonContent] = useState<LessonContent | null>(null);
   const [practiceQuestions, setPracticeQuestions] = useState<any[] | null>(null);
+  const [practiceError, setPracticeError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [savedLessons, setSavedLessons] = useState<SavedLesson[]>(() => loadSavedLessons());
   const [showSavedView, setShowSavedView] = useState(false);
@@ -247,25 +250,42 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
     });
 
     if (!practiceResult.ok) {
-      setError('Practice generation failed. ' + practiceResult.error + '. The lesson was saved.');
-      setGenStage(null);
-      return;
-    }
+      console.warn('Practice generation failed:', practiceResult.error);
+      setPracticeError(`Practice generation didn't complete: ${practiceResult.error}`);
+    } else {
+      setPracticeQuestions(practiceResult.data.questions);
+      setPracticeError(null);
 
-    const practiceData = practiceResult.data;
-    setPracticeQuestions(practiceData.questions);
-
-    if (pendingSaveRef.current) {
-      const updated = {
-        ...pendingSaveRef.current,
-        practiceQuestions: practiceData.questions,
-      };
-      saveLesson(updated);
-      setSavedLessons(loadSavedLessons());
-      pendingSaveRef.current = null;
+      if (pendingSaveRef.current) {
+        const updated = {
+          ...pendingSaveRef.current,
+          practiceQuestions: practiceResult.data.questions,
+        };
+        saveLesson(updated);
+        setSavedLessons(loadSavedLessons());
+        pendingSaveRef.current = null;
+      }
     }
     setSourceIsSaved(false);
     setGenStage(null);
+  };
+
+  const [navigatingToPractice, setNavigatingToPractice] = useState(false);
+
+  const handleStartPractice = () => {
+    if (practiceQuestions && practiceQuestions.length > 0) {
+      sessionStorage.setItem('practice.autoData', JSON.stringify({
+        questions: practiceQuestions,
+        subject: draft.subject,
+        topic: draft.topics[0] || '',
+      }));
+    }
+    setNavigatingToPractice(true);
+    const params = new URLSearchParams();
+    if (draft.subject) params.set('subject', draft.subject);
+    draft.topics.forEach(t => params.append('topic', t));
+    params.set('auto', '1');
+    router.push(`/practice?${params.toString()}`);
   };
 
   const handleReset = () => {
@@ -275,6 +295,7 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
     setSuggestedTopics([]);
     setLessonContent(null);
     setPracticeQuestions(null);
+    setPracticeError(null);
     setError(null);
     setShowSavedView(false);
     setSourceIsSaved(false);
@@ -320,7 +341,13 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
           )}
           <LessonResultView content={lessonContent} />
           {practiceQuestions && (
-            <PracticeResultView questions={practiceQuestions} onStartPractice={() => {}} />
+            <PracticeResultView questions={practiceQuestions} onStartPractice={handleStartPractice} />
+          )}
+          {practiceError && (
+            <div className={styles.practiceError}>
+              <AppIcon name="info" />
+              {practiceError}
+            </div>
           )}
           <div className={styles.actionButtons}>
             <button className={styles.createAnotherBtn} onClick={handleReset}>
@@ -491,8 +518,10 @@ export default function LessonStudioWizard({ subjects, initialSubject, preferred
         </button>
         </div>
       )}
-      <div className={styles.stepContent}>
-        {showSavedView ? renderSavedView() : renderStep()}
+          <div className={styles.stepContent}>
+        {showSavedView ? renderSavedView() : navigatingToPractice ? (
+          <GenerationProgress stage="practice" />
+        ) : renderStep()}
       </div>
       {!lessonContent && !genStage && !showSavedView && step < 4 && (
         <div className={styles.stepNav}>

@@ -1,0 +1,244 @@
+.quizContainer {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.quizHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.quizBackBtn {
+  background: none;
+  border: none;
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.quizBackBtn:hover {
+  background: var(--color-surface-container);
+}
+
+.quizMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quizSubject {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-on-surface);
+}
+
+.quizTopic {
+  font-size: 0.75rem;
+  color: var(--color-on-surface-variant);
+}
+
+.quizProgress {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: var(--color-surface-container-high);
+  border-radius: 2px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.questionCard {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow-cozy);
+  margin-bottom: 16px;
+}
+
+.questionNumber {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-on-surface-variant);
+  margin-bottom: 12px;
+}
+
+.questionPrompt {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--color-on-surface);
+  margin: 0 0 24px;
+  font-weight: 500;
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.optionBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid var(--color-outline-variant);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  font-size: 0.9rem;
+  color: var(--color-on-surface);
+}
+
+.optionBtn:hover {
+  background: var(--color-surface-container);
+}
+
+.optionBtn.optionSelected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-container, #e8def8);
+  color: var(--color-on-primary-container);
+}
+
+.optionLabel {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-surface-container-high);
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.optionBtn.optionSelected .optionLabel {
+  background: var(--color-primary);
+  color: white;
+}
+
+.optionText {
+  flex: 1;
+  line-height: 1.35;
+}
+
+.optionCheck {
+  color: var(--color-primary);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.textInput {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid var(--color-outline-variant);
+  background: transparent;
+  font-size: 0.95rem;
+  color: var(--color-on-surface);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.textInput:focus {
+  border-color: var(--color-primary);
+}
+
+.textArea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid var(--color-outline-variant);
+  background: transparent;
+  font-size: 0.95rem;
+  color: var(--color-on-surface);
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.textArea:focus {
+  border-color: var(--color-primary);
+}
+
+.quizNav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-outline-variant);
+  background: transparent;
+  color: var(--color-on-surface);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.navBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.navBtn:hover:not(:disabled) {
+  background: var(--color-surface-container);
+}
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: none;
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.12s;
+  margin-left: auto;
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
