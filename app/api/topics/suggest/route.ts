@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await suggestTopics({ subject, gradeBand, languageMode });
-    return NextResponse.json(result);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 500 });
+    }
+    return NextResponse.json(result.data);
   } catch (error) {
     console.error('Topic suggestion failed:', error);
     return NextResponse.json(

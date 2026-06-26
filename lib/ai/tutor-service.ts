@@ -1,6 +1,12 @@
 import { createAzure } from '@ai-sdk/azure';
-import { streamText, convertToModelMessages, type UIMessage } from 'ai';
+import { streamText, convertToModelMessages, createUIMessageStreamResponse, type UIMessage, type TextStreamPart, type UIMessageChunk } from 'ai';
 import { createClient } from '@/lib/supabase/server';
+import {
+  validateTutorResponse,
+  extractTextFromUIMessage,
+  FALLBACK_MESSAGES,
+  type ValidationReason,
+} from './validate';
 
 // --- Types ---
 
@@ -186,36 +192,60 @@ export async function streamTutorResponse(messages: UIMessage[], sessionId?: str
     }
   }
 
-  const result = await streamText({
+  // Generate AI response, buffer full stream, validate, then emit
+  const result = streamText({
     model: tutorModel,
     system: buildSystemPrompt(context),
     messages: await convertToModelMessages(messages),
-    onFinish: async (event) => {
-      const { error: saveErr } = await supabase
-        .from('tutor_messages')
-        .insert({
-          study_session_id: resolvedSessionId,
-          user_id: user.id,
-          role: 'assistant',
-          language_mode: session.language_mode,
-          content: event.text,
-        });
+  });
 
-      if (saveErr) {
-        console.error('Failed to save AI message:', saveErr);
+  const chunks: TextStreamPart<any>[] = [];
+  let aiText = '';
+
+  try {
+    for await (const chunk of result.fullStream) {
+      chunks.push(chunk);
+      if (chunk.type === 'text-delta') {
+        aiText += chunk.text;
       }
+    }
+  } catch (streamErr) {
+    console.error('AI streaming failed:', streamErr);
+    aiText = '';
+  }
+
+  // Validate the complete response
+  const validation = validateTutorResponse(aiText, session.language_mode, session.subject, session.topic);
+  const responseText = validation.valid ? aiText : FALLBACK_MESSAGES[validation.reason || 'empty'];
+
+  // Persist AI message (non-fatal if save fails — client already has the response)
+  const { error: saveErr } = await supabase
+    .from('tutor_messages')
+    .insert({
+      study_session_id: resolvedSessionId,
+      user_id: user.id,
+      role: 'assistant',
+      language_mode: session.language_mode,
+      content: responseText,
+    });
+
+  if (saveErr) {
+    console.error('Failed to save AI message:', saveErr);
+  }
+
+  // Build UIMessageChunk stream from the validated (or fallback) text
+  const chunkStream = new ReadableStream<UIMessageChunk>({
+    start(controller) {
+      controller.enqueue({ type: 'start' });
+      controller.enqueue({ type: 'start-step' });
+      controller.enqueue({ type: 'text-start', id: 't0' });
+      controller.enqueue({ type: 'text-delta', id: 't0', delta: responseText });
+      controller.enqueue({ type: 'text-end', id: 't0' });
+      controller.enqueue({ type: 'finish-step' });
+      controller.enqueue({ type: 'finish', finishReason: 'stop' });
+      controller.close();
     },
   });
 
-  return result;
-}
-
-function extractTextFromUIMessage(msg: UIMessage): string {
-  if (msg.parts && msg.parts.length > 0) {
-    return msg.parts
-      .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
-      .map(p => p.text)
-      .join('');
-  }
-  return '';
+  return createUIMessageStreamResponse({ stream: chunkStream });
 }

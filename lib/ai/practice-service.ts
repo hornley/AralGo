@@ -1,4 +1,4 @@
-import { generateObject, jsonSchema } from 'ai';
+import { generateObject, jsonSchema, NoObjectGeneratedError, type RepairTextFunction } from 'ai';
 import { aiModel } from './ai-client';
 import { buildPracticePrompt } from './prompts';
 import { GradeBand, StudySubject, LanguageMode, LearningStyle } from '@/lib/types/supabase';
@@ -29,45 +29,66 @@ export interface PracticeResult {
   questions: GeneratedQuestion[];
 }
 
-export async function generatePractice(input: PracticeInput): Promise<PracticeResult> {
-  const prompt = buildPracticePrompt(input);
+export type GeneratePracticeResult =
+  | { ok: true; data: PracticeResult }
+  | { ok: false; error: string };
 
-  const result = await generateObject({
-    model: aiModel,
-    prompt,
-    schema: jsonSchema<PracticeResult>({
-      type: 'object',
-      properties: {
-        questions: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              type: { type: 'string', enum: ['multiple_choice', 'short_answer', 'problem_solving'] },
-              prompt: { type: 'string' },
-              options: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: { label: { type: 'string' }, text: { type: 'string' } },
-                  required: ['label', 'text'],
-                  additionalProperties: false,
-                },
-              },
-              correctAnswer: { type: 'string' },
-              acceptableAnswers: { type: 'array', items: { type: 'string' } },
-              explanation: { type: 'string' },
-              commonMistake: { type: 'string' },
+const schema = jsonSchema<PracticeResult>({
+  type: 'object',
+  properties: {
+    questions: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          type: { type: 'string', enum: ['multiple_choice', 'short_answer', 'problem_solving'] },
+          prompt: { type: 'string' },
+          options: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: { label: { type: 'string' }, text: { type: 'string' } },
+              required: ['label', 'text'],
+              additionalProperties: false,
             },
-            required: ['type', 'prompt', 'correctAnswer', 'explanation'],
-            additionalProperties: false,
           },
+          correctAnswer: { type: 'string' },
+          acceptableAnswers: { type: 'array', items: { type: 'string' } },
+          explanation: { type: 'string' },
+          commonMistake: { type: 'string' },
         },
+        required: ['type', 'prompt', 'correctAnswer', 'explanation'],
+        additionalProperties: false,
       },
-      required: ['questions'],
-      additionalProperties: false,
-    }),
-  });
+    },
+  },
+  required: ['questions'],
+  additionalProperties: false,
+});
 
-  return result.object;
+const repairText: RepairTextFunction = async ({ text, error }) => {
+  console.error('Practice generation repair attempt:', error.message);
+  return null;
+};
+
+export async function generatePractice(input: PracticeInput): Promise<GeneratePracticeResult> {
+  try {
+    const prompt = buildPracticePrompt(input);
+
+    const result = await generateObject({
+      model: aiModel,
+      prompt,
+      schema,
+      experimental_repairText: repairText,
+    });
+
+    return { ok: true, data: result.object };
+  } catch (err) {
+    const message =
+      err instanceof NoObjectGeneratedError
+        ? 'The AI could not generate valid practice questions. Please try again.'
+        : `Practice generation failed: ${(err as Error).message}`;
+    console.error('Practice generation error:', err);
+    return { ok: false, error: message };
+  }
 }

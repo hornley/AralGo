@@ -11,8 +11,7 @@ export async function POST(req: Request) {
       mode?: TutorMode;
     } = await req.json();
 
-    const result = await streamTutorResponse(messages, sessionId, mode);
-    return result.toUIMessageStreamResponse();
+    return await streamTutorResponse(messages, sessionId, mode);
   } catch (error: any) {
     console.error('Chat API Error:', error);
 

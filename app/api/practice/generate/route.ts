@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await generatePractice({
+    const gen = await generatePractice({
       subject, topics, gradeBand, languageMode,
       learningStyle: learningStyle || null,
       studyGoal: studyGoal || null,
@@ -24,6 +24,12 @@ export async function POST(req: NextRequest) {
       questionCount: questionCount || 5,
       referenceTexts: referenceTexts || [],
     });
+
+    if (!gen.ok) {
+      return NextResponse.json({ error: gen.error }, { status: 500 });
+    }
+
+    const practice = gen.data;
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -57,7 +63,7 @@ export async function POST(req: NextRequest) {
 
     if (!setError) {
       practiceSet = ps;
-      const questions = result.questions.map((q: any, i: number) => ({
+      const questions = practice.questions.map((q: any, i: number) => ({
         practice_set_id: practiceSet.id,
         question_type: q.type,
         prompt: q.prompt,
@@ -78,7 +84,7 @@ export async function POST(req: NextRequest) {
       console.warn('Practice set DB insert failed, returning questions anyway:', setError.message);
     }
 
-    return NextResponse.json({ practiceSet: practiceSet || null, questions: result.questions });
+    return NextResponse.json({ practiceSet: practiceSet || null, questions: practice.questions });
   } catch (error) {
     console.error('Practice generation failed:', error);
     return NextResponse.json(

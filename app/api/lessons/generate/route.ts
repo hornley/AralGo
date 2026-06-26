@@ -16,12 +16,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const content = await generateLesson({
+    const gen = await generateLesson({
       subject, topics, gradeBand, languageMode,
       learningStyle: learningStyle || null,
       studyGoal: studyGoal || null,
       referenceTexts: referenceTexts || [],
     });
+
+    if (!gen.ok) {
+      return NextResponse.json({ error: gen.error }, { status: 500 });
+    }
+
+    const content = gen.data;
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
