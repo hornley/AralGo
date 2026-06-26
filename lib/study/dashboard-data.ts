@@ -15,36 +15,57 @@ export type Session = {
   started_at: string;
 };
 
+type ProfileShape = {
+  id: string;
+  display_name: string | null;
+  grade_band: GradeBand;
+  preferred_language_mode: "english" | "filipino" | "mixed";
+  preferred_subject: "mathematics" | "science" | "english" | "filipino" | null;
+};
+
+type LessonShape = {
+  id: string;
+  subject: "mathematics" | "science" | "english" | "filipino";
+  topic: string;
+  topics: string[] | null;
+  created_at: string;
+};
+
+type SubjectShape = {
+  id: number;
+  name: "mathematics" | "science" | "english" | "filipino";
+  display_name: string;
+  icon: string;
+  sort_order: number;
+};
+
+type TopicPerformanceShape = {
+  subject: "mathematics" | "science" | "english" | "filipino";
+  topic: string;
+  rolling_accuracy: number;
+  last_practiced_at: string | null;
+} | null;
+
+type RpcResult = {
+  profile: ProfileShape | null;
+  latestSession: Session | null;
+  recentLessons: LessonShape[];
+  subjects: SubjectShape[];
+  todayStudySessions: number;
+  todayCompletedSessions: number;
+  todayPracticeAttempts: number;
+  totalPracticeAttempts: number;
+  topicPerformance: TopicPerformanceShape;
+};
+
 export type DashboardData = {
   user: User | null;
   error: string | null;
-  profile: {
-    id: string;
-    display_name: string | null;
-    grade_band: GradeBand;
-    preferred_language_mode: "english" | "filipino" | "mixed";
-    preferred_subject: "mathematics" | "science" | "english" | "filipino" | null;
-  } | null;
+  profile: ProfileShape | null;
   latestSession: Session | null;
-  recentLessons: Array<{
-    id: string;
-    subject: "mathematics" | "science" | "english" | "filipino";
-    topic: string;
-    topics: string[] | null;
-    created_at: string;
-  }>;
-  subjects: Array<{
-    id: number;
-    name: "mathematics" | "science" | "english" | "filipino";
-    display_name: string;
-    icon: string;
-  }>;
-  topicPerformance: {
-    subject: "mathematics" | "science" | "english" | "filipino";
-    topic: string;
-    rolling_accuracy: number;
-    last_practiced_at: string | null;
-  } | null;
+  recentLessons: LessonShape[];
+  subjects: SubjectShape[];
+  topicPerformance: TopicPerformanceShape;
   stats: {
     todayStudySessions: number;
     todayCompletedSessions: number;
@@ -60,101 +81,16 @@ export async function getDashboardData(): Promise<DashboardData> {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return {
-      user: null,
-      error: null,
-      profile: null,
-      latestSession: null,
-      recentLessons: [],
-      subjects: [],
-      topicPerformance: null,
-      stats: {
-        todayStudySessions: 0,
-        todayCompletedSessions: 0,
-        todayPracticeAttempts: 0,
-        totalPracticeAttempts: 0,
-      },
-    };
+    return emptyResult();
   }
 
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-  const startOfDayIso = startOfDay.toISOString();
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    "get_dashboard_data",
+    { p_user_id: user.id },
+  );
 
-  const [
-    profileResult,
-    latestSessionResult,
-    lessonsResult,
-    subjectsResult,
-    todayStudySessionsResult,
-    todayCompletedSessionsResult,
-    todayPracticeAttemptsResult,
-    totalPracticeAttemptsResult,
-  ] = await Promise.all([
-    supabase
-      .from("learner_profiles")
-      .select("id, display_name, grade_band, preferred_language_mode, preferred_subject")
-      .eq("user_id", user.id)
-      .maybeSingle(),
-    supabase
-      .from("study_sessions")
-      .select("id, subject, language_mode, topic, status, last_active_at, started_at")
-      .eq("user_id", user.id)
-      .order("last_active_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from("generated_lessons")
-      .select("id, subject, topic, topics, created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(3),
-    supabase
-      .from("subjects")
-      .select("*")
-      .order("sort_order"),
-    supabase
-      .from("study_sessions")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .gte("last_active_at", startOfDayIso),
-    supabase
-      .from("study_sessions")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .eq("status", "completed")
-      .gte("last_active_at", startOfDayIso),
-    supabase
-      .from("practice_attempts")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .gte("completed_at", startOfDayIso),
-    supabase
-      .from("practice_attempts")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id),
-  ]);
-
-  if (
-    profileResult.error ||
-    latestSessionResult.error ||
-    lessonsResult.error ||
-    subjectsResult.error ||
-    todayStudySessionsResult.error ||
-    todayCompletedSessionsResult.error ||
-    todayPracticeAttemptsResult.error ||
-    totalPracticeAttemptsResult.error
-  ) {
-    console.error("Failed to load dashboard data", {
-      profileError: profileResult.error?.message,
-      latestSessionError: latestSessionResult.error?.message,
-      lessonsError: lessonsResult.error?.message,
-      subjectsError: subjectsResult.error?.message,
-      todayStudySessionsError: todayStudySessionsResult.error?.message,
-      todayCompletedSessionsError: todayCompletedSessionsResult.error?.message,
-      todayPracticeAttemptsError: todayPracticeAttemptsResult.error?.message,
-      totalPracticeAttemptsError: totalPracticeAttemptsResult.error?.message,
-    });
+  if (rpcError || !rpcData) {
+    console.error("Failed to load dashboard data via RPC", rpcError?.message);
 
     return {
       user,
@@ -173,41 +109,39 @@ export async function getDashboardData(): Promise<DashboardData> {
     };
   }
 
-  const latestSession = latestSessionResult.data ?? null;
-  let topicPerformance: DashboardData["topicPerformance"] = null;
-
-  if (latestSession) {
-    const { data: topicPerformanceData, error: topicPerformanceError } = await supabase
-      .from("topic_performance")
-      .select("subject, topic, rolling_accuracy, last_practiced_at")
-      .eq("user_id", user.id)
-      .eq("subject", latestSession.subject)
-      .order("last_practiced_at", { ascending: false, nullsFirst: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (topicPerformanceError) {
-      console.error("Failed to load topic performance", {
-        topicPerformanceError: topicPerformanceError.message,
-      });
-    } else {
-      topicPerformance = topicPerformanceData ?? null;
-    }
-  }
+  const data = rpcData as unknown as RpcResult;
 
   return {
     user,
     error: null,
-    profile: profileResult.data ?? null,
-    latestSession,
-    recentLessons: lessonsResult.data ?? [],
-    subjects: subjectsResult.data ?? [],
-    topicPerformance,
+    profile: data.profile ?? null,
+    latestSession: data.latestSession ?? null,
+    recentLessons: data.recentLessons ?? [],
+    subjects: data.subjects ?? [],
+    topicPerformance: data.topicPerformance ?? null,
     stats: {
-      todayStudySessions: todayStudySessionsResult.count ?? 0,
-      todayCompletedSessions: todayCompletedSessionsResult.count ?? 0,
-      todayPracticeAttempts: todayPracticeAttemptsResult.count ?? 0,
-      totalPracticeAttempts: totalPracticeAttemptsResult.count ?? 0,
+      todayStudySessions: data.todayStudySessions ?? 0,
+      todayCompletedSessions: data.todayCompletedSessions ?? 0,
+      todayPracticeAttempts: data.todayPracticeAttempts ?? 0,
+      totalPracticeAttempts: data.totalPracticeAttempts ?? 0,
+    },
+  };
+}
+
+function emptyResult(): DashboardData {
+  return {
+    user: null,
+    error: null,
+    profile: null,
+    latestSession: null,
+    recentLessons: [],
+    subjects: [],
+    topicPerformance: null,
+    stats: {
+      todayStudySessions: 0,
+      todayCompletedSessions: 0,
+      todayPracticeAttempts: 0,
+      totalPracticeAttempts: 0,
     },
   };
 }
